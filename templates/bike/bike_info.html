@@ -1,0 +1,29 @@
+<div class="container h-full w-full  p-4 bg-black">
+    <div class="max-w-full max-h-full h-full rounded overflow-hidden border border-gray-800 flex flex-col transition duration-500 items-center hover:shadow-sm hover:shadow-gray-500 hover:border-gray-500">
+        <div class="px-4 py-2 flex flex-col w-full h-full text-center">
+                <div class="w-48 h-48 mx-auto relative">
+                    <img class="w-full h-full" src="{{ bike.thumbnail }}" alt="bike Image">
+
+                </div>
+                <div class="font-bold text-lg text-white mb-2">
+                    {{ bike.name }}
+                </div>
+                <div class="w-full flex flex-col justify-between mt-auto mb-2">
+                    <div class="flex flex-row justify-between">
+                        <div class="flex items-center ml-4">
+                            <p class="text-gray-300 text-sm">{{ bike.like_count }}</p>
+                        </div>
+                        {% if bike.deleted_at.is_some() %}
+                        <p class="text-red-400 text-sm">hidden</p>
+                        {% endif %}
+                        <div class="flex items-center mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-1">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m9 9 10.5-3m0 6.553v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 1 1-.99-3.467l2.31-.66a2.25 2.25 0 0 0 1.632-2.163Zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 0 1-.99-3.467l2.31-.66A2.25 2.25 0 0 0 9 15.553Z" />
+                            </svg>
+                            <p class="text-gray-300 text-sm">{{ bike.view_count }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>

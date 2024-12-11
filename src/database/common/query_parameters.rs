@@ -143,7 +143,7 @@ impl Debug for DbTable {
 pub enum DbColumn {
     Name,
     Length,
-    StreamCount,
+    ViewCount,
     LikeCount,
     OverallRating,
     CreatedAt,
@@ -155,7 +155,7 @@ impl DbColumn {
         match self {
             DbColumn::Name => write!(f, "name"),
             DbColumn::Length => write!(f, "length"),
-            DbColumn::StreamCount => write!(f, "stream_count"),
+            DbColumn::ViewCount => write!(f, "view_count"),
             DbColumn::LikeCount => write!(f, "like_count"),
             DbColumn::OverallRating => write!(f, "overall_rating"),
             DbColumn::CreatedAt => write!(f, "created_at"),

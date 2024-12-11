@@ -1,16 +1,15 @@
-use crate::database::common::error::BackendErrorKind::{
-    BikeDeleted, BikeDoesNotExist,
+use crate::database::common::error::BackendErrorKind::{BikeDeleted, BikeDoesNotExist};
+use crate::database::common::error::{DbResultMultiple, DbResultSingle, EntityError};
+use crate::database::common::{
+    DbCreate, DbDelete, DbPoolHandler, DbReadMany, DbReadOne, DbRepository, DbUpdate, EntityById,
+    PoolHandler,
 };
-use crate::database::common::error::{
-    DbResultMultiple, DbResultSingle, EntityError,
-};
-use crate::database::common::{DbCreate, DbDelete, DbPoolHandler, DbReadMany, DbReadOne, DbRepository, DbUpdate, EntityById, PoolHandler};
-
+use serde::Serialize;
 
 use sqlx::{Postgres, Transaction};
 
-use crate::database::common::utilities::entity_is_correct;
-use crate::database::models::bike::{Bike, BikeCreate};
+use crate::database::common::utilities::{entity_is_correct, generate_query_param_string};
+use crate::database::models::bike::{Bike, BikeCreate, BikeDetail, BikeSearch};
 use crate::database::models::{GetById, Id};
 
 #[derive(Clone)]
@@ -20,7 +19,7 @@ pub struct BikeRepository {
 
 impl BikeRepository {
     pub async fn get_bike<'a>(
-        params: &GetById,
+        params: &impl EntityById,
         transaction_handle: &mut Transaction<'a, Postgres>,
     ) -> DbResultSingle<Bike> {
         let maybe_bike = sqlx::query_as!(
@@ -57,7 +56,6 @@ impl BikeRepository {
         Ok(())
     }
 
-
     pub async fn restore(&self, params: &impl EntityById) -> DbResultMultiple<Bike> {
         let mut transaction = self.pool_handler.pool.begin().await?;
         let books = sqlx::query_as!(
@@ -93,27 +91,75 @@ impl BikeRepository {
     }
 }
 
-
 impl DbRepository for BikeRepository {
     #[inline]
     fn new(pool_handler: PoolHandler) -> Self {
         Self { pool_handler }
     }
 
-    async fn disconnect(&self) -> () {
+    async fn disconnect(&self) {
         self.pool_handler.disconnect().await;
     }
 }
 
-
-impl DbReadOne<GetById, Bike> for BikeRepository {
-    async fn read_one(&self, params: &GetById) -> DbResultSingle<Bike> {
+impl<ById> DbReadOne<ById, Bike> for BikeRepository
+where
+    ById: EntityById,
+{
+    async fn read_one(&self, params: &ById) -> DbResultSingle<Bike> {
         let mut transaction = self.pool_handler.pool.begin().await?;
         let bike = BikeRepository::get_bike(params, &mut transaction).await?;
         Ok(bike)
     }
 }
 
+impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
+    async fn read_many(&self, params: &BikeSearch) -> DbResultMultiple<BikeDetail> {
+        let mut query = r#"
+            SELECT
+                bike.id,
+                bike.brand_id,
+                bike.model_id,
+                bike.name,
+                bike.thumbnail,
+                bike.description,
+                bike.view_count,
+                bike.like_count,
+                bike.created_at,
+                bike.edited_at,
+                bike.deleted_at,
+                
+                brand.name as brand_name,
+                model.name as model_name
+            FROM
+                "Bike" AS bike
+                    INNER JOIN
+                "Brand" AS brand ON brand.id = bike.brand_id
+                    INNER JOIN
+                "Model" AS model ON model.id = bike.model_id
+            WHERE
+                (bike.name = $1 OR $1 IS NULL)
+                AND (bike.brand_id = $2 OR $2 IS NULL)
+                AND (bike.model_id = $3 OR $3 IS NULL)
+                AND (brand.name = $4 OR $4 IS NULL)
+                AND (model.name = $5 OR $5 IS NULL)
+            "#
+            .to_owned();
+
+        let query_params = generate_query_param_string(&params.query_params);
+        query.push_str(query_params.as_str());
+
+        let bikes = sqlx::query_as::<_, BikeDetail>(query.as_str())
+            .bind(&params.name)
+            .bind(params.brand_id)
+            .bind(params.model_id)
+            .bind(&params.brand_name)
+            .bind(&params.model_name)
+            .fetch_all(&self.pool_handler.pool)
+            .await?;
+        Ok(bikes)
+    }
+}
 
 impl DbCreate<BikeCreate, Bike> for BikeRepository {
     async fn create(&self, params: &BikeCreate) -> DbResultSingle<Bike> {
@@ -130,8 +176,8 @@ impl DbCreate<BikeCreate, Bike> for BikeRepository {
             params.thumbnail,
             params.description
         )
-            .fetch_one(&self.pool_handler.pool)
-            .await?;
+        .fetch_one(&self.pool_handler.pool)
+        .await?;
 
         Ok(book)
     }
@@ -161,8 +207,8 @@ impl DbCreate<BikeCreate, Bike> for BikeRepository {
 //             UPDATE "Bike"
 //             SET
 //                 name = COALESCE($1, name),
-//                 author_id = COALESCE($2, author_id),
-//                 genre_id = COALESCE($3, genre_id),
+//                 brand_id = COALESCE($2, brand_id),
+//                 model_id = COALESCE($3, model_id),
 //                 file_path = COALESCE($4, file_path),
 //                 length = COALESCE($5, length),
 //                 stream_count = COALESCE($6, stream_count),
@@ -175,8 +221,8 @@ impl DbCreate<BikeCreate, Bike> for BikeRepository {
 //             RETURNING *
 //             "#,
 //             params.name,
-//             params.author_id,
-//             params.genre_id,
+//             params.brand_id,
+//             params.model_id,
 //             params.file_path,
 //             params.length,
 //             params.stream_count,
@@ -194,15 +240,13 @@ impl DbCreate<BikeCreate, Bike> for BikeRepository {
 //     }
 // }
 
-
-impl DbDelete<GetById, Bike> for BikeRepository {
-    async fn delete(&self, params: &GetById) -> DbResultMultiple<Bike> {
+impl<ById> DbDelete<ById, Bike> for BikeRepository
+where
+    ById: EntityById,
+{
+    async fn delete(&self, params: &ById) -> DbResultMultiple<Bike> {
         let mut transaction = self.pool_handler.pool.begin().await?;
-        let _bike = BikeRepository::get_bike(
-            &params,
-            &mut transaction,
-        )
-        .await?;
+        let _bike = BikeRepository::get_bike(params, &mut transaction).await?;
 
         let books = sqlx::query_as!(
             Bike,

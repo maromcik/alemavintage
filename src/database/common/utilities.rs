@@ -5,7 +5,7 @@ use crate::database::common::query_parameters::DbQueryParams;
 pub fn generate_query_param_string(params: &DbQueryParams) -> String {
     let mut qp_string = String::new();
     if !params.fetch_deleted {
-        qp_string.push_str("AND a.deleted_at IS NULL\n");
+        qp_string.push_str("AND bike.deleted_at IS NULL\n");
     }
 
 

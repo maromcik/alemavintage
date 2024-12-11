@@ -6,10 +6,12 @@ use actix_files::Files as ActixFiles;
 use actix_web::web;
 use actix_web::web::ServiceConfig;
 use sqlx::PgPool;
+use crate::database::repositories::bike::repository::BikeRepository;
+use crate::handlers::index::{index, index_content};
 
 pub fn configure_webapp(pool: &PgPool) -> Box<dyn FnOnce(&mut ServiceConfig)> {
     // let user_repository = UserRepository::new(PoolHandler::new(pool.clone()));
-    // let audiobook_repository = AudiobookRepository::new(PoolHandler::new(pool.clone()));
+    let bike_repo = BikeRepository::new(PoolHandler::new(pool.clone()));
     // let chapter_repository = ChapterRepository::new(PoolHandler::new(pool.clone()));
     // let genre_repository = GenreRepository::new(PoolHandler::new(pool.clone()));
     // let rating_repository = RatingRepository::new(PoolHandler::new(pool.clone()));
@@ -87,6 +89,9 @@ pub fn configure_webapp(pool: &PgPool) -> Box<dyn FnOnce(&mut ServiceConfig)> {
     //
     Box::new(move |cfg: &mut ServiceConfig| {
         cfg
+            .app_data(web::Data::new(bike_repo.clone()))
+            .service(index)
+            .service(index_content)
             .service(ActixFiles::new("/media", "./media").prefer_utf8(true))
             .service(ActixFiles::new("/static", "./static").prefer_utf8(true));
     })
