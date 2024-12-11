@@ -1,0 +1,37 @@
+<div id="#chapter-{{chapter.order}}" class="container bg-gray-800 hover:bg-gray-700 hover:cursor-pointer"
+     hx-get="/audiobook/{{ audiobook_id }}/player?position={{chapter.position}}" hx-trigger="click"
+     hx-target="#player-container"
+     hx-target-error="#content-area"
+     hx-swap="outerHTML">
+    <div class="shadow-md rounded pl-8 pr-2 pt-4 pb-4 mb-4">
+        <div class="w-full flex flex-row justify-between">
+            <div class="text-xl ml-4 mr-2 flex flex-row justify-between">
+                <p class="text-blue-300 mr-2">Chapter {{chapter.order}}{% if !chapter.name.is_empty() %}: {% endif %}</p>
+                <p class="text-white">{{ chapter.name }}</p>
+            </div>
+            <div class="flex flex-row justify-between items-center">
+                <div class="text-xl text-white ml-1 mr-5">
+                    <p>{{ crate::templates::utilities::format_position(chapter.position) }}</p>
+                </div>
+                {% if show_delete %}
+                <form class="h-full" hx-delete="/chapter/delete" hx-target-error="#content-area" hx-target="#chapters-list">
+                    <input class="hidden" name="audiobook_id" value="{{ audiobook_id }}">
+                    <input class="hidden" name="chapter_id" value="{{ chapter.id }}">
+                    <button id="delete-chapter-btn" class="h-full hover:text-red-500" onclick="handleDelete(event)" type="submit">
+                        <svg class="w-6 h-6 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function handleDelete(event) {
+        // Stop the event from propagating to the parent div
+        event.stopPropagation();
+    }
+</script>

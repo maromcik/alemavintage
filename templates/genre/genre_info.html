@@ -1,0 +1,8 @@
+<div class="container h-40 w-full mx-auto bg-black p-4">
+    <a class="cursor-pointer" hx-get="/genre/{{ genre.id }}"  hx-push-url="/genre/{{ genre.id }}/content" hx-target-error="#content-area" hx-target="#content-area">
+        <div class="flex w-full h-full flex-row items-center justify-center overflow-hidden rounded border border-gray-800 hover:shadow-sm hover:shadow-gray-500 hover:border-gray-500 shadow-inner px-4 py-2"
+            style="background: linear-gradient(180deg, {{genre.color}} 0%, rgba(0,0,0, 0) 100%);">
+            <div class="text-center text-lg font-bold text-white">{{ genre.name }}</div>
+        </div>
+    </a>
+</div>

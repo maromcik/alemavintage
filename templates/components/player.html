@@ -1,0 +1,44 @@
+<div id="player-container" class="bg-gray-800 sticky bottom-0 flex flex-row">
+    <div class="flex flex-row p-2 w-full align-center">
+        <a class="book-info-link cursor-pointer" hx-get="/audiobook/{{ played_book.book_id }}/detail-content" hx-target="#content-area"
+           hx-push-url="/audiobook/{{ played_book.book_id }}/detail" hx-swap="innerHTML show:window:top">
+            <img class="ml-2 mr-2 w-28 h-28" src="{{ played_book.thumbnail }}" alt="Audiobook Image">
+        </a>
+
+        <div class="w-full flex flex-col justify-center">
+            <div class="w-full flex flex-row align-center">
+                <a class="book-info-link cursor-pointer" hx-get="/audiobook/{{ played_book.book_id }}/detail-content" hx-target="#content-area"
+                   hx-push-url="/audiobook/{{ played_book.book_id }}/detail" hx-swap="innerHTML show:window:top">
+                    <div class="flex flex-col">
+                        <div class="pl-5 text-2xl font-bold">{{ played_book.name }}</div>
+                        <div class="pl-5 text-2xl font-light text-slate-400">{{ played_book.author_name }} {{ played_book.author_surname }}</div>
+                    </div>
+                </a>
+            </div>
+            <audio id="audiobook-player" class="w-full mt-auto" begin-time="{{ played_book.playback_position }}" controls>
+                <source id="source-{{ played_book.book_id }}" src="{{ played_book.path }}" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+<script>
+
+    document.getElementById('audiobook-player').currentTime = {{ played_book.playback_position }};
+    // update active book entry every 5s whilst playing
+    attachInterval('{{ played_book.book_id }}');
+
+    document.getElementById('audiobook-player').onpause = () => {
+        clearInterval(playerIntervalId);
+    }
+
+    document.getElementById('audiobook-player').onended = () => {
+        clearInterval(playerIntervalId);
+        updateActiveBook()
+    }
+</script>

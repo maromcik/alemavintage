@@ -1,0 +1,31 @@
+{% let date = crate::templates::utilities::format_date( rating.created_at ) %}
+{% let review = crate::templates::utilities::display_optional(rating.review) %}
+{% let filled_stars = rating.rating %}
+{% let empty_stars = 5 - rating.rating %}
+{% let profile_picture = crate::templates::utilities::display_optional(rating.user_thumbnail) %}
+<div class="flex flex-col rounded-xl bg-gray-700 p-4 mb-4">
+    <div class="flex flex-row mb-4 center-items ">
+        {% if profile_picture == "" %}
+            <img class="w-24 h-24 object-cover rounded-full bg-red-500">
+        {% else %}
+            <img src="{{ profile_picture }}" class="w-24 h-24 object-cover rounded-full bg-red-500">
+        {% endif %}
+
+        <div class="pl-5 flex flex-col justify-center">
+            <div class="font-bold text-lg">{{ rating.user_name }} {{ rating.user_surname }}</div>
+            <div class="text-slate-400">{{ date }}</div>
+            <div class="flex flex-row pb-2">
+                {% for i in 0..crate::templates::utilities::as_integer(filled_stars) %}
+                    <i class="flex-1 fa-solid fa-star" style="color: #FFD43B;"></i>
+                {% endfor %}
+
+                {% for i in 0..crate::templates::utilities::as_integer(empty_stars) %}
+                    <i class="flex-1 fa-regular fa-star"></i>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <p class="text-lg"> {{ review }} </p>
+
+</div>

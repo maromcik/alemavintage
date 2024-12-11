@@ -1,0 +1,49 @@
+workflow:
+  rules:
+    - when: always
+
+default:
+  image: rust:1.75-bullseye
+  before_script:
+    - apt-get update
+    - apt install -y protobuf-compiler libprotobuf-dev
+    - apt-get install -y postgresql-client
+    - rustc --version
+    - cargo --version
+    - echo 'DATABASE_URL="postgres://${PG_USER}:${PG_PASS}@${PG_HOST}/${PG_DB}"' >> .env
+    - echo 'COOKIE_SESSION_KEY=${COOKIE_CI_SESSION_KEY}' >> .env
+
+  tags:
+    - shared-fi
+
+stages:
+  - build
+  - preflight
+  - tests
+
+build:
+  stage: build
+  script:
+    - cargo build --verbose
+
+# dependencies_unchanged:
+#   stage: preflight
+
+# tests_unchanged:
+#   stage: preflight
+
+lint:
+  stage: preflight
+  script:
+    - rustup component add rustfmt
+#    - cargo fmt -- --check
+    - rustup component add clippy
+    - cargo check
+#    - cargo clippy -- -D warnings
+
+tests:
+  stage: tests
+  allow_failure: true
+  script:
+    - cargo test
+

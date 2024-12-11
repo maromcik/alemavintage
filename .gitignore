@@ -1,0 +1,7 @@
+target
+.env
+.idea
+kubernetes.sh
+kubernetes-ai.sh
+data
+podlet

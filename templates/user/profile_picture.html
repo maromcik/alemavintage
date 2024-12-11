@@ -1,0 +1,8 @@
+<img class="w-48 h-48 md:w-72 md:h-72 lg:w-108 lg:h-108 object-cover rounded-full mb-4" src="{{ user.profile_picture }}" alt="Profile Picture">
+<button hx-get="/user/manage/picture" hx-replace-url="/user/manage" hx-target="#profile-picture-box" hx-target-error="#content-area" hx-swap="innerHTML" class="absolute bottom-[32px] right-[32px] md:bottom-[48px] md:right-[48px] lg:bottom-[72px] lg:right-[72px] hidden transform translate-x-1/2 translate-y-1/2 text-white rounded-full p-2 bg-blue-600 hover:bg-blue-300 focus:outline-none group-hover:block">
+    <svg class="w-12 h-12 md:w-18 md:h-18 lg:w-27 lg:h-27" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+         xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 5v14m-7-7h14"></path>
+    </svg>
+</button>

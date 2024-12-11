@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.4"
+            integrity="sha384-zUfuhFKKZCbHTY6aRR46gxiqszMk5tcHjsVFxnUo8VMus4kHGVdIYVbOYYNlKmHV"
+            crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/response-targets.js"></script>
+</head>
+<body class="h-screen flex justify-center items-center bg-black">
+    <div id="generic-error" class="w-full h-full flex justify-center items-center bg-black">
+        <div class="bg-black shadow-lg border border-gray-800 rounded-lg p-5 flex flex-col items-center">
+            <h2 class="text-white text-2xl mb-6">Error</h2>
+            <div id="generic-error-area" class="text-white mb-3">
+                <p> {{ code }} </p>
+                <p>{{ description }}</p>
+            </div>
+
+            <p class="text-white">Please, return to <a href="/" class="text-blue-600 hover:text-blue-400"> homepage</a></p>
+        </div>
+    </div>
+</body>
+</html>

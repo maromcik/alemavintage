@@ -1,0 +1,11 @@
+<div class="w-full h-full">
+    <h2 class="text-6xl font-bold mb-6 pl-10">
+        {{ genre.name }}
+    </h2>
+    <div class="pl-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {% for audiobook in audiobooks %}
+        {% include "audiobook/audiobook_card.html" %}
+        {% endfor %}
+    </div>
+</div>
+

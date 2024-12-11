@@ -1,0 +1,67 @@
+<div id="user-mgmt-profile-form">
+    <div class="mx-auto text-center bg-gray-800 rounded-lg px-4">
+        <form hx-post="/user/manage" hx-target="#user-mgmt-profile-form" hx-target-error="#content-area" hx-swap="outerHTML"  class="rounded-lg p-5 flex flex-col items-center max-w-full w-96 mx-4 md:w-96 sm:w-96 lg:w-96 min-w-lg">
+            {% if success %}
+            <div id="success-area" class="text-green-500 mb-3" onclick=" { this.style.display = 'none'; }">
+            {% else %}
+            <div id="error-area2" class="text-red-500 mb-3" onclick=" { this.style.display = 'none'; }">
+            {% endif %}
+                {{ message }}
+            </div>
+            <div class="flex flex-wrap justify-between text-center">
+                <div class="px-2">
+                    <table class="w-full">
+                        <tbody>
+                        <tr>
+                            <td class="text-right pr-2">
+                                <label for="profile-id-name" class="w-24 font-bold text-white">Name</label>
+                            </td>
+                            <td class="pb-2">
+                                <input type="text" id="profile-id-name" name="name" value="{{ user.name }}" placeholder="{{ user.name }}" class="p-3 rounded border border-gray-400 bg-gray-900 text-white placeholder-gray-600 focus:outline-none focus:border-green-500">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right pr-2">
+                                <label for="profile-id-surname" class="font-bold text-white">Surname</label>
+                            </td>
+                            <td class="pb-2">
+                                <input type="text" id="profile-id-surname" name="surname" value="{{ user.surname }}" placeholder="{{ user.surname }}" class="p-3 rounded border border-gray-400 bg-gray-900 text-white placeholder-gray-600 focus:outline-none focus:border-green-500">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right pr-2">
+                                <label for="profile-id-email" class="font-bold text-white">Email</label>
+                            </td>
+                            <td class="pb-2">
+                                <input type="text" id="profile-id-email" name="email" value="{{ user.email }}" placeholder="{{ user.email }}" class="p-3 rounded border border-gray-400 bg-gray-900 text-white placeholder-gray-600 focus:outline-none focus:border-green-500">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right pr-2">
+                                <label for="profile-id-username" class="font-bold text-white">Username</label>
+                            </td>
+                            <td class="pb-2">
+                                <input type="text" id="profile-id-username" name="username" value="{{ user.username }}" placeholder="{{ user.username }}" class="p-3 rounded border border-gray-400 bg-gray-900 text-white placeholder-gray-600 focus:outline-none focus:border-green-500">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right pr-2">
+                                <label for="profile-id-bio" class="font-bold text-white">Bio</label>
+                            </td>
+                            <td>
+                                <input type="text" id="profile-id-bio" name="bio" value="{{ user.bio }}" placeholder="{{ user.bio }}" class="p-3 rounded border border-gray-400 bg-gray-900 text-white placeholder-gray-600 focus:outline-none focus:border-green-500">
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <button type="submit" class="bg-blue-600 hover:bg-blue-300 text-white font-bold py-3 px-6 rounded mt-4 focus:outline-none focus:shadow-outline-green">Update profile</button>
+        </form>
+    </div>
+    <a hx-get="/user/manage/password" hx-replace-url="false" hx-target="#profile-update-fields" hx-target-error="#content-area" hx-swap="innerHTML" hx-boost="true">
+        <button type="submit" class="float-right bg-blue-600 hover:bg-blue-300 text-white font-bold py-3 px-6 rounded mt-4 focus:outline-none focus:shadow-outline-green">
+            Change password
+        </button>
+    </a>
+</div>

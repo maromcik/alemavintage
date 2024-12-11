@@ -1,0 +1,33 @@
+<div class="flex flex-row pl-10 justify-between pb-8">
+    <div class="flex flex-col w-1/2">
+        <h1 class="text-2xl mb-3">Tell us what you think</h1>
+        <form id="rating-form" class="bg-gray-700 rounded-md p-3 shadow-inner shadow-md"
+              hx-post="/rating/audiobook/{{ audiobook.id }}" hx-target="#my-rating-container" hx-target-error="#content-area" hx-trigger="submit" hx-swap="innerHTML">
+            <textarea id="review" name="review" class="focus:outline-none w-full bg-gray-700 h-32 resize-none" placeholder="Write a review..."></textarea>
+
+            <div class="flex flex-row justify-between">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-300 text-white font-bold py-2 px-2 rounded  focus:outline-none focus:shadow-outline-blue">
+                    Submit review
+                </button>
+                <div class="flex flex-row justify-center align-center">
+                    <label class="flex flex-col justify-center mr-1" for="rating">
+                        <span class="fa-solid fa-star text-2xl" style="color: #FFD43B;"></span>
+                    </label>
+                    <select class="bg-gray-700 focus:outline-none text-2xl" name="rating" id="rating">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <div id="ratings-summary-container" class="flex flex-row justify-center"
+         hx-get="/rating/audiobook/{{audiobook.id}}/rating-summary" hx-trigger="load" hx-target="#ratings-summary-container" hx-target-error="#content-area"
+         hx-swap="outerHTML">
+    </div>
+</div>

@@ -1,0 +1,41 @@
+<div class="container mx-auto p-6 bg-black max-w-5xl">
+    <form hx-post="/audiobook/create" hx-target="#content-area" hx-target-error="#content-area" class="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <h2 class="block text-gray-300 text-xl font-bold mb-2 text-center">Create New Audiobook</h2>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="audiobook-name">
+                Name
+            </label>
+            <input name="name"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   id="audiobook-name" type="text" placeholder="Audiobook Name">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="genre">
+                Genre
+            </label>
+            <select name="genre_id" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="genre">
+                {% for genre in genres %}
+                <option value="{{ genre.id }}">{{ genre.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="description">
+                Description
+            </label>
+            <textarea name="description"
+                      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      id="description" placeholder="Description"></textarea>
+        </div>
+
+        <div class="flex justify-end">
+            <button hx-target="#content-area" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    type="submit">
+                Next step
+            </button>
+        </div>
+    </form>
+</div>

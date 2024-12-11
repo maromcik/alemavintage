@@ -1,0 +1,33 @@
+services:
+  alemavintage-db:
+    image: postgres:latest
+    container_name: alemavintage-db
+    command: postgres -c 'max_connections=2000'
+    volumes:
+      - ./data/db:/var/lib/postgresql/data:z
+    environment:
+      - POSTGRES_DB=alemavintage
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  alemavintage:
+    build: .
+    container_name: alemavintage-app
+    volumes:
+      - ./media/:/usr/src/alemavintage/media:z
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./.env-docker
+    depends_on:
+      - alemavintage-db
+  alemavintage-nginx:
+    build: ./nginx
+    container_name: alemavintage-nginx
+    depends_on:
+      - alemavintage
+    volumes:
+      - ./static/:/var/www/static:z
+      - ./media/:/var/www/media:z
+    ports:
+      - "80:80"
+      - "443:443"

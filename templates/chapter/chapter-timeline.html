@@ -1,0 +1,12 @@
+<div id="chapters-timeline" class="w-full h-4 bg-neutral-500 relative mb-10"
+     hx-get="/chapter/audiobook/{{ audiobook_id }}/chapter-timeline"
+     hx-swap="outerHTML" hx-target="#chapters-timeline" hx-target-error="#content-area" hx-trigger="studio-form-submit"
+>
+    {% for chapter in chapters %}
+        {% let percentage = crate::templates::utilities::get_percentage(chapter.position, length) %}
+        <div class="absolute z-2 h-12 border-l-4 border-cyan-500" style="left: {{ percentage }}%">
+            <p class="absolute max-h-8 left-0 bottom-0 pl-1 text-ellipsis">{{chapter.order}}</p>
+        </div>
+
+    {% endfor %}
+</div>

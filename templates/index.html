@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>{% block title %} AudioHub {% endblock %}</title>
+    <!--    <link rel="stylesheet" href="../static/css/main.css">-->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.4"
+            integrity="sha384-zUfuhFKKZCbHTY6aRR46gxiqszMk5tcHjsVFxnUo8VMus4kHGVdIYVbOYYNlKmHV"
+            crossorigin="anonymous"></script>
+    <!-- font awesome-->
+    <script src="https://kit.fontawesome.com/34be06a8e3.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/response-targets.js"></script>
+</head>
+<body class="bg-black text-white">
+{% block navbar %}
+    {% include "components/navbar.html" %}
+{% endblock %}
+<div class="flex pt-16 flex-col h-screen">
+    <!-- Sidebar -->
+    {% include "components/sidebar.html" %}
+    <!-- Main Content -->
+    <main id="content-area" hx-ext="response-targets" class="flex-1 pl-64 p-10">
+        {% block content %} {% include "index_content.html" %} {% endblock %}
+    </main>
+    <div id="player-container" class="pl-64 sticky bottom-0" hx-get="/audiobook/last-played" hx-trigger="load" hx-swap="outerHTML" >
+    </div>
+
+</div>
+</body>
+</html>
+<script>
+    let playerIntervalId = 0;
+    let currentBookId = -1;
+
+    const getCurrentPlayerTime = () => {
+        return document.getElementById('audiobook-player').currentTime;
+    }
+
+    const getBeginningPlayerTime = () => {
+        return document.getElementById('audiobook-player').getAttribute("begin-time");
+
+    }
+    // player init
+    document.addEventListener("htmx:load", (e) => {
+        if (e.detail.elt.id === 'player-container') {
+            clearInterval(playerIntervalId);
+            let audio = document.getElementById('audiobook-player');
+            let bookId = audio.lastElementChild.id;
+            attachInterval(parseBookIdFromSource(bookId));
+
+            audio.play();
+
+            let beginTime = getBeginningPlayerTime();
+            // initially set active book to current selection
+            fetch(`/audiobook/${currentBookId}/active?position=${beginTime}`, {
+                method: "PUT",
+            });
+            audio.currentTime = beginTime;
+
+            audio.onpause = () => {
+                clearInterval(playerIntervalId);
+            }
+
+            audio.onended = () => {
+                clearInterval(playerIntervalId);
+                updateActiveBook()
+            }
+        }
+    });
+
+
+    const attachInterval = (bookId) => {
+        currentBookId = bookId;
+        document.getElementById('audiobook-player').onplay = () => {
+            createInterval(bookId)
+        }
+    };
+
+    // TODO: prolong interval
+    const createInterval = () => {
+        playerIntervalId  = setInterval(() => {
+            updateActiveBook()
+        }, 3_000);
+    }
+
+    const parseBookIdFromSource = (sourceId ) => {
+        return sourceId.slice(7, sourceId.length);
+    };
+
+    const updateActiveBook = () => {
+        fetch(`/audiobook/${currentBookId}/active?position=${getCurrentPlayerTime()}`, {
+            method: "PUT",
+        });
+    }
+
+    const attachHideQuickSearchListener = () => {
+        document.body.addEventListener('click', hideQuickSearchResults)
+    }
+    const hideQuickSearchResults = () => {
+        document.getElementById('quick-search-input').value = '';
+        document.getElementById('search-result').style.display = 'none';
+        document.body.removeEventListener('click', this);
+    }
+
+
+    document.addEventListener("htmx:afterRequest", (e) => {
+        // rating clear
+        if (e.detail.elt.id === 'rating-form') {
+            document.getElementById('rating-form').reset();
+        }
+
+        // update rating summary
+        if (e.detail.target.id === 'my-rating-container' && e.detail.elt.id === 'rating-form') {
+            htmx.trigger('#ratings-summary-container', 'change')
+        }
+
+        // after calling create chapter
+        if (e.detail.elt.id === 'create-chapter-form') {
+            document.getElementById('create-chapter-form').reset();
+            htmx.trigger("#chapters-list", "studio-form-submit");
+            htmx.trigger("#chapters-timeline", "studio-form-submit");
+        }
+
+        // after calling delete chapter
+        if (e.detail.target.id === 'chapters-list' && e.detail.elt.id === 'chapters-container') {
+            htmx.trigger("#chapters-timeline", "studio-form-submit");
+        }
+    });
+
+    const increasePage = (maxPage, minPage) => {
+        htmx.trigger("#load-next-page-btn", "page-change");
+        const currentPage = document.getElementById('pagination-text').getAttribute('current-page');
+        const nextPage = Math.min(parseInt(currentPage) + 1, maxPage);
+        setCurrentPageDialog(nextPage, maxPage);
+        setNextButtonLink(nextPage, minPage, maxPage);
+        setPrevButtonLink(nextPage, maxPage);
+    }
+
+    const decreasePage = (maxPage, minPage) => {
+        htmx.trigger("#load-previous-page-btn", "page-change");
+        const currentPage = document.getElementById('pagination-text').getAttribute('current-page');
+        const nextPage = Math.max(parseInt(currentPage) - 1, 1);
+        setCurrentPageDialog(nextPage, maxPage);
+        setNextButtonLink(nextPage, minPage, maxPage);
+        setPrevButtonLink(nextPage, maxPage);
+    }
+
+    const setCurrentPageDialog = (currentPage, maxPage) => {
+        const pagination = document.getElementById('pagination-text');
+        pagination.setAttribute('current-page', currentPage);
+        pagination.innerText = `Page ${currentPage} out of ${maxPage}`;
+    }
+
+    const setPrevButtonLink = (pageNum, maxPage) => {
+        const button = document.getElementById("load-previous-page-btn");
+        const hxUrl = button.getAttribute('hx-get');
+        const parts = hxUrl.split('=');
+        let nextPage = pageNum - 1;
+        nextPage = Math.min(nextPage, maxPage)
+        nextPage = Math.max(1, nextPage)
+        button.setAttribute('hx-get', `${parts[0]}=${nextPage}`)
+        htmx.process(button)
+    }
+
+    const setNextButtonLink = (pageNum, minPage, maxPage) => {
+        const button = document.getElementById("load-next-page-btn");
+        const hxUrl = button.getAttribute('hx-get');
+        const parts = hxUrl.split('=');
+        let nextPage = pageNum + 1;
+        nextPage = Math.min(nextPage, maxPage)
+        nextPage = Math.max(minPage, nextPage)
+        button.setAttribute('hx-get', `${parts[0]}=${nextPage}`)
+        htmx.process(button)
+    }
+
+    function parseTime(timeString) {
+        let parts = timeString.split(":");
+        let time = 0;
+        let modifier = 1;
+        for (let i = parts.length - 1; i >= 0; i--) {
+            time += parseInt(parts[i]) * modifier;
+            modifier *= 60;
+        }
+
+        return time;
+    }
+
+    const isValidTime = (timeString) => {
+        let parts = timeString.split(":");
+        let invalid = parts.length > 3;
+        let emptyString = timeString.length === 0;
+        return ! (parts.some((part) => isNaN(parseInt(part))) || invalid || emptyString);
+    }
+
+
+    const validateChapterBeginSelection = (element) => {
+        const timeString = element.value;
+        if (!isValidTime(timeString)) {
+            element.setCustomValidity('Invalid time format')
+        } else {
+            element.setCustomValidity('');
+            const time = parseTime(timeString);
+
+            document.getElementById('chapter-begin-selection').value = time;
+            document.getElementById('select-player-container').currentTime = time;
+        }
+
+    }
+</script>

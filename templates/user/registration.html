@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+<!--    <link rel="stylesheet" href="../static/css/register.css">-->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.4"
+            integrity="sha384-zUfuhFKKZCbHTY6aRR46gxiqszMk5tcHjsVFxnUo8VMus4kHGVdIYVbOYYNlKmHV"
+            crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/response-targets.js"></script>
+</head>
+<body class="h-screen flex justify-center items-center bg-black">
+<div id="login-box" class="w-full h-full flex justify-center items-center bg-black">
+    <form method="post" action="/user/register" class="bg-black shadow-lg border border-gray-800 rounded-lg p-5 flex flex-col items-center max-w-full w-96 mx-4 md:w-96 sm:w-96 lg:w-96 xl:w-1/4">
+        <h2 class="text-white text-2xl mb-4">Welcome to AudioHub!</h2>
+        <div id="error-area" class="text-red-500 mb-3">
+            {{ message }}
+        </div>
+        <div class="flex flex-wrap justify-between w-full">
+            <div class="flex flex-col space-y-2 w-full md:w-1/2 px-2">
+                <input type="text" name="name" placeholder="Name" class="p-2.5 rounded border border-gray-400">
+                <input type="text" name="surname" placeholder="Surname" class="p-2.5 rounded border border-gray-400">
+                <input type="text" name="email" placeholder="Email" class="p-2.5 rounded border border-gray-400">
+                <br>
+            </div>
+            <div class="flex flex-col space-y-2 w-full md:w-1/2 px-2">
+                <input type="text" name="username" placeholder="Username" class="p-2.5 rounded border border-gray-400">
+                <input type="password" name="password" placeholder="Password" class="p-2.5 rounded border border-gray-400">
+                <input type="password" name="confirm_password" placeholder="Confirm password" class="p-2.5 rounded border border-gray-400">
+            </div>
+        </div>
+        <button type="submit" class="bg-blue-600 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded mt-4">Register</button>
+        <p class="text-white mt-4">Already have an account? <a href="/user/login" class="text-blue-600 hover:text-blue-400">Login here</a>.</p>
+    </form>
+</div>
+</body>
+</body>
+</html>

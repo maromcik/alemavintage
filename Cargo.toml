@@ -1,0 +1,39 @@
+[package]
+name = "alemavintage"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-files = { version = "0.6.5" }
+actix-web = "4.4.1"
+anyhow = { version = "1.0.79", features = [] }
+askama = "0.12.1"
+async-trait = "0.1.77"
+chrono = "0.4.31"
+dotenv = "0.15.0"
+dotenvy = "0.15.7"
+env_logger = "0.10.1"
+futures = "0.3.30"
+hmac = "0.12.1"
+log = "0.4.20"
+serde = { version = "1.0.195", features = ["derive"] }
+sqlx = { version = "0.7.3", features = ["chrono", "runtime-tokio-native-tls", "postgres", "bigdecimal"] }
+thiserror = "1.0.56"
+tokio = { version = "1.35.1", features = ["full"] }
+uuid = { version = "1.6.1", features = ["v4"] }
+pbkdf2 = { version = "0.12", features = ["simple"] }
+rand_core = { version = "0.6", features = ["std"] }
+actix-identity = "0.7.0"
+actix-session = { version = "0.9.0", features = ["redis-rs-session", "redis-actor-session", "cookie-session"]}
+actix-cors = "0.7.0"
+actix-multipart = "0.6.1"
+futures-util = "0.3.30"
+lazy_static = "1.4.0"
+lofty = "0.18.0"
+tonic = "0.10"
+prost = "0.12"
+
+[build-dependencies]
+tonic-build = "0.10"
