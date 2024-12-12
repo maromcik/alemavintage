@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS "User"
     name            text        NOT NULL,
     surname         text        NOT NULL,
     password_hash   text        NOT NULL,
-    password_salt   text        NOT NULL
+    password_salt   text        NOT NULL,
+    admin           bool        NOT NULL DEFAULT false
 );
 
 

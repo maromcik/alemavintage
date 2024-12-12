@@ -4,9 +4,10 @@ use crate::database::common::{DbPoolHandler, DbRepository};
 use crate::handlers::*;
 use actix_files::Files as ActixFiles;
 use actix_web::web;
-use actix_web::web::ServiceConfig;
+use actix_web::web::{service, ServiceConfig};
 use sqlx::PgPool;
 use crate::database::repositories::bike::repository::BikeRepository;
+use crate::handlers::bike::{get_bike_detail, get_bike_detail_content};
 use crate::handlers::index::{index, index_content};
 
 pub fn configure_webapp(pool: &PgPool) -> Box<dyn FnOnce(&mut ServiceConfig)> {
@@ -32,7 +33,7 @@ pub fn configure_webapp(pool: &PgPool) -> Box<dyn FnOnce(&mut ServiceConfig)> {
     //     .service(author_content)
     //     .service(author_index);
     //
-    // let audiobook_scope = web::scope("audiobook")
+    let bike_scope = web::scope("bike")
     //     .app_data(web::Data::new(genre_repository.clone()))
     //     .app_data(web::Data::new(chapter_repository.clone()))
     //     .service(create_audiobook)
@@ -53,7 +54,8 @@ pub fn configure_webapp(pool: &PgPool) -> Box<dyn FnOnce(&mut ServiceConfig)> {
     //     .service(search)
     //     .service(set_active_audiobook)
     //     .service(get_last_active_audiobook)
-    //     .service(get_audiobook_detail_content)
+        .service(get_bike_detail)
+        .service(get_bike_detail_content);
     //     .service(get_audiobook_player)
     //     .service(upload_book_cover)
     //     .service(upload_book_cover_post)
@@ -90,6 +92,7 @@ pub fn configure_webapp(pool: &PgPool) -> Box<dyn FnOnce(&mut ServiceConfig)> {
     Box::new(move |cfg: &mut ServiceConfig| {
         cfg
             .app_data(web::Data::new(bike_repo.clone()))
+            .service(bike_scope)
             .service(index)
             .service(index_content)
             .service(ActixFiles::new("/media", "./media").prefer_utf8(true))

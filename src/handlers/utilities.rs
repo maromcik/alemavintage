@@ -1,6 +1,6 @@
 use crate::database::common::DbReadOne;
 
-use crate::database::models::Id;
+use crate::database::models::{GetById, Id};
 
 use crate::error::{AppError, AppErrorKind};
 use actix_identity::Identity;
@@ -12,6 +12,8 @@ use crate::database::common::error::{BackendError, BackendErrorKind};
 
 use crate::MIN_PASS_LEN;
 use uuid::Uuid;
+use crate::database::models::user::User;
+use crate::database::repositories::user::repository::UserRepository;
 
 pub struct AudiobookCreateSessionKeys {
     pub name: String,
@@ -65,14 +67,14 @@ pub fn parse_user_id(identity: Identity) -> Result<Id, AppError> {
 //     })
 // }
 
-// pub async fn get_user_from_identity(
-//     identity: Identity,
-//     user_repo: &web::Data<UserRepository>,
-// ) -> Result<User, AppError> {
-//     Ok(user_repo
-//         .read_one(&UserGetById::new(&parse_user_id(identity)?))
-//         .await?)
-// }
+pub async fn get_user_from_identity(
+    identity: Identity,
+    user_repo: &web::Data<UserRepository>,
+) -> Result<User, AppError> {
+    Ok(user_repo
+        .read_one(&GetById::new(parse_user_id(identity)?))
+        .await?)
+}
 
 pub fn validate_file(
     file: &TempFile,

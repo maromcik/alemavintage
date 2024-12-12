@@ -40,7 +40,7 @@ pub struct UserLoginReturnURL {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct UserLoginForm {
-    pub email_or_username: String,
+    pub email: String,
     pub password: String,
     pub return_url: String,
 }

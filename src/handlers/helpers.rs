@@ -1,10 +1,12 @@
 use crate::database::common::query_parameters::{DbColumn, DbOrder, DbOrderColumn, DbQueryParams};
-use crate::database::common::DbReadMany;
-use crate::database::models::bike::BikeSearch;
+use crate::database::common::{DbReadMany, DbReadOne};
+use crate::database::models::bike::{BikeDetail, BikeSearch};
 use crate::database::repositories::bike::repository::BikeRepository;
 use crate::error::AppError;
 use crate::templates::index::IndexBase;
 use actix_web::web;
+use crate::database::models::{GetById, Id};
+use crate::templates::bike::BikeDetailBase;
 
 // pub async fn get_releases(
 //     u: Identity,
@@ -26,24 +28,20 @@ use actix_web::web;
 //     Ok(displayed_chapters)
 // }
 // 
-// pub async fn get_audiobook_detail_base(
-//     audiobook_repo: web::Data<AudiobookRepository>,
-//     chapter_repo: web::Data<ChapterRepository>,
-//     user_id: Id,
-//     audiobook_id: Id,
-// ) -> Result<AudiobookDetailBase, AppError> {
-//     let audiobook = audiobook_repo
-//         .read_one(&AudiobookGetByIdJoin::new(user_id, audiobook_id, false))
-//         .await?;
-// 
-//     let displayed_chapters = get_displayable_chapters(chapter_repo, audiobook_id).await?;
-// 
-//     Ok(AudiobookDetailBase {
-//         is_liked: audiobook.is_liked,
-//         audiobook: AudiobookDisplay::from(audiobook),
-//         chapters: displayed_chapters,
-//     })
-// }
+pub async fn get_bike_detail_base(
+    bike_repo: web::Data<BikeRepository>,
+    bike_id: Id,
+) -> Result<BikeDetailBase, AppError> {
+    let bike: BikeDetail = <BikeRepository as DbReadOne<GetById, BikeDetail>>::read_one(
+        bike_repo.as_ref(),
+        &GetById::new(bike_id),
+    )
+        .await?;
+    
+    Ok(BikeDetailBase {
+        bike,
+    })
+}
 // 
 // pub async fn get_displayable_chapters(
 //     chapter_repo: web::Data<ChapterRepository>,
@@ -164,11 +162,11 @@ pub async fn get_index_base(
 //     genre_repo: web::Data<GenreRepository>,
 //     audiobook_id: Id,
 // ) -> Result<AudiobookEditBase, AppError> {
-//     let audiobook =
+//     let bike =
 //         authorized_to_modify_join(&audiobook_repo, parse_user_id(u)?, audiobook_id).await?;
 //     let genres = genre_repo.read_many(&GenreSearch::new(None)).await?;
 //     Ok(AudiobookEditBase {
 //         genres,
-//         audiobook: AudiobookDisplay::from(audiobook),
+//         bike: AudiobookDisplay::from(bike),
 //     })
 // }

@@ -113,6 +113,53 @@ where
     }
 }
 
+impl<ById> DbReadOne<ById, BikeDetail> for BikeRepository
+where
+    ById: EntityById,
+{
+    async fn read_one(&self, params: &ById) -> DbResultSingle<BikeDetail> {
+        let maybe_bike = sqlx::query_as!(
+            BikeDetail,
+            r#"
+            SELECT
+                bike.id,
+                bike.brand_id,
+                bike.model_id,
+                bike.name,
+                bike.thumbnail,
+                bike.description,
+                bike.view_count,
+                bike.like_count,
+                bike.created_at,
+                bike.edited_at,
+                bike.deleted_at,
+
+                brand.name as brand_name,
+                model.name as model_name
+            FROM
+                "Bike" AS bike
+                    INNER JOIN
+                "Brand" AS brand ON brand.id = bike.brand_id
+                    INNER JOIN
+                "Model" AS model ON model.id = bike.model_id
+            WHERE
+                bike.id = $1
+            "#,
+            params.id(),
+        )
+            .fetch_optional(&self.pool_handler.pool)
+            .await?;
+
+        let bike = entity_is_correct(
+            maybe_bike,
+            EntityError::new(BikeDeleted, BikeDoesNotExist),
+            params.is_deleted(),
+        )?;
+        Ok(bike)
+    }
+}
+
+
 impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
     async fn read_many(&self, params: &BikeSearch) -> DbResultMultiple<BikeDetail> {
         let mut query = r#"
@@ -128,7 +175,7 @@ impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
                 bike.created_at,
                 bike.edited_at,
                 bike.deleted_at,
-                
+
                 brand.name as brand_name,
                 model.name as model_name
             FROM
