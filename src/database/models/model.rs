@@ -15,7 +15,7 @@ impl EntityById for Model {
         self.id
     }
 
-    fn is_deleted(&self) -> bool {
+    fn fetch_deleted(&self) -> bool {
         false
     }
 }

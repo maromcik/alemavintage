@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS "Bike"
     brand_id     bigserial   NOT NULL,
     model_id     bigserial   NOT NULL,
     name         text        NOT NULL,
+    thumbnail    text        NOT NULL,
     description  text        NOT NULL,
     view_count   bigint      NOT NULL DEFAULT 0,
     like_count   bigint      NOT NULL DEFAULT 0,
@@ -50,7 +51,6 @@ CREATE TABLE IF NOT EXISTS "BikeImage"
     id       bigserial PRIMARY KEY,
     ---------------------------------------------
     bike_id  bigserial NOT NULL,
-    ordering int       NOT NULL DEFAULT (0),
     path     text      NOT NULL,
 
     FOREIGN KEY (bike_id) REFERENCES "Bike" (id) ON DELETE CASCADE

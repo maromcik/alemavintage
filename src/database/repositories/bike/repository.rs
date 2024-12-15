@@ -37,7 +37,7 @@ impl BikeRepository {
         entity_is_correct(
             maybe_bike,
             EntityError::new(BikeDeleted, BikeDoesNotExist),
-            params.is_deleted(),
+            params.fetch_deleted(),
         )
     }
 
@@ -128,6 +128,7 @@ where
                 bike.brand_id,
                 bike.model_id,
                 bike.name,
+                bike.thumbnail,
                 bike.description,
                 bike.view_count,
                 bike.like_count,
@@ -136,17 +137,13 @@ where
                 bike.deleted_at,
 
                 brand.name as brand_name,
-                model.name as model_name,
-                
-                image.path AS thumbnail
+                model.name as model_name                
             FROM
                 "Bike" AS bike
                     INNER JOIN
                 "Brand" AS brand ON brand.id = bike.brand_id
                     INNER JOIN
                 "Model" AS model ON model.id = bike.model_id
-                    INNER JOIN
-                "BikeImage" AS image ON image.bike_id = bike.id
             WHERE
                 bike.id = $1
             "#,
@@ -154,11 +151,11 @@ where
         )
         .fetch_optional(&self.pool_handler.pool)
         .await?;
-
+        println!("{}", params.fetch_deleted());
         let bike = entity_is_correct(
             maybe_bike,
             EntityError::new(BikeDeleted, BikeDoesNotExist),
-            params.is_deleted(),
+            params.fetch_deleted(),
         )?;
         Ok(bike)
     }
@@ -172,6 +169,7 @@ impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
                 bike.brand_id,
                 bike.model_id,
                 bike.name,
+                bike.thumbnail,
                 bike.description,
                 bike.view_count,
                 bike.like_count,
@@ -180,20 +178,15 @@ impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
                 bike.deleted_at,
 
                 brand.name AS brand_name,
-                model.name AS model_name,
-                
-                image.path AS thumbnail
+                model.name AS model_name
             FROM
                 "Bike" AS bike
                     INNER JOIN
                 "Brand" AS brand ON brand.id = bike.brand_id
                     INNER JOIN
-                "Model" AS model ON model.id = bike.model_id
-                    INNER JOIN
-                "BikeImage" AS image ON image.bike_id = bike.id  
+                "Model" AS model ON model.id = bike.model_id  
             WHERE
-                image.ordering = 0 
-                AND (bike.name = $1 OR $1 IS NULL)
+                (bike.name = $1 OR $1 IS NULL)
                 AND (bike.brand_id = $2 OR $2 IS NULL)
                 AND (bike.model_id = $3 OR $3 IS NULL)
                 AND (brand.name = $4 OR $4 IS NULL)
@@ -221,13 +214,14 @@ impl DbCreate<BikeCreate, Bike> for BikeRepository {
         let book = sqlx::query_as!(
             Bike,
             r#"
-            INSERT INTO "Bike" (name, brand_id, model_id, description)
-            VALUES ($1, $2, $3, $4)
+            INSERT INTO "Bike" (name, brand_id, model_id, thumbnail, description)
+            VALUES ($1, $2, $3, $4, $5)
             RETURNING *
             "#,
             params.name,
             params.brand_id,
             params.model_id,
+            params.thumbnail,
             params.description
         )
         .fetch_one(&self.pool_handler.pool)
@@ -302,7 +296,7 @@ where
         let mut transaction = self.pool_handler.pool.begin().await?;
         let _bike = BikeRepository::get_bike(params, &mut transaction).await?;
 
-        let books = sqlx::query_as!(
+        let bikes = sqlx::query_as!(
             Bike,
             r#"
             UPDATE "Bike" SET
@@ -318,7 +312,7 @@ where
 
         transaction.commit().await?;
 
-        Ok(books)
+        Ok(bikes)
     }
 }
 
@@ -327,15 +321,12 @@ impl DbReadMany<BikeImageSearch, BikeImage> for BikeRepository {
         let mut query = r#"
             SELECT
                 image.id,
-                image.bike_id
-                image.path,
-                image.ordering,
+                image.bike_id,
+                image.path
             FROM
-                "Bike" AS bike
-                    INNER JOIN
-                "BikeImage" AS image ON image.id = bike.model_id
+                "BikeImage" AS image
             WHERE
-                bike.id = $1 OR $1 IS NULL
+                image.bike_id = $1 OR $1 IS NULL
             "#
         .to_owned();
 
@@ -343,7 +334,7 @@ impl DbReadMany<BikeImageSearch, BikeImage> for BikeRepository {
         query.push_str(query_params.as_str());
 
         let images = sqlx::query_as::<_, BikeImage>(query.as_str())
-            .bind(&params.bike_id)
+            .bind(params.bike_id)
             .fetch_all(&self.pool_handler.pool)
             .await?;
         Ok(images)
@@ -354,16 +345,15 @@ impl DbCreate<BikeImageCreate, Vec<BikeImage>> for BikeRepository {
     async fn create(&self, data: &BikeImageCreate) -> DbResultSingle<Vec<BikeImage>> {
         let mut transaction = self.pool_handler.pool.begin().await?;
         let mut images = Vec::default();
-        for (i, path) in data.paths.iter().enumerate() {
+        for path in data.paths.iter() {
             let bike_image = sqlx::query_as!(
                 BikeImage,
                 r#"
-                    INSERT INTO "BikeImage" (bike_id, ordering, path)
-                    VALUES ($1, $2, $3)
+                    INSERT INTO "BikeImage" (bike_id, path)
+                    VALUES ($1, $2)
                     RETURNING *
                 "#,
                 data.bike_id,
-                i as i32,
                 path
             )
             .fetch_one(transaction.as_mut())
@@ -383,7 +373,7 @@ where T: EntityById
             BikeImage,
             r#"
             SELECT * FROM "BikeImage"
-            WHERE bike_id = $1 and ordering = 0
+            WHERE id = $1
             "#,
             params.id()
         )
@@ -392,7 +382,7 @@ where T: EntityById
         entity_is_correct(
             maybe_image,
             EntityError::new(BikeDeleted, BikeDoesNotExist),
-            params.is_deleted(),
+            params.fetch_deleted(),
         )
     }
 }

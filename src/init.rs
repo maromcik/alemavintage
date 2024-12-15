@@ -10,9 +10,9 @@ use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::brand::repository::BrandRepository;
 use crate::database::repositories::model::repository::ModelRepository;
 use crate::database::repositories::user::repository::UserRepository;
-use crate::handlers::bike::{create_bike, create_bike_content, create_bike_page, get_bike_detail, get_bike_detail_content, upload_bike, upload_bike_form};
-use crate::handlers::index::{index, index_content};
-use crate::handlers::user::{user_manage_form_content, user_manage_form_page, user_manage_password, user_manage_password_form};
+use crate::handlers::bike::{create_bike, create_bike_page, get_bike_detail, hard_remove_bike, manage_bike, remove_bike, restore_bike, upload_bike, upload_bike_form};
+use crate::handlers::index::{index};
+use crate::handlers::user::{user_manage_form_page, user_manage_password, user_manage_password_form};
 
 pub fn configure_webapp(pool: &PgPool) -> Box<dyn FnOnce(&mut ServiceConfig)> {
     let user_repo = UserRepository::new(PoolHandler::new(pool.clone()));
@@ -25,7 +25,6 @@ pub fn configure_webapp(pool: &PgPool) -> Box<dyn FnOnce(&mut ServiceConfig)> {
         .service(user_login)
         .service(user_logout)
         .service(user_manage_form_page)
-        .service(user_manage_form_content)
         .service(user_manage_password_form)
         .service(user_manage)
         .service(user_manage_password);
@@ -36,29 +35,26 @@ pub fn configure_webapp(pool: &PgPool) -> Box<dyn FnOnce(&mut ServiceConfig)> {
         .service(create_bike)
         .service(upload_bike)
         .service(create_bike_page)
-        .service(create_bike_content)
     //     .service(edit_bike_page)
     //     .service(edit_bike_content)
     //     .service(edit_bike)
         .service(upload_bike_form)
     //     .service(get_bike)
-    //     .service(manage_bike)
-    //     .service(manage_bike_content)
+        .service(manage_bike)
     //     .service(releases_content)
     //     .service(releases_page)
-    //     .service(remove_bike)
+        .service(remove_bike)
     //     .service(change_like)
     //     .service(search)
     //     .service(set_active_bike)
     //     .service(get_last_active_bike)
         .service(get_bike_detail)
-        .service(get_bike_detail_content);
     //     .service(get_bike_player)
     //     .service(upload_book_cover)
     //     .service(upload_book_cover_post)
     //     .service(recommend_bikes)
-    //     .service(restore_bike)
-    //     .service(hard_remove_bike);
+        .service(restore_bike)
+        .service(hard_remove_bike);
     //
     // let chapter_scope = web::scope("chapter")
     //     .app_data(web::Data::new(chapter_repository.clone()))
@@ -93,9 +89,7 @@ pub fn configure_webapp(pool: &PgPool) -> Box<dyn FnOnce(&mut ServiceConfig)> {
             .service(bike_scope)
             .service(user_scope)
             .service(index)
-            .service(index_content)
             .service(studio::studio_index)
-            .service(studio::studio_get_content)
             .service(ActixFiles::new("/media", "./media").prefer_utf8(true))
             .service(ActixFiles::new("/static", "./static").prefer_utf8(true));
     })

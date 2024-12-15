@@ -14,7 +14,7 @@ impl EntityById for Brand {
         self.id
     }
 
-    fn is_deleted(&self) -> bool {
+    fn fetch_deleted(&self) -> bool {
         false
     }
 }

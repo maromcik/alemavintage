@@ -2,9 +2,8 @@ use crate::authorized;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::error::AppError;
 use crate::templates::user::{
-    LoginTemplate,
-    UserManagePasswordTemplate, UserManageProfileContentTemplate, UserManageProfilePageTemplate,
-    UserManageProfileUserFormTemplate,
+    LoginTemplate, UserManagePasswordTemplate, UserManageProfileContentTemplate,
+    UserManageProfilePageTemplate, UserManageProfileUserFormTemplate,
 };
 use actix_identity::Identity;
 use actix_web::http::header::LOCATION;
@@ -13,15 +12,15 @@ use actix_web::web::Redirect;
 use actix_web::{get, post, web, HttpMessage, HttpRequest, HttpResponse, Responder};
 use askama::Template;
 
-use crate::database::common::{DbReadOne, DbUpdate};
 use crate::database::common::error::{BackendError, BackendErrorKind};
+use crate::database::common::{DbReadOne, DbUpdate};
 use crate::database::models::user::{UserLogin, UserUpdate, UserUpdatePassword};
 use crate::database::models::GetById;
-use crate::forms::user::{UserLoginForm, UserLoginReturnURL, UserUpdateForm, UserUpdatePasswordForm};
-
-use crate::handlers::utilities::{
-    parse_user_id, validate_password,
+use crate::forms::user::{
+    UserLoginForm, UserLoginReturnURL, UserUpdateForm, UserUpdatePasswordForm,
 };
+
+use crate::handlers::utilities::{is_htmx, parse_user_id, validate_password};
 
 #[get("/login")]
 pub async fn login(
@@ -92,34 +91,22 @@ pub async fn user_manage_form_page(
     user_repo: web::Data<UserRepository>,
 ) -> Result<impl Responder, AppError> {
     let u = authorized!(identity, request.path());
-    let user = user_repo
-        .read_one(&GetById::new(parse_user_id(u)?))
-        .await?;
-    let template = UserManageProfilePageTemplate {
-        user,
-        message: "".to_string(),
-        success: true,
-    };
-    let body = template.render()?;
-    Ok(HttpResponse::Ok().content_type("text/html").body(body))
-}
+    let user = user_repo.read_one(&GetById::new(parse_user_id(u)?)).await?;
 
-#[get("/manage-content")]
-pub async fn user_manage_form_content(
-    request: HttpRequest,
-    identity: Option<Identity>,
-    user_repo: web::Data<UserRepository>,
-) -> Result<impl Responder, AppError> {
-    let u = authorized!(identity, request.path());
-    let user = user_repo
-        .read_one(&GetById::new(parse_user_id(u)?))
-        .await?;
-    let template = UserManageProfileContentTemplate {
-        user,
-        message: "".to_string(),
-        success: true,
+    let body = match is_htmx(request) {
+        true => UserManageProfilePageTemplate {
+            user,
+            message: "".to_string(),
+            success: true,
+        }
+        .render()?,
+        false => UserManageProfileContentTemplate {
+            user,
+            message: "".to_string(),
+            success: true,
+        }
+        .render()?,
     };
-    let body = template.render()?;
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
 
@@ -144,9 +131,7 @@ pub async fn user_manage_profile_form(
     user_repo: web::Data<UserRepository>,
 ) -> Result<impl Responder, AppError> {
     let u = authorized!(identity, request.path());
-    let user = user_repo
-        .read_one(&GetById::new(parse_user_id(u)?))
-        .await?;
+    let user = user_repo.read_one(&GetById::new(parse_user_id(u)?)).await?;
     let template = UserManageProfileUserFormTemplate {
         user,
         message: "".to_string(),

@@ -15,6 +15,7 @@ pub struct Bike {
     pub view_count: i64,
     pub like_count: i64,
     pub description: String,
+    pub thumbnail: String,
     pub created_at: DateTime<Utc>,
     pub edited_at: DateTime<Utc>,
     pub deleted_at: Option<DateTime<Utc>>,
@@ -24,7 +25,7 @@ impl EntityById for Bike {
     fn id(&self) -> Id {
         self.id
     }
-    fn is_deleted(&self) -> bool {
+    fn fetch_deleted(&self) -> bool {
         self.deleted_at.is_some()
     }
 }
@@ -38,6 +39,7 @@ pub struct BikeDetail {
     pub model_id: Id,
     pub view_count: i64,
     pub like_count: i64,
+    pub thumbnail: String,
     pub description: String,
     pub created_at: DateTime<Utc>,
     pub edited_at: DateTime<Utc>,
@@ -45,15 +47,13 @@ pub struct BikeDetail {
 
     pub brand_name: String,
     pub model_name: String,
-    
-    pub thumbnail: String,
 }
 
 impl EntityById for BikeDetail {
     fn id(&self) -> Id {
         self.id
     }
-    fn is_deleted(&self) -> bool {
+    fn fetch_deleted(&self) -> bool {
         self.deleted_at.is_some()
     }
 }
@@ -62,15 +62,23 @@ pub struct BikeCreate {
     pub name: String,
     pub brand_id: Id,
     pub model_id: Id,
+    pub thumbnail: String,
     pub description: String,
 }
 
 impl BikeCreate {
-    pub fn new(name: &str, brand_id: &Id, model_id: &Id, description: &str) -> Self {
+    pub fn new(
+        name: &str,
+        brand_id: &Id,
+        model_id: &Id,
+        thumbnail: &str,
+        description: &str,
+    ) -> Self {
         Self {
             name: name.to_owned(),
             brand_id: *brand_id,
             model_id: *model_id,
+            thumbnail: thumbnail.to_owned(),
             description: description.to_owned(),
         }
     }
@@ -198,7 +206,6 @@ pub struct BikeImage {
     pub id: Id,
     pub bike_id: Id,
     pub path: String,
-    pub ordering: i32,
 }
 
 impl EntityById for BikeImage {
@@ -206,7 +213,7 @@ impl EntityById for BikeImage {
         self.id
     }
 
-    fn is_deleted(&self) -> bool {
+    fn fetch_deleted(&self) -> bool {
         false
     }
 }
@@ -217,7 +224,14 @@ pub struct BikeImageSearch {
 }
 
 impl BikeImageSearch {
-    pub fn new(bike_id: Option<Id>, query_params: DbQueryParams) -> Self {
+    pub fn new(bike_id: Option<Id>) -> Self {
+        Self {
+            bike_id,
+            query_params: DbQueryParams::default(),
+        }
+    }
+
+    pub fn with_params(bike_id: Option<Id>, query_params: DbQueryParams) -> Self {
         Self {
             bike_id,
             query_params,
@@ -227,11 +241,10 @@ impl BikeImageSearch {
     pub fn search_by_bike_id(bike_id: Id) -> Self {
         Self {
             bike_id: Some(bike_id),
-            query_params: DbQueryParams::order(DbOrderColumn::new(
-                DbTable::BikeImage,
-                DbColumn::Ordering,
-                DbOrder::Asc,
-            )),
+            query_params: DbQueryParams::order(
+                DbOrderColumn::new(DbTable::BikeImage, DbColumn::Path, DbOrder::Asc),
+                None,
+            ),
         }
     }
 }

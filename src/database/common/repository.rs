@@ -150,5 +150,5 @@ pub async fn setup_pool(max_conn: u32) -> anyhow::Result<PgPool> {
 
 pub trait EntityById {
     fn id(&self) -> Id;
-    fn is_deleted(&self) -> bool;
+    fn fetch_deleted(&self) -> bool;
 }

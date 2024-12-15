@@ -2,7 +2,6 @@
     <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
         <div class="mb-4 sm:mb-0 xl:col-span-1">
             <div class="w-25 h-25 md:w-40 md:h-40 lg:w-80 lg:h-80 overflow-hidden">
-                <!--            <div class="">-->
                 <img class="responsive-image bg-blue-600 w-full h-full sm:h-mr-10" src="{{ bike.thumbnail }}" alt="book-cover">
             </div>
             <div class="flex flex-row mt-5 justify-between">
@@ -60,7 +59,12 @@
         <h2 class="text-2xl font-bold mb-4">Description</h2>
         <p class="mb-4"> {{bike.description}}</p>
     </div>
-
+    <div class="flex flex-col justify-between pt-4 overflow-hidden">
+        <h2 class="text-2xl font-bold mb-4">Images</h2>
+        {% for path in bike_images %}
+        <img class="responsive-image bg-blue-600 w-full h-full sm:h-mr-10" src="{{ path }}" alt="book-cover">
+        {% endfor %}
+    </div>
     <div id="recommandation-container" class="flex flex-row justify-center"
          hx-get="/bike/{{bike.id}}/similar" hx-trigger="load" hx-target="#recommandation-container"
          hx-swap="outerHTML"

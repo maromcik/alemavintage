@@ -1,4 +1,6 @@
 use crate::database::common::DbReadOne;
+use std::fs::File;
+use std::io::{BufWriter, Read};
 
 use crate::database::models::{GetById, Id};
 
@@ -6,16 +8,28 @@ use crate::error::{AppError, AppErrorKind};
 use actix_identity::Identity;
 use actix_multipart::form::tempfile::TempFile;
 use actix_session::Session;
-use actix_web::web;
+use actix_web::{web, HttpRequest};
 
 use crate::database::common::error::{BackendError, BackendErrorKind};
-use actix_web::http::header::LOCATION;
-
-use crate::MIN_PASS_LEN;
-use uuid::Uuid;
 use crate::database::models::bike::BikeMetadataForm;
 use crate::database::models::user::User;
 use crate::database::repositories::user::repository::UserRepository;
+use crate::MIN_PASS_LEN;
+use actix_web::http::header::LOCATION;
+use futures_util::TryFutureExt;
+use image::{ImageFormat, ImageResult};
+use uuid::Uuid;
+
+pub struct ImageDimensions {
+    pub width: u32,
+    pub height: u32,
+}
+
+impl ImageDimensions {
+    pub fn new(width: u32, height: u32) -> Self {
+        Self { width, height }
+    }
+}
 
 pub struct BikeCreateSessionKeys {
     pub name: String,
@@ -92,7 +106,7 @@ pub fn validate_file(
     file: &TempFile,
     uuid: Uuid,
     mime: &str,
-    handler: &str,
+    prefix: &str,
 ) -> Result<String, AppError> {
     let extension = match file.file_name.clone() {
         None => "".to_owned(),
@@ -105,7 +119,7 @@ pub fn validate_file(
             }
         }
     };
-    let file_path = format!("/media/{handler}_{uuid}_{mime}.{extension}");
+    let file_path = format!("/media/{prefix}_{uuid}_{mime}.{extension}");
 
     let Some(file_mime) = &file.content_type else {
         return Err(AppError::new(
@@ -126,15 +140,23 @@ pub fn validate_file(
     Ok(file_path)
 }
 
-pub fn save_file(file: TempFile, path: &str) -> Result<(), AppError> {
+pub fn save_file(file: TempFile, path: &str, dimensions: &ImageDimensions) -> Result<(), AppError> {
     log::info!("saving file to .{path}");
+    let mut buffer = Vec::default();
+    file.file.into_file().read_to_end(&mut buffer)?;
+    let img = image::load_from_memory(&buffer)?;
+
+    let format = image::guess_format(&*buffer)?;
+    let resized_img = img.resize(
+        dimensions.width,
+        dimensions.height,
+        image::imageops::FilterType::Nearest,
+    );
+
     let path = format!(".{path}");
-    if let Err(e) = file.file.persist(path) {
-        return Err(AppError::new(
-            AppErrorKind::FileError,
-            e.to_string().as_str(),
-        ));
-    };
+    let mut output_file = BufWriter::new(File::create(path)?);
+    resized_img.write_to(&mut output_file, format)?;
+
     Ok(())
 }
 
@@ -160,30 +182,6 @@ macro_rules! authorized {
         }
     }};
 }
-
-// pub async fn authorized_to_modify(
-//     bike_repo: &web::Data<BikeRepository>,
-//     user_id: Id,
-//     bike_id: Id,
-// ) -> Result<Bike, AppError> {
-//     let bike = bike_repo
-//         .read_one(&BikeGetById::new(&bike_id, true))
-//         .await?;
-//     is_authorized(user_id, bike.author_id)?;
-//     Ok(bike)
-// }
-
-// pub async fn authorized_to_modify_join(
-//     bike_repo: &web::Data<BikeRepository>,
-//     user_id: Id,
-//     bike_id: Id,
-// ) -> Result<BikeDetail, AppError> {
-//     let bike = bike_repo
-//         .read_one(&BikeGetByIdJoin::new(user_id, bike_id, true))
-//         .await?;
-//     is_authorized(user_id, bike.author_id)?;
-//     Ok(bike)
-// }
 
 pub fn is_authorized(user_id: Id, author_id: Id) -> Result<(), AppError> {
     match user_id == author_id {
@@ -227,4 +225,11 @@ pub fn validate_password(password: &str) -> bool {
                 )
             });
     lower && upper && numeric && special && password.len() >= MIN_PASS_LEN
+}
+
+pub fn is_htmx(request: HttpRequest) -> bool {
+    request
+        .headers()
+        .get("HX-Request")
+        .map_or(false, |v| v == "true")
 }

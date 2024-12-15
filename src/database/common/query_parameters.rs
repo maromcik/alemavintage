@@ -6,7 +6,7 @@ pub struct DbQueryParams {
     pub order: Option<DbOrderColumn>,
     pub limit: Option<i64>,
     pub offset: Option<i64>,
-    pub fetch_deleted: bool,
+    pub ignore_deleted: Option<DbTable>,
 }
 
 impl DbQueryParams {
@@ -15,32 +15,32 @@ impl DbQueryParams {
         order: Option<DbOrderColumn>,
         limit: Option<i64>,
         offset: Option<i64>,
-        fetch_deleted: bool,
+        ignore_deleted: Option<DbTable>,
     ) -> Self {
         Self {
             order,
             limit,
             offset,
-            fetch_deleted,
+            ignore_deleted,
         }
     }
 
     #[allow(dead_code)]
-    pub fn limit(limit: i64, offset: i64) -> Self {
+    pub fn limit(limit: i64, offset: i64, ignore_deleted: Option<DbTable>) -> Self {
         Self {
             order: Some(DbOrderColumn::default()),
             limit: Some(limit),
             offset: Some(offset),
-            fetch_deleted: false,
+            ignore_deleted,
         }
     }
 
-    pub fn order(order: DbOrderColumn) -> Self {
+    pub fn order(order: DbOrderColumn, ignore_deleted: Option<DbTable>) -> Self {
         Self {
             order: Some(order),
             limit: None,
             offset: None,
-            fetch_deleted: false,
+            ignore_deleted,
         }
     }
 
@@ -49,7 +49,7 @@ impl DbQueryParams {
             order: Some(DbOrderColumn::default()),
             limit: None,
             offset: None,
-            fetch_deleted: true,
+            ignore_deleted: None,
         }
     }
 }
@@ -60,7 +60,7 @@ impl Default for DbQueryParams {
             order: Some(DbOrderColumn::default()),
             limit: None,
             offset: None,
-            fetch_deleted: false,
+            ignore_deleted: None,
         }
     }
 }
@@ -94,8 +94,8 @@ impl Default for DbOrderColumn {
     fn default() -> Self {
         Self {
             table: None,
-            column: DbColumn::CreatedAt,
-            order: DbOrder::Desc,
+            column: DbColumn::Id,
+            order: DbOrder::Asc,
         }
     }
 }
@@ -108,16 +108,16 @@ pub enum DbTable {
     Brand,
     BikeImage,
     User,
-}
+}   
 
 impl DbTable {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            DbTable::Bike => write!(f, "b"),
-            DbTable::BikeImage => write!(f, "bi"),
-            DbTable::Brand => write!(f, "br"),
-            DbTable::Model => write!(f, "m"),
-            DbTable::User => write!(f, "u"),
+            DbTable::Bike => write!(f, "bike"),
+            DbTable::BikeImage => write!(f, "image"),
+            DbTable::Brand => write!(f, "brand"),
+            DbTable::Model => write!(f, "model"),
+            DbTable::User => write!(f, "user"),
         }
     }
 }
@@ -137,6 +137,7 @@ impl Debug for DbTable {
 #[allow(dead_code)]
 #[derive(Clone)]
 pub enum DbColumn {
+    Id,
     Name,
     Length,
     ViewCount,
@@ -144,11 +145,13 @@ pub enum DbColumn {
     CreatedAt,
     EditedAt,
     Ordering,
+    Path,
 }
 
 impl DbColumn {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
+            DbColumn::Id => write!(f, "id"),
             DbColumn::Name => write!(f, "name"),
             DbColumn::Length => write!(f, "length"),
             DbColumn::ViewCount => write!(f, "view_count"),
@@ -156,6 +159,7 @@ impl DbColumn {
             DbColumn::CreatedAt => write!(f, "created_at"),
             DbColumn::EditedAt => write!(f, "edited_at"),
             DbColumn::Ordering => write!(f, "ordering"),
+            DbColumn::Path => write!(f, "path"),
         }
     }
 }
