@@ -42,7 +42,6 @@ pub async fn get_bike_detail_base(
     
     Ok(BikeDetailBase {
         bike,
-        thumbnail: "delete_me".to_string()
     })
 }
 // 
@@ -68,37 +67,16 @@ pub async fn get_bike_detail_base(
 pub async fn get_index_base(
     bike_repo: web::Data<BikeRepository>,
 ) -> Result<IndexBase, AppError> {
-    // let user = user_repo
-    //     .read_one(&UserGetById::new(&parse_user_id(u)?))
-    //     .await?;
+
     let bikes = bike_repo
         .read_many(&BikeSearch::with_params(
             DbQueryParams::order(DbOrderColumn::new_column_only(DbColumn::ViewCount, DbOrder::Desc)),
         ))
         .await?;
-    // let active_bikes = bike_repo
-    //     .read_many(&BikeSearch::with_params(
-    //         DbQueryParams::order(
-    //             DbOrderColumn::new(DbTable::ActiveBike, DbColumn::EditedAt, DbOrder::Desc),
-    //             Some(BookState::Active(true)),
-    //         ),
-    //         user.id,
-    //     ))
-    //     .await?;
-    // let finished_bikes = bike_repo
-    //     .read_many(&BikeSearch::with_params(
-    //         DbQueryParams::order(
-    //             DbOrderColumn::new(DbTable::ActiveBike, DbColumn::EditedAt, DbOrder::Desc),
-    //             Some(BookState::Finished(true)),
-    //         ),
-    //         user.id,
-    //     ))
-    //     .await?;
+
     let template = IndexBase {
-        email: "pes".to_string(),
         logged_in: true,
         bikes,
-        thumbnail: "delete_me".to_string()
     };
     Ok(template)
 }
@@ -136,6 +114,7 @@ pub async fn get_studio(
     Ok(book_repo
         .read_many(&BikeSearch::with_params(DbQueryParams::deleted()))
         .await?)
+    
 }
 // 
 // pub async fn get_author_profile(

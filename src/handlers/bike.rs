@@ -175,8 +175,7 @@ pub async fn upload_bike(
     session.remove(session_keys.brand_id.as_str());
     session.remove(session_keys.model_id.as_str());
 
-    // let handler = format!("/bike/{}/manage-content", bike.id);
     Ok(HttpResponse::SeeOther()
-        .insert_header((LOCATION, '/'.to_string()))
+        .insert_header((LOCATION, "/studio".to_string()))
         .finish())
 }

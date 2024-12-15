@@ -3,7 +3,7 @@
         <div class="mb-4 sm:mb-0 xl:col-span-1">
             <div class="w-25 h-25 md:w-40 md:h-40 lg:w-80 lg:h-80 overflow-hidden">
                 <!--            <div class="">-->
-                <img class="responsive-image bg-blue-600 w-full h-full sm:h-mr-10" src="{{ thumbnail }}" alt="book-cover">
+                <img class="responsive-image bg-blue-600 w-full h-full sm:h-mr-10" src="{{ bike.thumbnail }}" alt="book-cover">
             </div>
             <div class="flex flex-row mt-5 justify-between">
                 <button hx-patch="/bike/{{bike.id}}/likes" hx-target="#like-count" hx-swap="outerHTML" hx-target-error="#content-area">

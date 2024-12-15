@@ -136,13 +136,17 @@ where
                 bike.deleted_at,
 
                 brand.name as brand_name,
-                model.name as model_name
+                model.name as model_name,
+                
+                image.path AS thumbnail
             FROM
                 "Bike" AS bike
                     INNER JOIN
                 "Brand" AS brand ON brand.id = bike.brand_id
                     INNER JOIN
                 "Model" AS model ON model.id = bike.model_id
+                    INNER JOIN
+                "BikeImage" AS image ON image.bike_id = bike.id
             WHERE
                 bike.id = $1
             "#,
@@ -175,16 +179,21 @@ impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
                 bike.edited_at,
                 bike.deleted_at,
 
-                brand.name as brand_name,
-                model.name as model_name
+                brand.name AS brand_name,
+                model.name AS model_name,
+                
+                image.path AS thumbnail
             FROM
                 "Bike" AS bike
                     INNER JOIN
                 "Brand" AS brand ON brand.id = bike.brand_id
                     INNER JOIN
                 "Model" AS model ON model.id = bike.model_id
+                    INNER JOIN
+                "BikeImage" AS image ON image.bike_id = bike.id  
             WHERE
-                (bike.name = $1 OR $1 IS NULL)
+                image.ordering = 0 
+                AND (bike.name = $1 OR $1 IS NULL)
                 AND (bike.brand_id = $2 OR $2 IS NULL)
                 AND (bike.model_id = $3 OR $3 IS NULL)
                 AND (brand.name = $4 OR $4 IS NULL)
@@ -363,5 +372,27 @@ impl DbCreate<BikeImageCreate, Vec<BikeImage>> for BikeRepository {
         }
         transaction.commit().await?;
         Ok(images)
+    }
+}
+
+impl<T> DbReadOne<T, BikeImage> for BikeRepository
+where T: EntityById
+{
+    async fn read_one(&self, params: &T) -> DbResultSingle<BikeImage> {
+        let maybe_image = sqlx::query_as!(
+            BikeImage,
+            r#"
+            SELECT * FROM "BikeImage"
+            WHERE bike_id = $1 and ordering = 0
+            "#,
+            params.id()
+        )
+            .fetch_optional(&self.pool_handler.pool)
+            .await?;
+        entity_is_correct(
+            maybe_image,
+            EntityError::new(BikeDeleted, BikeDoesNotExist),
+            params.is_deleted(),
+        )
     }
 }

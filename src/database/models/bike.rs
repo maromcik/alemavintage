@@ -45,6 +45,8 @@ pub struct BikeDetail {
 
     pub brand_name: String,
     pub model_name: String,
+    
+    pub thumbnail: String,
 }
 
 impl EntityById for BikeDetail {
@@ -197,6 +199,16 @@ pub struct BikeImage {
     pub bike_id: Id,
     pub path: String,
     pub ordering: i32,
+}
+
+impl EntityById for BikeImage {
+    fn id(&self) -> Id {
+        self.id
+    }
+
+    fn is_deleted(&self) -> bool {
+        false
+    }
 }
 
 pub struct BikeImageSearch {
