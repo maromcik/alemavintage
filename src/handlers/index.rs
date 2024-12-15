@@ -10,7 +10,6 @@ pub async fn index(
     request: HttpRequest,
     bike_repo: web::Data<BikeRepository>,
 ) -> Result<HttpResponse, AppError> {
-    println!("KURVA");
     let base = get_index_base(bike_repo).await?;
     let body = IndexTemplate::from(base).render()?;
     Ok(HttpResponse::Ok().content_type("text/html").body(body))

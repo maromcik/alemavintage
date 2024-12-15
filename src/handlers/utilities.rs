@@ -9,24 +9,28 @@ use actix_session::Session;
 use actix_web::web;
 
 use crate::database::common::error::{BackendError, BackendErrorKind};
+use actix_web::http::header::LOCATION;
 
 use crate::MIN_PASS_LEN;
 use uuid::Uuid;
+use crate::database::models::bike::BikeMetadataForm;
 use crate::database::models::user::User;
 use crate::database::repositories::user::repository::UserRepository;
 
-pub struct AudiobookCreateSessionKeys {
+pub struct BikeCreateSessionKeys {
     pub name: String,
     pub description: String,
-    pub genre_id: String,
+    pub brand_id: String,
+    pub model_id: String,
 }
 
-impl AudiobookCreateSessionKeys {
+impl BikeCreateSessionKeys {
     pub fn new(user_id: Id) -> Self {
         Self {
-            name: format!("audiobook_create_{}_name", user_id),
-            description: format!("audiobook_create_{}_description", user_id),
-            genre_id: format!("audiobook_create_{}_genre_id", user_id),
+            name: format!("bike_create_{}_name", user_id),
+            description: format!("bike_create_{}_description", user_id),
+            brand_id: format!("bike_create_{}_brand_id", user_id),
+            model_id: format!("bike_create_{}_model_id", user_id),
         }
     }
 }
@@ -35,37 +39,45 @@ pub fn parse_user_id(identity: Identity) -> Result<Id, AppError> {
     Ok(identity.id()?.parse::<i64>()?)
 }
 
-// pub fn get_metadata_from_session(
-//     session: &Session,
-//     session_keys: &AudiobookCreateSessionKeys,
-// ) -> Result<AudiobookMetadataForm, AppError> {
-//     let Some(name) = session.get::<String>(session_keys.name.as_str())? else {
-//         return Err(AppError::new(
-//             AppErrorKind::NotFound,
-//             "New book could not be found in the active session",
-//         ));
-//     };
-//
-//     let Some(genre_id) = session.get::<i64>(session_keys.genre_id.as_str())? else {
-//         return Err(AppError::new(
-//             AppErrorKind::NotFound,
-//             "New book could not be found in the active session",
-//         ));
-//     };
-//
-//     let Some(description) = session.get::<String>(session_keys.description.as_str())? else {
-//         return Err(AppError::new(
-//             AppErrorKind::NotFound,
-//             "New book could not be found in the active session",
-//         ));
-//     };
-//
-//     Ok(AudiobookMetadataForm {
-//         name,
-//         description,
-//         genre_id,
-//     })
-// }
+pub fn get_metadata_from_session(
+    session: &Session,
+    session_keys: &BikeCreateSessionKeys,
+) -> Result<BikeMetadataForm, AppError> {
+    let Some(name) = session.get::<String>(session_keys.name.as_str())? else {
+        return Err(AppError::new(
+            AppErrorKind::NotFound,
+            "New bike could not be found in the active session",
+        ));
+    };
+
+    let Some(brand_id) = session.get::<i64>(session_keys.brand_id.as_str())? else {
+        return Err(AppError::new(
+            AppErrorKind::NotFound,
+            "New bike could not be found in the active session",
+        ));
+    };
+
+    let Some(model_id) = session.get::<i64>(session_keys.model_id.as_str())? else {
+        return Err(AppError::new(
+            AppErrorKind::NotFound,
+            "New bike could not be found in the active session",
+        ));
+    };
+
+    let Some(description) = session.get::<String>(session_keys.description.as_str())? else {
+        return Err(AppError::new(
+            AppErrorKind::NotFound,
+            "New bike could not be found in the active session",
+        ));
+    };
+
+    Ok(BikeMetadataForm {
+        name,
+        description,
+        brand_id,
+        model_id,
+    })
+}
 
 pub async fn get_user_from_identity(
     identity: Identity,
@@ -150,27 +162,27 @@ macro_rules! authorized {
 }
 
 // pub async fn authorized_to_modify(
-//     audiobook_repo: &web::Data<AudiobookRepository>,
+//     bike_repo: &web::Data<BikeRepository>,
 //     user_id: Id,
-//     audiobook_id: Id,
-// ) -> Result<Audiobook, AppError> {
-//     let audiobook = audiobook_repo
-//         .read_one(&AudiobookGetById::new(&audiobook_id, true))
+//     bike_id: Id,
+// ) -> Result<Bike, AppError> {
+//     let bike = bike_repo
+//         .read_one(&BikeGetById::new(&bike_id, true))
 //         .await?;
-//     is_authorized(user_id, audiobook.author_id)?;
-//     Ok(audiobook)
+//     is_authorized(user_id, bike.author_id)?;
+//     Ok(bike)
 // }
 
 // pub async fn authorized_to_modify_join(
-//     audiobook_repo: &web::Data<AudiobookRepository>,
+//     bike_repo: &web::Data<BikeRepository>,
 //     user_id: Id,
-//     audiobook_id: Id,
-// ) -> Result<AudiobookDetail, AppError> {
-//     let audiobook = audiobook_repo
-//         .read_one(&AudiobookGetByIdJoin::new(user_id, audiobook_id, true))
+//     bike_id: Id,
+// ) -> Result<BikeDetail, AppError> {
+//     let bike = bike_repo
+//         .read_one(&BikeGetByIdJoin::new(user_id, bike_id, true))
 //         .await?;
-//     is_authorized(user_id, audiobook.author_id)?;
-//     Ok(audiobook)
+//     is_authorized(user_id, bike.author_id)?;
+//     Ok(bike)
 // }
 
 pub fn is_authorized(user_id: Id, author_id: Id) -> Result<(), AppError> {

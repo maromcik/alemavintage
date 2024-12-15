@@ -68,14 +68,11 @@ pub async fn get_index_base(
     // let user = user_repo
     //     .read_one(&UserGetById::new(&parse_user_id(u)?))
     //     .await?;
-    println!("KOKOT");
     let bikes = bike_repo
         .read_many(&BikeSearch::with_params(
             DbQueryParams::order(DbOrderColumn::new_column_only(DbColumn::ViewCount, DbOrder::Desc)),
         ))
         .await?;
-    
-    println!("{:?}", bikes);
     // let active_audiobooks = bike_repo
     //     .read_many(&AudiobookSearch::with_params(
     //         DbQueryParams::order(
@@ -95,7 +92,7 @@ pub async fn get_index_base(
     //     ))
     //     .await?;
     let template = IndexBase {
-        username: "pes".to_string(),
+        email: "pes".to_string(),
         logged_in: true,
         bikes
     };

@@ -181,3 +181,11 @@ impl BikeSearch {
         }
     }
 }
+
+#[derive(Debug, Clone)]
+pub struct BikeMetadataForm {
+    pub name: String,
+    pub description: String,
+    pub brand_id: Id,
+    pub model_id: Id,
+}

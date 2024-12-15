@@ -1,7 +1,0 @@
-<div id="chapters-list" class="h-72 overflow-auto"
-    hx-get="/chapter/audiobook/{{ audiobook_id }}/manage" hx-swap="outerHTML"
-     hx-target="#chapters-list" hx-target-error="#content-area" hx-trigger="studio-form-submit">
-    {% for chapter in chapters %}
-        {% include "chapter.html" %}
-    {% endfor %}
-</div>

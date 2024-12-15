@@ -78,7 +78,7 @@ impl UserUpdate {
         email: Option<&str>,
         name: Option<&str>,
         surname: Option<&str>,
-        password_hash: Option<&str>,
+        password: Option<&str>,
         admin: Option<bool>,
     ) -> Self {
         let change_to_owned = |value: &str| Some(value.to_owned());
@@ -87,7 +87,7 @@ impl UserUpdate {
             email: email.and_then(change_to_owned),
             name: name.and_then(change_to_owned),
             surname: surname.and_then(change_to_owned),
-            password: password_hash.and_then(change_to_owned),
+            password: password.and_then(change_to_owned),
             admin,
         }
     }

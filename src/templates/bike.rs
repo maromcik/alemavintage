@@ -41,3 +41,9 @@ impl From<BikeDetailBase> for BikeDetailContentTemplate {
         }
     }
 }
+
+#[derive(Template)]
+#[template(path = "bike/bike_upload.html")]
+pub struct BikeUploadFormTemplate {
+    pub message: String,
+}

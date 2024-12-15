@@ -5,36 +5,38 @@ use actix_multipart::form::MultipartForm;
 use serde::Deserialize;
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct AudiobookCreateForm {
+pub struct BikeCreateForm {
     pub name: String,
     pub description: String,
-    pub genre_id: Id,
+    pub brand_id: Id,
+    pub model_id: Id
 }
 #[derive(Debug, MultipartForm)]
-pub struct AudiobookUploadForm {
+pub struct BikeUploadForm {
     #[multipart(rename = "thumbnail")]
-    pub thumbnail: Option<TempFile>,
-    #[multipart(rename = "file")]
-    pub audio_file: TempFile,
+    pub thumbnail: TempFile,
+    #[multipart(rename = "files")]
+    pub photos: Vec<TempFile>,
 }
 
 #[derive(Debug, MultipartForm)]
-pub struct AudiobookThumbnailEditForm {
+pub struct BikeThumbnailEditForm {
     #[multipart(rename = "thumbnail")]
     pub thumbnail: TempFile,
-    pub audiobook_id: Text<Id>,
+    pub bike_id: Text<Id>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct AudiobookEditForm {
-    pub audiobook_id: Id,
+pub struct BikeEditForm {
+    pub bike_id: Id,
     pub name: String,
-    pub genre_id: Id,
+    pub brand_id: Id,
+    pub model_id: Id,
     pub description: String,
 }
 
 #[derive(Deserialize)]
-pub struct AudiobookQuickSearchQuery {
+pub struct BikeQuickSearchQuery {
     pub query: String,
     pub search_type: String,
 }
