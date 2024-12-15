@@ -148,7 +148,7 @@ impl BikeSearch {
     }
 
     #[allow(dead_code)]
-    pub fn search_by_book_name(name: &str) -> Self {
+    pub fn search_by_bike_name(name: &str) -> Self {
         Self {
             name: Some(name.to_owned()),
             model_name: None,

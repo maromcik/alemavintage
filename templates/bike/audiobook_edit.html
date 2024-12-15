@@ -1,17 +1,17 @@
 <div class="container mx-auto max-w-5xl bg-black p-6">
-    <form hx-post="/audiobook/edit" hx-push-url="/audiobook/{{ audiobook.id }}/manage" hx-target="#content-area" hx-target-error="#content-area" class="mb-4 rounded bg-gray-800 px-8 pb-8 pt-6 shadow-md">
-        <h2 class="mb-2 block text-center text-xl font-bold text-gray-300">Edit Audiobook</h2>
-        <input class="hidden" name="audiobook_id" value="{{audiobook.id}}">
+    <form hx-post="/bike/edit" hx-push-url="/bike/{{ bike.id }}/manage" hx-target="#content-area" hx-target-error="#content-area" class="mb-4 rounded bg-gray-800 px-8 pb-8 pt-6 shadow-md">
+        <h2 class="mb-2 block text-center text-xl font-bold text-gray-300">Edit Bike</h2>
+        <input class="hidden" name="bike_id" value="{{bike.id}}">
         <div class="mb-4">
-            <label class="mb-2 block text-sm font-bold text-gray-300" for="audiobook-name"> Name </label>
-            <input name="name" class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none" id="audiobook-name" type="text" value="{{audiobook.name}}" />
+            <label class="mb-2 block text-sm font-bold text-gray-300" for="bike-name"> Name </label>
+            <input name="name" class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none" id="bike-name" type="text" value="{{bike.name}}" />
         </div>
 
         <div class="mb-4">
             <label class="mb-2 block text-sm font-bold text-gray-300" for="genre"> Genre </label>
             <select name="genre_id" class="focus:shadow-outline w-full rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none" id="genre">
                 {% for genre in genres %}
-                    {% if audiobook.genre_id == genre.id %}
+                    {% if bike.genre_id == genre.id %}
                         <option selected value="{{ genre.id }}">{{ genre.name }}</option>
                     {% else %}
                         <option value="{{ genre.id }}">{{ genre.name }}</option>
@@ -22,7 +22,7 @@
 
         <div class="mb-4">
             <label class="mb-2 block text-sm font-bold text-gray-300" for="description"> Description </label>
-            <textarea name="description" class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none" id="description">{{ audiobook.description }}</textarea>
+            <textarea name="description" class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none" id="description">{{ bike.description }}</textarea>
         </div>
 
         <div class="flex justify-end">

@@ -103,9 +103,9 @@ impl Default for DbOrderColumn {
 #[allow(dead_code)]
 #[derive(Clone)]
 pub enum DbTable {
-    Audiobook,
+    Bike,
     Genre,
-    ActiveAudiobook,
+    ActiveBike,
     Bookmark,
     Chapter,
     Rating,
@@ -115,8 +115,8 @@ pub enum DbTable {
 impl DbTable {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            DbTable::Audiobook => write!(f, "a"),
-            DbTable::ActiveAudiobook => write!(f, "ab"),
+            DbTable::Bike => write!(f, "a"),
+            DbTable::ActiveBike => write!(f, "ab"),
             DbTable::Bookmark => write!(f, "b"),
             DbTable::Chapter => write!(f, "c"),
             DbTable::Rating => write!(f, "r"),

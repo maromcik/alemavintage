@@ -1,24 +1,31 @@
 <div class="container mx-auto p-6 bg-black max-w-5xl">
-    <form hx-post="/audiobook/create" hx-target="#content-area" hx-target-error="#content-area" class="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <h2 class="block text-gray-300 text-xl font-bold mb-2 text-center">Create New Audiobook</h2>
+    <form hx-post="/bike/create" hx-target="#content-area" hx-target-error="#content-area" class="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <h2 class="block text-gray-300 text-xl font-bold mb-2 text-center">Create New Bike</h2>
 
         <div class="mb-4">
-            <label class="block text-gray-300 text-sm font-bold mb-2" for="audiobook-name">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="bike-name">
                 Name
             </label>
             <input name="name"
                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   id="audiobook-name" type="text" placeholder="Audiobook Name">
+                   id="bike-name" type="text" placeholder="Bike Name">
         </div>
 
         <div class="mb-4">
-            <label class="block text-gray-300 text-sm font-bold mb-2" for="genre">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="brand">
                 Genre
             </label>
-            <select name="genre_id" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="genre">
-                {% for genre in genres %}
-                <option value="{{ genre.id }}">{{ genre.name }}</option>
-                {% endfor %}
+            <select name="brand_id" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="brand">
+                <option value=1>1</option>
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="model">
+                Genre
+            </label>
+            <select name="model_id" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="model">
+                <option value=1>1</option>
             </select>
         </div>
 

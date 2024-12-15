@@ -5,8 +5,8 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
 <!--        <div class="hidden lg:block"></div>-->
         {% for book in books %}
-        <div class="book-info-link cursor-pointer" hx-get="/audiobook/{{ book.id }}/detail-content" hx-push-url="/audiobook/{{ book.id }}/detail" hx-target="#content-area">
-            {% include "audiobook/audiobook_recommend.html" %}
+        <div class="book-info-link cursor-pointer" hx-get="/bike/{{ book.id }}/detail-content" hx-push-url="/bike/{{ book.id }}/detail" hx-target="#content-area">
+            {% include "bike/bike_recommend.html" %}
         </div>
         {% endfor %}
 <!--        <div class="hidden lg:block"></div>-->

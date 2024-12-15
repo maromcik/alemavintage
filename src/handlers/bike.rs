@@ -6,14 +6,14 @@ use crate::database::models::Id;
 use crate::database::repositories::bike::repository::BikeRepository;
 use crate::error::AppError;
 use crate::handlers::helpers::get_bike_detail_base;
-use crate::templates::bike::{BikeDetailContentTemplate, BikeDetailPageTemplate, BikeUploadFormTemplate};
+use crate::templates::bike::{BikeCreateContentTemplate, BikeCreatePageTemplate, BikeDetailContentTemplate, BikeDetailPageTemplate, BikeUploadFormTemplate};
 use actix_web::{get, post, web, HttpRequest, HttpResponse};
 use askama::Template;
 use uuid::Uuid;
 use crate::{authorized, parse_host};
 use crate::database::models::bike::BikeCreate;
 use crate::database::repositories::user::repository::UserRepository;
-use crate::forms::bike::BikeUploadForm;
+use crate::forms::bike::{BikeCreateForm, BikeUploadForm};
 use crate::handlers::utilities::{get_metadata_from_session, get_user_from_identity, save_file, validate_file, BikeCreateSessionKeys};
 
 #[get("/{id}/detail")]
@@ -48,6 +48,28 @@ pub async fn get_bike_detail_content(
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
 
+#[get("/create")]
+pub async fn create_bike_page(
+    request: HttpRequest,
+    identity: Option<Identity>,
+) -> Result<HttpResponse, AppError> {
+    authorized!(identity, request.path());
+    let template = BikeCreatePageTemplate {  };
+    let body = template.render()?;
+    Ok(HttpResponse::Ok().content_type("text/html").body(body))
+}
+
+#[get("/create-content")]
+pub async fn create_bike_content(
+    request: HttpRequest,
+    identity: Option<Identity>,
+) -> Result<HttpResponse, AppError> {
+    authorized!(identity, request.path());
+    let template = BikeCreateContentTemplate {  };
+    let body = template.render()?;
+    Ok(HttpResponse::Ok().content_type("text/html").body(body))
+}
+
 #[get("/upload")]
 pub async fn upload_bike_form(
     request: HttpRequest,
@@ -61,7 +83,24 @@ pub async fn upload_bike_form(
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
 
+#[post("/create")]
+pub async fn create_bike(
+    request: HttpRequest,
+    identity: Option<Identity>,
+    session: Session,
+    user_repo: web::Data<UserRepository>,
+    form: web::Form<BikeCreateForm>,
+) -> Result<HttpResponse, AppError> {
+    let u = authorized!(identity, request.path());
+    let user = get_user_from_identity(u, &user_repo).await?;
+    let session_keys = BikeCreateSessionKeys::new(user.id);
 
+    session.insert(session_keys.name.as_str(), &form.name)?;
+    session.insert(session_keys.description.as_str(), &form.description)?;
+    Ok(HttpResponse::SeeOther()
+        .insert_header((LOCATION, "/bike/upload"))
+        .finish())
+}
 
 #[post("/upload")]
 pub async fn upload_bike(
@@ -72,16 +111,15 @@ pub async fn upload_bike(
     bike_repo: web::Data<BikeRepository>,
     MultipartForm(mut form): MultipartForm<BikeUploadForm>,
 ) -> Result<HttpResponse, AppError> {
-    let uuid = Uuid::new_v4();
     let u = authorized!(identity, request.path());
     let user = get_user_from_identity(u, &user_repo).await?;
     let session_keys = BikeCreateSessionKeys::new(user.id);
     
-    let thumbnail_path = validate_file(&form.thumbnail, uuid, "image", "bike")?;
+    let thumbnail_path = validate_file(&form.thumbnail, Uuid::new_v4(), "image", "bike")?;
     save_file(form.thumbnail, &thumbnail_path)?;
     
     for photo in form.photos {
-        let path = validate_file(&photo, uuid, "image", "bike")?;
+        let path = validate_file(&photo, Uuid::new_v4(), "image", "bike")?;
         save_file(photo, &path)?;
     }
     // let metadata = get_metadata_from_session(&session, &session_keys)?;

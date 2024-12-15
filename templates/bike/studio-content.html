@@ -1,14 +1,12 @@
 <div class="pl-10">
     <div class="flex justify-between">
-        <h1 class="text-6xl font-bold">My Audiobooks</h1>
-        <button hx-get="/audiobook/create-content" hx-target-error="#content-area" hx-push-url="/audiobook/create" hx-target="#content-area" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        <h1 class="text-6xl font-bold">My Bikes</h1>
+        <button hx-get="/bike/create-content" hx-target-error="#content-area" hx-push-url="/bike/create" hx-target="#content-area" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 type="submit">
-            New Audiobook
+            New Bike
         </button>
     </div>
     <div class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {% for audiobook in audiobooks %}
-        {% include "audiobook/audiobook_card_author.html" %}
-        {% endfor %}
+
     </div>
 </div>

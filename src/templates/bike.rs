@@ -4,11 +4,23 @@
 // #[derive(Template)]
 // #[template(path = "bike.html")]
 // pub struct NewReleasesPageTemplate {
-//     pub audiobooks: Vec<Bike>,
+//     pub bikes: Vec<Bike>,
 // }
 
 use askama::Template;
 use crate::database::models::bike::BikeDetail;
+
+#[derive(Template)]
+#[template(path = "studio_create_bike.html")]
+pub struct BikeCreatePageTemplate {
+    // pub genres: Vec<Genre>,
+}
+
+#[derive(Template)]
+#[template(path = "bike/bike_create.html")]
+pub struct BikeCreateContentTemplate {
+    // pub genres: Vec<Genre>,
+}
 
 #[derive(Template)]
 #[template(path = "detail.html")]

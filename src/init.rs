@@ -8,7 +8,7 @@ use actix_web::web::{service, ServiceConfig};
 use sqlx::PgPool;
 use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::user::repository::UserRepository;
-use crate::handlers::bike::{get_bike_detail, get_bike_detail_content, upload_bike, upload_bike_form};
+use crate::handlers::bike::{create_bike, create_bike_content, create_bike_page, get_bike_detail, get_bike_detail_content, upload_bike, upload_bike_form};
 use crate::handlers::index::{index, index_content};
 use crate::handlers::user::{user_manage_form_content, user_manage_form_page, user_manage_password, user_manage_password_form};
 
@@ -31,32 +31,32 @@ pub fn configure_webapp(pool: &PgPool) -> Box<dyn FnOnce(&mut ServiceConfig)> {
     let bike_scope = web::scope("bike")
     //     .app_data(web::Data::new(genre_repository.clone()))
     //     .app_data(web::Data::new(chapter_repository.clone()))
-    //     .service(create_audiobook)
+        .service(create_bike)
         .service(upload_bike)
-    //     .service(create_audiobook_page)
-    //     .service(create_audiobook_content)
-    //     .service(edit_audiobook_page)
-    //     .service(edit_audiobook_content)
-    //     .service(edit_audiobook)
+        .service(create_bike_page)
+        .service(create_bike_content)
+    //     .service(edit_bike_page)
+    //     .service(edit_bike_content)
+    //     .service(edit_bike)
         .service(upload_bike_form)
-    //     .service(get_audiobook)
-    //     .service(manage_audiobook)
-    //     .service(manage_audiobook_content)
+    //     .service(get_bike)
+    //     .service(manage_bike)
+    //     .service(manage_bike_content)
     //     .service(releases_content)
     //     .service(releases_page)
-    //     .service(remove_audiobook)
+    //     .service(remove_bike)
     //     .service(change_like)
     //     .service(search)
-    //     .service(set_active_audiobook)
-    //     .service(get_last_active_audiobook)
+    //     .service(set_active_bike)
+    //     .service(get_last_active_bike)
         .service(get_bike_detail)
         .service(get_bike_detail_content);
-    //     .service(get_audiobook_player)
+    //     .service(get_bike_player)
     //     .service(upload_book_cover)
     //     .service(upload_book_cover_post)
-    //     .service(recommend_audiobooks)
-    //     .service(restore_audiobook)
-    //     .service(hard_remove_audiobook);
+    //     .service(recommend_bikes)
+    //     .service(restore_bike)
+    //     .service(hard_remove_bike);
     //
     // let chapter_scope = web::scope("chapter")
     //     .app_data(web::Data::new(chapter_repository.clone()))
@@ -69,20 +69,20 @@ pub fn configure_webapp(pool: &PgPool) -> Box<dyn FnOnce(&mut ServiceConfig)> {
     //
     // let genre_scope = web::scope("genre")
     //     .app_data(web::Data::new(genre_repository.clone()))
-    //     .app_data(web::Data::new(audiobook_repository.clone()))
+    //     .app_data(web::Data::new(bike_repository.clone()))
     //     .service(get_genres_page)
     //     .service(get_genres_content)
-    //     .service(get_audiobooks_by_genre)
-    //     .service(get_audiobooks_by_genre_content);
+    //     .service(get_bikes_by_genre)
+    //     .service(get_bikes_by_genre_content);
     //
     // let rating_scope = web::scope("rating")
     //     .app_data(web::Data::new(rating_repository.clone()))
     //     .service(create_rating)
-    //     .service(get_ratings_by_audiobook)
+    //     .service(get_ratings_by_bike)
     //     .service(get_my_rating)
     //     .service(get_rating_summary)
     //     .service(get_pagination)
-    //     .service(remove_rating_for_audiobook);
+    //     .service(remove_rating_for_bike);
     //
     Box::new(move |cfg: &mut ServiceConfig| {
         cfg
@@ -92,6 +92,8 @@ pub fn configure_webapp(pool: &PgPool) -> Box<dyn FnOnce(&mut ServiceConfig)> {
             .service(user_scope)
             .service(index)
             .service(index_content)
+            .service(studio::studio_index)
+            .service(studio::studio_get_content)
             .service(ActixFiles::new("/media", "./media").prefer_utf8(true))
             .service(ActixFiles::new("/static", "./static").prefer_utf8(true));
     })
