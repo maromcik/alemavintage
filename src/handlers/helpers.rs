@@ -42,6 +42,7 @@ pub async fn get_bike_detail_base(
     
     Ok(BikeDetailBase {
         bike,
+        thumbnail: "delete_me".to_string()
     })
 }
 // 
@@ -96,7 +97,8 @@ pub async fn get_index_base(
     let template = IndexBase {
         email: "pes".to_string(),
         logged_in: true,
-        bikes
+        bikes,
+        thumbnail: "delete_me".to_string()
     };
     Ok(template)
 }

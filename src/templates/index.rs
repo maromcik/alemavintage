@@ -7,6 +7,7 @@ pub struct IndexTemplate {
     pub logged_in: bool,
     pub email: String,
     pub bikes: Vec<BikeDetail>,
+    pub thumbnail: String,
 }
 
 #[derive(Template)]
@@ -15,12 +16,14 @@ pub struct IndexContentTemplate {
     pub logged_in: bool,
     pub email: String,
     pub bikes: Vec<BikeDetail>,
+    pub thumbnail: String,
 }
 
 pub struct IndexBase {
     pub logged_in: bool,
     pub email: String,
     pub bikes: Vec<BikeDetail>,
+    pub thumbnail: String,
 }
 
 impl From<IndexBase> for IndexContentTemplate {
@@ -29,6 +32,7 @@ impl From<IndexBase> for IndexContentTemplate {
             logged_in: value.logged_in,
             email: value.email,
             bikes: value.bikes,
+            thumbnail: value.thumbnail,
         }
     }
 }
@@ -39,6 +43,7 @@ impl From<IndexBase> for IndexTemplate {
             logged_in: value.logged_in,
             email: value.email,
             bikes: value.bikes,
+            thumbnail: value.thumbnail,
         }
     }
 }

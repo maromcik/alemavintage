@@ -17,6 +17,14 @@ pub enum BackendErrorKind {
     BikeDeleted,
     BikeUpdateParametersEmpty,
 
+    BrandDoesNotExist,
+    BrandDeleted,
+    BrandUpdateParametersEmpty,
+
+    ModelDoesNotExist,
+    ModelDeleted,
+    ModelUpdateParametersEmpty,
+
     UnauthorizedOperation,
 }
 
@@ -47,7 +55,29 @@ impl Display for BackendErrorKind {
                         " (no Bike field would be changed)."
                     )
                 )
-            }
+            },
+            ModelDoesNotExist => f.write_str(does_not_exist("model").as_str()),
+            ModelDeleted => f.write_str(deleted("model").as_str()),
+            ModelUpdateParametersEmpty => {
+                write!(
+                    f,
+                    concat!(
+                    "The provided parameters for Model update query are incorrect",
+                    " (no model field would be changed)."
+                    )
+                )
+            },
+            BrandDoesNotExist => f.write_str(does_not_exist("brand").as_str()),
+            BrandDeleted => f.write_str(deleted("brand").as_str()),
+            BrandUpdateParametersEmpty => {
+                write!(
+                    f,
+                    concat!(
+                    "The provided parameters for Brand update query are incorrect",
+                    " (no brand field would be changed)."
+                    )
+                )
+            },
             UserUpdateParametersEmpty => {
                 write!(
                     f,

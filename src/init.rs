@@ -7,6 +7,8 @@ use actix_web::web;
 use actix_web::web::{service, ServiceConfig};
 use sqlx::PgPool;
 use crate::database::repositories::bike::repository::BikeRepository;
+use crate::database::repositories::brand::repository::BrandRepository;
+use crate::database::repositories::model::repository::ModelRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::handlers::bike::{create_bike, create_bike_content, create_bike_page, get_bike_detail, get_bike_detail_content, upload_bike, upload_bike_form};
 use crate::handlers::index::{index, index_content};
@@ -15,8 +17,8 @@ use crate::handlers::user::{user_manage_form_content, user_manage_form_page, use
 pub fn configure_webapp(pool: &PgPool) -> Box<dyn FnOnce(&mut ServiceConfig)> {
     let user_repo = UserRepository::new(PoolHandler::new(pool.clone()));
     let bike_repo = BikeRepository::new(PoolHandler::new(pool.clone()));
-    // let chapter_repository = ChapterRepository::new(PoolHandler::new(pool.clone()));
-    // let genre_repository = GenreRepository::new(PoolHandler::new(pool.clone()));
+    let model_repository = ModelRepository::new(PoolHandler::new(pool.clone()));
+    let brand_repository = BrandRepository::new(PoolHandler::new(pool.clone()));
     // let rating_repository = RatingRepository::new(PoolHandler::new(pool.clone()));
     let user_scope = web::scope("user")
         .service(user_login_page)
@@ -29,8 +31,8 @@ pub fn configure_webapp(pool: &PgPool) -> Box<dyn FnOnce(&mut ServiceConfig)> {
         .service(user_manage_password);
 
     let bike_scope = web::scope("bike")
-    //     .app_data(web::Data::new(genre_repository.clone()))
-    //     .app_data(web::Data::new(chapter_repository.clone()))
+        .app_data(web::Data::new(model_repository.clone()))
+        .app_data(web::Data::new(brand_repository.clone()))
         .service(create_bike)
         .service(upload_bike)
         .service(create_bike_page)

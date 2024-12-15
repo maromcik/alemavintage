@@ -1,7 +1,9 @@
-use crate::database::common::{EntityById};
+use crate::database::common::query_parameters::{
+    DbColumn, DbOrder, DbOrderColumn, DbQueryParams, DbTable,
+};
+use crate::database::common::EntityById;
 use crate::database::models::Id;
 use chrono::{DateTime, Utc};
-use crate::database::common::query_parameters::DbQueryParams;
 
 #[derive(sqlx::FromRow, Debug, Clone, PartialEq)]
 pub struct Bike {
@@ -12,7 +14,6 @@ pub struct Bike {
     pub model_id: Id,
     pub view_count: i64,
     pub like_count: i64,
-    pub thumbnail: String,
     pub description: String,
     pub created_at: DateTime<Utc>,
     pub edited_at: DateTime<Utc>,
@@ -26,7 +27,6 @@ impl EntityById for Bike {
     fn is_deleted(&self) -> bool {
         self.deleted_at.is_some()
     }
-
 }
 
 #[derive(sqlx::FromRow, Debug, Clone, PartialEq)]
@@ -38,14 +38,13 @@ pub struct BikeDetail {
     pub model_id: Id,
     pub view_count: i64,
     pub like_count: i64,
-    pub thumbnail: String,
     pub description: String,
     pub created_at: DateTime<Utc>,
     pub edited_at: DateTime<Utc>,
     pub deleted_at: Option<DateTime<Utc>>,
-    
+
     pub brand_name: String,
-    pub model_name: String
+    pub model_name: String,
 }
 
 impl EntityById for BikeDetail {
@@ -55,22 +54,25 @@ impl EntityById for BikeDetail {
     fn is_deleted(&self) -> bool {
         self.deleted_at.is_some()
     }
-
 }
 
 pub struct BikeCreate {
     pub name: String,
     pub brand_id: Id,
     pub model_id: Id,
-    pub view_count: i64,
-    pub like_count: i64,
-    pub thumbnail: String,
     pub description: String,
-    pub created_at: DateTime<Utc>,
-    pub edited_at: DateTime<Utc>,
-    pub deleted_at: Option<DateTime<Utc>>,
 }
 
+impl BikeCreate {
+    pub fn new(name: &str, brand_id: &Id, model_id: &Id, description: &str) -> Self {
+        Self {
+            name: name.to_owned(),
+            brand_id: *brand_id,
+            model_id: *model_id,
+            description: description.to_owned(),
+        }
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct BikeSearch {
@@ -81,7 +83,6 @@ pub struct BikeSearch {
     pub model_id: Option<Id>,
     pub query_params: DbQueryParams,
 }
-
 
 impl BikeSearch {
     #[inline]
@@ -188,4 +189,48 @@ pub struct BikeMetadataForm {
     pub description: String,
     pub brand_id: Id,
     pub model_id: Id,
+}
+
+#[derive(sqlx::FromRow, Debug, Clone, PartialEq)]
+pub struct BikeImage {
+    pub id: Id,
+    pub bike_id: Id,
+    pub path: String,
+    pub ordering: i32,
+}
+
+pub struct BikeImageSearch {
+    pub bike_id: Option<Id>,
+    pub query_params: DbQueryParams,
+}
+
+impl BikeImageSearch {
+    pub fn new(bike_id: Option<Id>, query_params: DbQueryParams) -> Self {
+        Self {
+            bike_id,
+            query_params,
+        }
+    }
+
+    pub fn search_by_bike_id(bike_id: Id) -> Self {
+        Self {
+            bike_id: Some(bike_id),
+            query_params: DbQueryParams::order(DbOrderColumn::new(
+                DbTable::BikeImage,
+                DbColumn::Ordering,
+                DbOrder::Asc,
+            )),
+        }
+    }
+}
+
+pub struct BikeImageCreate {
+    pub bike_id: Id,
+    pub paths: Vec<String>,
+}
+
+impl BikeImageCreate {
+    pub fn new(bike_id: Id, paths: Vec<String>) -> Self {
+        Self { bike_id, paths }
+    }
 }

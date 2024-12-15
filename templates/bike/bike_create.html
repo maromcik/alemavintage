@@ -16,7 +16,9 @@
                 Genre
             </label>
             <select name="brand_id" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="brand">
-                <option value=1>1</option>
+                {% for brand in brands %}
+                <option value="{{ brand.id }}">{{ brand.name }}</option>
+                {% endfor %}
             </select>
         </div>
 
@@ -25,7 +27,9 @@
                 Genre
             </label>
             <select name="model_id" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="model">
-                <option value=1>1</option>
+                {% for model in models %}
+                <option value="{{ model.id }}">{{ model.name }}</option>
+                {% endfor %}
             </select>
         </div>
 

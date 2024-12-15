@@ -2,6 +2,9 @@ use crate::database::common::EntityById;
 
 pub(crate) mod bike;
 pub(crate) mod user;
+pub mod model;
+pub mod brand;
+
 pub type Id = i64;
 
 pub struct GetById {

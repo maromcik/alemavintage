@@ -1,4 +1,4 @@
-<img class="w-25 h-25 md:w-45 md:h-45 lg:w-80 lg:h-80 mb-4" src="{{ bike.thumbnail }}" alt="book-cover">
+<img class="w-25 h-25 md:w-45 md:h-45 lg:w-80 lg:h-80 mb-4" src="{{ thumbnail }}" alt="book-cover">
 <button hx-get="/bike/cover/{{ bike.id }}/upload" hx-replace-url="/bike/{{bike.id}}/manage" hx-target="#book-cover-box" hx-target-error="#content-area" hx-swap="innerHTML"
         class="absolute bottom-[32px] right-[32px] md:bottom-[48px] md:right-[10px] lg:bottom-[40px] lg:right-[20px]
                         hidden transform translate-x-1/2 translate-y-1/2 text-white rounded-full p-2 bg-blue-600 hover:bg-blue-300

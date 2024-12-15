@@ -13,8 +13,6 @@ pub struct BikeCreateForm {
 }
 #[derive(Debug, MultipartForm)]
 pub struct BikeUploadForm {
-    #[multipart(rename = "thumbnail")]
-    pub thumbnail: TempFile,
     #[multipart(rename = "files")]
     pub photos: Vec<TempFile>,
 }

@@ -104,24 +104,20 @@ impl Default for DbOrderColumn {
 #[derive(Clone)]
 pub enum DbTable {
     Bike,
-    Genre,
-    ActiveBike,
-    Bookmark,
-    Chapter,
-    Rating,
+    Model,
+    Brand,
+    BikeImage,
     User,
 }
 
 impl DbTable {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            DbTable::Bike => write!(f, "a"),
-            DbTable::ActiveBike => write!(f, "ab"),
-            DbTable::Bookmark => write!(f, "b"),
-            DbTable::Chapter => write!(f, "c"),
-            DbTable::Rating => write!(f, "r"),
+            DbTable::Bike => write!(f, "b"),
+            DbTable::BikeImage => write!(f, "bi"),
+            DbTable::Brand => write!(f, "br"),
+            DbTable::Model => write!(f, "m"),
             DbTable::User => write!(f, "u"),
-            DbTable::Genre => write!(f, "g"),
         }
     }
 }
@@ -145,9 +141,9 @@ pub enum DbColumn {
     Length,
     ViewCount,
     LikeCount,
-    OverallRating,
     CreatedAt,
     EditedAt,
+    Ordering,
 }
 
 impl DbColumn {
@@ -157,9 +153,9 @@ impl DbColumn {
             DbColumn::Length => write!(f, "length"),
             DbColumn::ViewCount => write!(f, "view_count"),
             DbColumn::LikeCount => write!(f, "like_count"),
-            DbColumn::OverallRating => write!(f, "overall_rating"),
             DbColumn::CreatedAt => write!(f, "created_at"),
             DbColumn::EditedAt => write!(f, "edited_at"),
+            DbColumn::Ordering => write!(f, "ordering"),
         }
     }
 }

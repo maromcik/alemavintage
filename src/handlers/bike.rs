@@ -1,8 +1,10 @@
+use crate::database::common::repository::DbCreate;
+use std::os::unix::raw::mode_t;
 use actix_web::http::header::LOCATION;
 use actix_identity::Identity;
 use actix_multipart::form::MultipartForm;
 use actix_session::Session;
-use crate::database::models::Id;
+use crate::database::models::{GetById, Id};
 use crate::database::repositories::bike::repository::BikeRepository;
 use crate::error::AppError;
 use crate::handlers::helpers::get_bike_detail_base;
@@ -11,7 +13,12 @@ use actix_web::{get, post, web, HttpRequest, HttpResponse};
 use askama::Template;
 use uuid::Uuid;
 use crate::{authorized, parse_host};
-use crate::database::models::bike::BikeCreate;
+use crate::database::common::{DbReadMany, DbReadOne};
+use crate::database::models::bike::{BikeCreate, BikeImage, BikeImageCreate};
+use crate::database::models::brand::BrandSearch;
+use crate::database::models::model::ModelSearch;
+use crate::database::repositories::brand::repository::BrandRepository;
+use crate::database::repositories::model::repository::ModelRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::forms::bike::{BikeCreateForm, BikeUploadForm};
 use crate::handlers::utilities::{get_metadata_from_session, get_user_from_identity, save_file, validate_file, BikeCreateSessionKeys};
@@ -27,7 +34,7 @@ pub async fn get_bike_detail(
         path.into_inner().0,
     )
         .await?;
-    
+
     let body = BikeDetailPageTemplate::from(base).render()?;
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
@@ -52,9 +59,18 @@ pub async fn get_bike_detail_content(
 pub async fn create_bike_page(
     request: HttpRequest,
     identity: Option<Identity>,
+    brand_repo: web::Data<BrandRepository>,
+    model_repo: web::Data<ModelRepository>,
 ) -> Result<HttpResponse, AppError> {
     authorized!(identity, request.path());
-    let template = BikeCreatePageTemplate {  };
+
+    let brands = brand_repo.read_many(&BrandSearch::default()).await?;
+    let models = model_repo.read_many(&ModelSearch::default()).await?;
+
+    let template = BikeCreatePageTemplate {
+        brands,
+        models,
+    };
     let body = template.render()?;
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
@@ -63,9 +79,17 @@ pub async fn create_bike_page(
 pub async fn create_bike_content(
     request: HttpRequest,
     identity: Option<Identity>,
+    brand_repo: web::Data<BrandRepository>,
+    model_repo: web::Data<ModelRepository>,
 ) -> Result<HttpResponse, AppError> {
     authorized!(identity, request.path());
-    let template = BikeCreateContentTemplate {  };
+    let brands = brand_repo.read_many(&BrandSearch::default()).await?;
+    let models = model_repo.read_many(&ModelSearch::default()).await?;
+
+    let template = BikeCreateContentTemplate {
+        brands,
+        models,
+    };
     let body = template.render()?;
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
@@ -89,14 +113,27 @@ pub async fn create_bike(
     identity: Option<Identity>,
     session: Session,
     user_repo: web::Data<UserRepository>,
+    brand_repo: web::Data<BrandRepository>,
+    model_repo: web::Data<ModelRepository>,
     form: web::Form<BikeCreateForm>,
 ) -> Result<HttpResponse, AppError> {
     let u = authorized!(identity, request.path());
     let user = get_user_from_identity(u, &user_repo).await?;
     let session_keys = BikeCreateSessionKeys::new(user.id);
 
+    let model = model_repo
+        .read_one(&GetById::new(form.model_id))
+        .await?;
+
+    let brand = brand_repo
+        .read_one(&GetById::new(form.brand_id))
+        .await?;
+
     session.insert(session_keys.name.as_str(), &form.name)?;
     session.insert(session_keys.description.as_str(), &form.description)?;
+    session.insert(session_keys.brand_id.as_str(), brand.id)?;
+    session.insert(session_keys.model_id.as_str(), model.id)?;
+
     Ok(HttpResponse::SeeOther()
         .insert_header((LOCATION, "/bike/upload"))
         .finish())
@@ -114,53 +151,31 @@ pub async fn upload_bike(
     let u = authorized!(identity, request.path());
     let user = get_user_from_identity(u, &user_repo).await?;
     let session_keys = BikeCreateSessionKeys::new(user.id);
-    
-    let thumbnail_path = validate_file(&form.thumbnail, Uuid::new_v4(), "image", "bike")?;
-    save_file(form.thumbnail, &thumbnail_path)?;
-    
-    for photo in form.photos {
-        let path = validate_file(&photo, Uuid::new_v4(), "image", "bike")?;
-        save_file(photo, &path)?;
-    }
-    // let metadata = get_metadata_from_session(&session, &session_keys)?;
 
-    // let audio_file = form.audio_file.file.as_file_mut();
-    // let lofty_audio_file = match lofty::read_from(audio_file) {
-    //     Ok(f) => f,
-    //     Err(e) => {
-    //         let template = bikeUploadFormTemplate {
-    //             message: e.to_string(),
-    //         }
-    //             .render()?;
-    //         return Ok(HttpResponse::Ok().content_type("text/html").body(template));
-    //     }
-    // };
-    // let properties = lofty_audio_file.properties();
-    // let length = properties.duration().as_secs_f64();
-    
-    
-    // let book_crate = BikeCreate::new(
-    //     &metadata.name,
-    //     &user.id,
-    //     &metadata.genre_id,
-    //     &bike_path,
-    //     &length,
-    //     thumbnail_path.clone(),
-    //     &metadata.description,
-    // );
-    // let book = bike_repo.create(&book_crate).await?;
+    let metadata = get_metadata_from_session(&session, &session_keys)?;
 
-    // let genre = genre_repo
-    //     .read_one(&GenreGetById::new(&book.genre_id))
-    //     .await?;
-    
-    
+    let bike_create = BikeCreate::new(
+        &metadata.name,
+        &metadata.brand_id,
+        &metadata.model_id,
+        &metadata.description,
+    );
+
+    let bike = bike_repo.create(&bike_create).await?;
+    let paths = form.photos.into_iter().map(|photo|
+        {
+            let path = validate_file(&photo, Uuid::new_v4(), "image", "bike")?;
+            save_file(photo, &path)?;
+            Ok(path)
+        }).collect::<Result<Vec<String>, AppError>>()?;
+    bike_repo.create(&BikeImageCreate::new(bike.id, paths)).await?;
+
     session.remove(session_keys.name.as_str());
     session.remove(session_keys.description.as_str());
     session.remove(session_keys.brand_id.as_str());
     session.remove(session_keys.model_id.as_str());
 
-    // let handler = format!("/bike/{}/manage-content", book.id);
+    // let handler = format!("/bike/{}/manage-content", bike.id);
     Ok(HttpResponse::SeeOther()
         .insert_header((LOCATION, '/'.to_string()))
         .finish())

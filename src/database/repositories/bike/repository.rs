@@ -9,7 +9,9 @@ use serde::Serialize;
 use sqlx::{Postgres, Transaction};
 
 use crate::database::common::utilities::{entity_is_correct, generate_query_param_string};
-use crate::database::models::bike::{Bike, BikeCreate, BikeDetail, BikeSearch};
+use crate::database::models::bike::{
+    Bike, BikeCreate, BikeDetail, BikeImage, BikeImageCreate, BikeImageSearch, BikeSearch,
+};
 use crate::database::models::{GetById, Id};
 
 #[derive(Clone)]
@@ -126,7 +128,6 @@ where
                 bike.brand_id,
                 bike.model_id,
                 bike.name,
-                bike.thumbnail,
                 bike.description,
                 bike.view_count,
                 bike.like_count,
@@ -147,8 +148,8 @@ where
             "#,
             params.id(),
         )
-            .fetch_optional(&self.pool_handler.pool)
-            .await?;
+        .fetch_optional(&self.pool_handler.pool)
+        .await?;
 
         let bike = entity_is_correct(
             maybe_bike,
@@ -159,7 +160,6 @@ where
     }
 }
 
-
 impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
     async fn read_many(&self, params: &BikeSearch) -> DbResultMultiple<BikeDetail> {
         let mut query = r#"
@@ -168,7 +168,6 @@ impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
                 bike.brand_id,
                 bike.model_id,
                 bike.name,
-                bike.thumbnail,
                 bike.description,
                 bike.view_count,
                 bike.like_count,
@@ -191,7 +190,7 @@ impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
                 AND (brand.name = $4 OR $4 IS NULL)
                 AND (model.name = $5 OR $5 IS NULL)
             "#
-            .to_owned();
+        .to_owned();
 
         let query_params = generate_query_param_string(&params.query_params);
         query.push_str(query_params.as_str());
@@ -213,14 +212,13 @@ impl DbCreate<BikeCreate, Bike> for BikeRepository {
         let book = sqlx::query_as!(
             Bike,
             r#"
-            INSERT INTO "Bike" (name, brand_id, model_id, thumbnail, description)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO "Bike" (name, brand_id, model_id, description)
+            VALUES ($1, $2, $3, $4)
             RETURNING *
             "#,
             params.name,
             params.brand_id,
             params.model_id,
-            params.thumbnail,
             params.description
         )
         .fetch_one(&self.pool_handler.pool)
@@ -312,5 +310,58 @@ where
         transaction.commit().await?;
 
         Ok(books)
+    }
+}
+
+impl DbReadMany<BikeImageSearch, BikeImage> for BikeRepository {
+    async fn read_many(&self, params: &BikeImageSearch) -> DbResultMultiple<BikeImage> {
+        let mut query = r#"
+            SELECT
+                image.id,
+                image.bike_id
+                image.path,
+                image.ordering,
+            FROM
+                "Bike" AS bike
+                    INNER JOIN
+                "BikeImage" AS image ON image.id = bike.model_id
+            WHERE
+                bike.id = $1 OR $1 IS NULL
+            "#
+        .to_owned();
+
+        let query_params = generate_query_param_string(&params.query_params);
+        query.push_str(query_params.as_str());
+
+        let images = sqlx::query_as::<_, BikeImage>(query.as_str())
+            .bind(&params.bike_id)
+            .fetch_all(&self.pool_handler.pool)
+            .await?;
+        Ok(images)
+    }
+}
+
+impl DbCreate<BikeImageCreate, Vec<BikeImage>> for BikeRepository {
+    async fn create(&self, data: &BikeImageCreate) -> DbResultSingle<Vec<BikeImage>> {
+        let mut transaction = self.pool_handler.pool.begin().await?;
+        let mut images = Vec::default();
+        for (i, path) in data.paths.iter().enumerate() {
+            let bike_image = sqlx::query_as!(
+                BikeImage,
+                r#"
+                    INSERT INTO "BikeImage" (bike_id, ordering, path)
+                    VALUES ($1, $2, $3)
+                    RETURNING *
+                "#,
+                data.bike_id,
+                i as i32,
+                path
+            )
+            .fetch_one(transaction.as_mut())
+            .await?;
+            images.push(bike_image);
+        }
+        transaction.commit().await?;
+        Ok(images)
     }
 }
