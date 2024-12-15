@@ -1,7 +1,7 @@
 use crate::database::common::DbReadOne;
 use std::fs::File;
 use std::io::{BufWriter, Read};
-
+use rexiv2::Metadata;
 use crate::database::models::{GetById, Id};
 
 use crate::error::{AppError, AppErrorKind};
@@ -144,8 +144,8 @@ pub fn save_file(file: TempFile, path: &str, dimensions: &ImageDimensions) -> Re
     log::info!("saving file to .{path}");
     let mut buffer = Vec::default();
     file.file.into_file().read_to_end(&mut buffer)?;
+    let metadata = Metadata::new_from_buffer(&buffer)?;
     let img = image::load_from_memory(&buffer)?;
-
     let format = image::guess_format(&*buffer)?;
     let resized_img = img.resize(
         dimensions.width,
@@ -154,9 +154,12 @@ pub fn save_file(file: TempFile, path: &str, dimensions: &ImageDimensions) -> Re
     );
 
     let path = format!(".{path}");
-    let mut output_file = BufWriter::new(File::create(path)?);
+    let mut output_file = BufWriter::new(File::create(&path)?);
     resized_img.write_to(&mut output_file, format)?;
-
+    let resized_metadata = Metadata::new_from_path(&path)?;
+    resized_metadata.set_tag_string("Exif.Image.ImageWidth", &dimensions.width.to_string())?;
+    resized_metadata.set_tag_string("Exif.Image.ImageLength", &dimensions.height.to_string())?;
+    metadata.save_to_file(&path)?;
     Ok(())
 }
 

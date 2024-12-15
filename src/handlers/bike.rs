@@ -1,7 +1,7 @@
 use crate::authorized;
 use crate::database::common::repository::DbCreate;
 use crate::database::common::{DbDelete, DbReadMany, DbReadOne};
-use crate::database::models::bike::{BikeCreate, BikeDetail, BikeImageCreate, BikeImageSearch};
+use crate::database::models::bike::{BikeCreate, BikeImageCreate, BikeImageSearch};
 use crate::database::models::brand::BrandSearch;
 use crate::database::models::model::ModelSearch;
 use crate::database::models::{GetById, Id};
@@ -27,8 +27,6 @@ use actix_session::Session;
 use actix_web::http::header::LOCATION;
 use actix_web::{delete, get, post, put, web, HttpRequest, HttpResponse};
 use askama::Template;
-use image::{image_dimensions, ImageReader};
-use log::{info, warn};
 use rayon::iter::ParallelIterator;
 use rayon::prelude::IntoParallelIterator;
 use uuid::Uuid;

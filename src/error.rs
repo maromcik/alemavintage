@@ -10,6 +10,7 @@ use std::fmt::{Debug, Display, Formatter};
 use std::io::Error;
 use std::num::ParseIntError;
 use image::ImageError;
+use rexiv2::Rexiv2Error;
 use thiserror::Error;
 
 /// User facing error type
@@ -114,6 +115,12 @@ impl From<actix_identity::error::GetIdentityError> for AppError {
 impl From<actix_session::SessionInsertError> for AppError {
     fn from(value: actix_session::SessionInsertError) -> Self {
         Self::new(AppErrorKind::SessionError, value.to_string().as_str())
+    }
+}
+
+impl From<Rexiv2Error> for AppError {
+    fn from(value: Rexiv2Error) -> Self {
+        Self::new(AppErrorKind::FileError, value.to_string().as_str())
     }
 }
 
