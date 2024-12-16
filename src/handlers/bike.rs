@@ -1,8 +1,11 @@
-use crate::{authorized, AppState};
-use crate::database::common::query_parameters::{DbColumn, DbOrder, DbOrderColumn, DbQueryParams, DbTable};
+use crate::database::common::query_parameters::{
+    DbColumn, DbOrder, DbOrderColumn, DbQueryParams, DbTable,
+};
 use crate::database::common::repository::DbCreate;
 use crate::database::common::{DbDelete, DbReadMany, DbReadOne, DbUpdate};
-use crate::database::models::bike::{BikeCreate, BikeDetail, BikeImageCreate, BikeImageSearch, BikeSearch, BikeUpdate};
+use crate::database::models::bike::{
+    BikeCreate, BikeDetail, BikeImageCreate, BikeImageSearch, BikeSearch, BikeUpdate,
+};
 use crate::database::models::brand::BrandSearch;
 use crate::database::models::model::ModelSearch;
 use crate::database::models::{GetById, Id};
@@ -17,7 +20,12 @@ use crate::handlers::utilities::{
     get_metadata_from_session, get_user_from_identity, is_htmx, remove_file, save_file,
     validate_file, BikeCreateSessionKeys, ImageDimensions,
 };
-use crate::templates::bike::{BikeBase, BikeContentTemplate, BikeCreateContentTemplate, BikeCreatePageTemplate, BikeDetailAdminContentTemplate, BikeDetailAdminPageTemplate, BikeDetailContentTemplate, BikeDetailPageTemplate, BikeEditContentTemplate, BikeEditPageTemplate, BikeTemplate, BikeUploadFormTemplate};
+use crate::templates::bike::{BikeCreateContentTemplate, BikeCreatePageTemplate,
+    BikeDetailAdminContentTemplate, BikeDetailAdminPageTemplate, BikeDetailContentTemplate,
+    BikeDetailPageTemplate, BikeEditContentTemplate, BikeEditPageTemplate, BikeTemplate,
+    BikeUploadFormTemplate,
+};
+use crate::{authorized, AppState};
 use actix_identity::Identity;
 use actix_multipart::form::MultipartForm;
 use actix_session::Session;
@@ -28,7 +36,6 @@ use rayon::iter::ParallelIterator;
 use rayon::prelude::IntoParallelIterator;
 use uuid::Uuid;
 
-
 #[get("")]
 pub async fn get_bikes(
     request: HttpRequest,
@@ -36,7 +43,6 @@ pub async fn get_bikes(
     bike_repo: web::Data<BikeRepository>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
-    
     let bikes = bike_repo
         .read_many(&BikeSearch::with_params(DbQueryParams::order(
             DbOrderColumn::new_column_only(DbColumn::ViewCount, DbOrder::Desc),
@@ -44,16 +50,19 @@ pub async fn get_bikes(
         )))
         .await?;
 
-    let template_name = if is_htmx(request) { "bike/content.html" } else { "bike/page.html" };
-    
-    let template = BikeBase {
-        logged_in: identity.is_some(),
-        bikes
+    let template_name = if is_htmx(request) {
+        "bike/content.html"
+    } else {
+        "bike/page.html"
     };
-    
-    let temp = state.jinja.get_template(template_name)?;
-    let rendered = temp.render(BikeTemplate::from(template))?;
-    
+
+    let env = state.jinja.acquire_env()?;
+    let temp = env.get_template(template_name)?;
+    let rendered = temp.render(BikeTemplate {
+        logged_in: identity.is_some(),
+        bikes,
+    })?;
+
     Ok(HttpResponse::Ok().content_type("text/html").body(rendered))
 }
 
@@ -345,7 +354,7 @@ pub async fn edit_bike(
         None,
         Some(&form.description),
         None,
-        None
+        None,
     );
     bike_repo.update(&book_update).await?;
 

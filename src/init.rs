@@ -7,6 +7,7 @@ use actix_files::Files as ActixFiles;
 use actix_web::web;
 use actix_web::web::{service, ServiceConfig};
 use minijinja::{path_loader, Environment};
+use minijinja_autoreload::AutoReloader;
 use sqlx::PgPool;
 use crate::AppState;
 use crate::database::repositories::bike::repository::BikeRepository;
@@ -19,7 +20,7 @@ use crate::handlers::index::{index};
 use crate::handlers::user::{user_manage_form_page, user_manage_password, user_manage_password_form};
 
 
-pub fn configure_webapp(pool: &PgPool, jinja: Arc<Environment<'static>>) -> Box<dyn FnOnce(&mut ServiceConfig)> {
+pub fn configure_webapp(pool: &PgPool, jinja: Arc<AutoReloader>) -> Box<dyn FnOnce(&mut ServiceConfig)> {
     let user_repo = UserRepository::new(PoolHandler::new(pool.clone()));
     let bike_repo = BikeRepository::new(PoolHandler::new(pool.clone()));
     let model_repository = ModelRepository::new(PoolHandler::new(pool.clone()));

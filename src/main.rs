@@ -11,9 +11,14 @@ use actix_web::web::PayloadConfig;
 use actix_web::{cookie::Key, App, HttpServer};
 use env_logger::Env;
 use log::{info, warn};
+use minijinja::{path_loader, Environment, Error, Value};
+use minijinja_autoreload::AutoReloader;
 use std::env;
+use std::path::PathBuf;
 use std::sync::Arc;
-use minijinja::{path_loader, Environment};
+use chrono::{DateTime, Utc};
+use chrono::serde::ts_seconds::deserialize;
+use serde::Deserializer;
 
 mod database;
 mod error;
@@ -29,20 +34,13 @@ const PAYLOAD_LIMIT: usize = 16 * 1024 * 1024 * 1024; // 16GiB
 const MIN_PASS_LEN: usize = 6;
 
 pub struct AppState {
-    pub jinja: Arc<Environment<'static>>,
+    pub jinja: Arc<AutoReloader>,
 }
 
 impl AppState {
-    pub fn new(jinja: Arc<Environment<'static>>) -> Self {
+    pub fn new(jinja: Arc<AutoReloader>) -> Self {
         AppState { jinja }
     }
-}
-
-fn create_env() -> Arc<Environment<'static>> {
-    let mut env = Environment::new();
-    env.set_loader(path_loader("templates"));
-
-    Arc::new(env)
 }
 
 #[actix_web::main]
@@ -58,7 +56,20 @@ async fn main() -> anyhow::Result<()> {
     let _dir = env::temp_dir();
 
     let pool = setup_pool(10_u32).await?;
-    let jinja = create_env();
+
+    let reloader = AutoReloader::new(move |notifier| {
+        let template_path = "templates";
+        let mut env = Environment::new();
+        env.set_loader(path_loader(&template_path));
+        notifier.set_fast_reload(true);
+        notifier.watch_path(&template_path, true);
+        Ok(env)
+    });
+
+    // let mut env = Environment::new();
+    // env.set_loader(path_loader("templates"));
+    let jinja = Arc::new(reloader);
+
     let host = parse_host();
     let host2 = host.clone();
 
@@ -79,7 +90,6 @@ async fn main() -> anyhow::Result<()> {
         warn!("failed loading .env file: {e}");
     };
     info!("starting server on {host}");
-
 
     HttpServer::new(move || {
         App::new()

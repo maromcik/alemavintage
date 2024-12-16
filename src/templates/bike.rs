@@ -12,36 +12,6 @@ pub struct BikeTemplate {
     pub bikes: Vec<BikeDetail>,
 }
 
-#[derive(Template, Serialize)]
-#[template(path = "bike/content.html")]
-pub struct BikeContentTemplate {
-    pub logged_in: bool,
-    pub bikes: Vec<BikeDetail>,
-}
-
-pub struct BikeBase {
-    pub logged_in: bool,
-    pub bikes: Vec<BikeDetail>,
-}
-
-impl From<BikeBase> for BikeContentTemplate {
-    fn from(value: BikeBase) -> Self {
-        Self {
-            logged_in: value.logged_in,
-            bikes: value.bikes,
-        }
-    }
-}
-
-impl From<BikeBase> for BikeTemplate {
-    fn from(value: BikeBase) -> Self {
-        Self {
-            logged_in: value.logged_in,
-            bikes: value.bikes,
-        }
-    }
-}
-
 
 #[derive(Template)]
 #[template(path = "bike/admin/create/page.html")]
