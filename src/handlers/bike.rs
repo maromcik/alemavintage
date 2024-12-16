@@ -1,7 +1,8 @@
 use crate::authorized;
+use crate::database::common::query_parameters::{DbColumn, DbOrder, DbOrderColumn, DbQueryParams, DbTable};
 use crate::database::common::repository::DbCreate;
-use crate::database::common::{DbDelete, DbReadMany, DbReadOne};
-use crate::database::models::bike::{BikeCreate, BikeImageCreate, BikeImageSearch};
+use crate::database::common::{DbDelete, DbReadMany, DbReadOne, DbUpdate};
+use crate::database::models::bike::{BikeCreate, BikeDetail, BikeImageCreate, BikeImageSearch, BikeSearch, BikeUpdate};
 use crate::database::models::brand::BrandSearch;
 use crate::database::models::model::ModelSearch;
 use crate::database::models::{GetById, Id};
@@ -10,17 +11,13 @@ use crate::database::repositories::brand::repository::BrandRepository;
 use crate::database::repositories::model::repository::ModelRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::error::AppError;
-use crate::forms::bike::{BikeCreateForm, BikeUploadForm};
+use crate::forms::bike::{BikeCreateForm, BikeEditForm, BikeUploadForm};
 use crate::handlers::helpers::get_bike_detail_base;
 use crate::handlers::utilities::{
     get_metadata_from_session, get_user_from_identity, is_htmx, remove_file, save_file,
     validate_file, BikeCreateSessionKeys, ImageDimensions,
 };
-use crate::templates::bike::{
-    BikeCreateContentTemplate, BikeCreatePageTemplate, BikeDetailAdminContentTemplate,
-    BikeDetailAdminPageTemplate, BikeDetailContentTemplate, BikeDetailPageTemplate,
-    BikeUploadFormTemplate,
-};
+use crate::templates::bike::{BikeBase, BikeContentTemplate, BikeCreateContentTemplate, BikeCreatePageTemplate, BikeDetailAdminContentTemplate, BikeDetailAdminPageTemplate, BikeDetailContentTemplate, BikeDetailPageTemplate, BikeEditContentTemplate, BikeEditPageTemplate, BikeTemplate, BikeUploadFormTemplate};
 use actix_identity::Identity;
 use actix_multipart::form::MultipartForm;
 use actix_session::Session;
@@ -31,13 +28,40 @@ use rayon::iter::ParallelIterator;
 use rayon::prelude::IntoParallelIterator;
 use uuid::Uuid;
 
+#[get("")]
+pub async fn get_bikes(
+    request: HttpRequest,
+    identity: Option<Identity>,
+    bike_repo: web::Data<BikeRepository>,
+) -> Result<HttpResponse, AppError> {
+    let bikes = bike_repo
+        .read_many(&BikeSearch::with_params(DbQueryParams::order(
+            DbOrderColumn::new_column_only(DbColumn::ViewCount, DbOrder::Desc),
+            Some(DbTable::Bike),
+        )))
+        .await?;
+
+    let template = BikeBase {
+        logged_in: identity.is_some(),
+        bikes
+    };
+
+    let body = match is_htmx(request) {
+        true => BikeContentTemplate::from(template).render()?,
+        false => BikeTemplate::from(template).render()?,
+    };
+
+    Ok(HttpResponse::Ok().content_type("text/html").body(body))
+}
+
 #[get("/{id}/detail")]
 pub async fn get_bike_detail(
     request: HttpRequest,
+    identity: Option<Identity>,
     bike_repo: web::Data<BikeRepository>,
     path: web::Path<(Id,)>,
 ) -> Result<HttpResponse, AppError> {
-    let base = get_bike_detail_base(bike_repo, path.into_inner().0, false).await?;
+    let base = get_bike_detail_base(&identity, bike_repo, path.into_inner().0, false).await?;
 
     let body = match is_htmx(request) {
         true => BikeDetailContentTemplate::from(base).render()?,
@@ -60,8 +84,18 @@ pub async fn create_bike_page(
     let models = model_repo.read_many(&ModelSearch::default()).await?;
 
     let body = match is_htmx(request) {
-        true => BikeCreateContentTemplate { brands, models }.render()?,
-        false => BikeCreatePageTemplate { brands, models }.render()?,
+        true => BikeCreateContentTemplate {
+            brands,
+            models,
+            logged_in: true,
+        }
+        .render()?,
+        false => BikeCreatePageTemplate {
+            brands,
+            models,
+            logged_in: true,
+        }
+        .render()?,
     };
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
@@ -174,7 +208,7 @@ pub async fn manage_bike(
 ) -> Result<HttpResponse, AppError> {
     let u = authorized!(identity, request.path());
 
-    let base = get_bike_detail_base(bike_repo, path.into_inner().0, true).await?;
+    let base = get_bike_detail_base(&Some(u), bike_repo, path.into_inner().0, true).await?;
 
     let body = match is_htmx(request) {
         true => BikeDetailAdminContentTemplate::from(base).render()?,
@@ -193,7 +227,9 @@ pub async fn remove_bike(
 ) -> Result<HttpResponse, AppError> {
     let u = authorized!(identity, request.path());
     let bike_id = path.into_inner().0;
-    bike_repo.delete(&GetById::new_with_deleted(bike_id)).await?;
+    bike_repo
+        .delete(&GetById::new_with_deleted(bike_id))
+        .await?;
 
     let path = format!("/bike/{}/manage", bike_id);
     Ok(HttpResponse::SeeOther()
@@ -211,13 +247,17 @@ pub async fn hard_remove_bike(
     let u = authorized!(identity, request.path());
     let bike_id = path.into_inner().0;
 
-    let bike_images = bike_repo.read_many(&BikeImageSearch::new(Some(bike_id))).await?;
+    let bike_images = bike_repo
+        .read_many(&BikeImageSearch::new(Some(bike_id)))
+        .await?;
 
     for image in bike_images {
         remove_file(&image.path)?;
     }
 
-    let bikes = bike_repo.hard_delete(&GetById::new_with_deleted(bike_id)).await?;
+    let bikes = bike_repo
+        .hard_delete(&GetById::new_with_deleted(bike_id))
+        .await?;
     for bike in bikes {
         remove_file(&bike.thumbnail)?;
     }
@@ -236,8 +276,77 @@ pub async fn restore_bike(
 ) -> Result<HttpResponse, AppError> {
     let u = authorized!(identity, request.path());
     let bike_id = path.into_inner().0;
-    bike_repo.restore(&GetById::new_with_deleted(bike_id)).await?;
+    bike_repo
+        .restore(&GetById::new_with_deleted(bike_id))
+        .await?;
     let path = format!("/bike/{}/manage", bike_id);
+    Ok(HttpResponse::SeeOther()
+        .insert_header((LOCATION, path))
+        .finish())
+}
+
+#[get("/{id}/edit")]
+pub async fn edit_bike_page(
+    request: HttpRequest,
+    identity: Option<Identity>,
+    bike_repo: web::Data<BikeRepository>,
+    brand_repo: web::Data<BrandRepository>,
+    model_repo: web::Data<ModelRepository>,
+    path: web::Path<(Id,)>,
+) -> Result<HttpResponse, AppError> {
+    let _ = authorized!(identity, request.path());
+    let bike_id = path.into_inner().0;
+    let bike: BikeDetail = <BikeRepository as DbReadOne<GetById, BikeDetail>>::read_one(
+        bike_repo.as_ref(),
+        &GetById::new_with_deleted(bike_id),
+    )
+    .await?;
+
+    let brands = brand_repo.read_many(&BrandSearch::default()).await?;
+    let models = model_repo.read_many(&ModelSearch::default()).await?;
+
+    let body = match is_htmx(request) {
+        true => BikeEditContentTemplate {
+            bike,
+            brands,
+            models,
+            logged_in: true,
+        }
+        .render()?,
+        false => BikeEditPageTemplate {
+            bike,
+            brands,
+            models,
+            logged_in: true,
+        }
+        .render()?,
+    };
+
+    Ok(HttpResponse::Ok().content_type("text/html").body(body))
+}
+
+#[post("/edit")]
+pub async fn edit_bike(
+    request: HttpRequest,
+    identity: Option<Identity>,
+    bike_repo: web::Data<BikeRepository>,
+    form: web::Form<BikeEditForm>,
+) -> Result<HttpResponse, AppError> {
+    let _ = authorized!(identity, request.path());
+
+    let book_update = BikeUpdate::new(
+        &form.bike_id,
+        Some(&form.name),
+        Some(&form.brand_id),
+        Some(&form.model_id),
+        None,
+        Some(&form.description),
+        None,
+        None
+    );
+    bike_repo.update(&book_update).await?;
+
+    let path = format!("/bike/{}/manage", form.bike_id);
     Ok(HttpResponse::SeeOther()
         .insert_header((LOCATION, path))
         .finish())

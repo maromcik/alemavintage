@@ -81,7 +81,7 @@ pub async fn logout_user(identity: Option<Identity>) -> Result<impl Responder, A
     if let Some(u) = identity {
         u.logout();
     }
-    Ok(Redirect::to("/user/login").using_status_code(StatusCode::FOUND))
+    Ok(Redirect::to("/").using_status_code(StatusCode::FOUND))
 }
 
 #[get("/manage")]
@@ -98,12 +98,14 @@ pub async fn user_manage_form_page(
             user,
             message: "".to_string(),
             success: true,
+            logged_in: true,
         }
         .render()?,
         false => UserManageProfileContentTemplate {
             user,
             message: "".to_string(),
             success: true,
+            logged_in: true,
         }
         .render()?,
     };
@@ -119,6 +121,7 @@ pub async fn user_manage_password_form(
     let template = UserManagePasswordTemplate {
         message: "".to_string(),
         success: true,
+        logged_in: true,
     };
     let body = template.render()?;
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
@@ -136,6 +139,7 @@ pub async fn user_manage_profile_form(
         user,
         message: "".to_string(),
         success: true,
+        logged_in: true,
     };
     let body = template.render()?;
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
@@ -168,9 +172,10 @@ pub async fn user_manage(
         user: user_valid,
         message: "Profile update successful".to_string(),
         success: true,
+        logged_in: true,
     };
     let body = template.render()?;
-    return Ok(HttpResponse::Ok().content_type("text/html").body(body));
+    Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
 
 #[post("/manage/password")]
@@ -186,6 +191,7 @@ pub async fn user_manage_password(
         let template = UserManagePasswordTemplate {
             message: "Passwords do not match".to_string(),
             success: false,
+            logged_in: true,
         };
         let body = template.render()?;
         return Ok(HttpResponse::Ok().content_type("text/html").body(body));
@@ -209,6 +215,7 @@ pub async fn user_manage_password(
         let template = UserManagePasswordTemplate {
             message: "Old password incorrect".to_string(),
             success: false,
+            logged_in: true,
         };
         let body = template.render()?;
         return Ok(HttpResponse::Ok().content_type("text/html").body(body));
@@ -217,6 +224,7 @@ pub async fn user_manage_password(
     let template = UserManagePasswordTemplate {
         message: "Password update successful".to_string(),
         success: true,
+        logged_in: true,
     };
     let body = template.render()?;
     Ok(HttpResponse::Ok().content_type("text/html").body(body))

@@ -12,10 +12,11 @@ pub struct LoginTemplate {
 }
 
 #[derive(Template, Default)]
-#[template(path = "user/password.html")]
+#[template(path = "user/manage/password/content.html")]
 pub struct UserManagePasswordTemplate {
     pub message: String,
     pub success: bool,
+    pub logged_in: bool,
 }
 
 impl UserManagePasswordTemplate {
@@ -23,24 +24,27 @@ impl UserManagePasswordTemplate {
         Self {
             success: false,
             message: WEAK_PASSWORD_MESSAGE.to_owned(),
+            logged_in: false,
         }
     }
 }
 
 #[derive(Template)]
-#[template(path = "user-manage.html")]
+#[template(path = "user/manage/profile/page.html")]
 pub struct UserManageProfilePageTemplate {
     pub user: User,
     pub message: String,
     pub success: bool,
+    pub logged_in: bool,
 }
 
 #[derive(Template)]
-#[template(path = "user/profile.html")]
+#[template(path = "user/manage/profile/content.html")]
 pub struct UserManageProfileContentTemplate {
     pub user: User,
     pub message: String,
     pub success: bool,
+    pub logged_in: bool,
 }
 
 
@@ -50,5 +54,6 @@ pub struct UserManageProfileUserFormTemplate {
     pub user: User,
     pub message: String,
     pub success: bool,
+    pub logged_in: bool,
 }
 

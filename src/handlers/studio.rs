@@ -1,3 +1,4 @@
+use std::convert::identity;
 use crate::authorized;
 use crate::database::common::query_parameters::{DbQueryParams, DbTable};
 use crate::database::common::DbReadMany;
@@ -25,8 +26,8 @@ pub async fn studio_index(
         .await?;
 
     let body = match is_htmx(request) {
-        true => StudioContentTemplate { bikes }.render()?,
-        false => StudioPageTemplate { bikes }.render()?,
+        true => StudioContentTemplate { bikes, logged_in: true }.render()?,
+        false => StudioPageTemplate { bikes, logged_in: true }.render()?,
     };
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))

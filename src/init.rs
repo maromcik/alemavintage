@@ -10,7 +10,8 @@ use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::brand::repository::BrandRepository;
 use crate::database::repositories::model::repository::ModelRepository;
 use crate::database::repositories::user::repository::UserRepository;
-use crate::handlers::bike::{create_bike, create_bike_page, get_bike_detail, hard_remove_bike, manage_bike, remove_bike, restore_bike, upload_bike, upload_bike_form};
+use crate::handlers::bike::{create_bike, create_bike_page, edit_bike, edit_bike_page, get_bike_detail, get_bikes, hard_remove_bike, manage_bike, remove_bike, restore_bike, upload_bike, upload_bike_form};
+use crate::handlers::brand::{create_brand, create_brand_page, get_brands};
 use crate::handlers::index::{index};
 use crate::handlers::user::{user_manage_form_page, user_manage_password, user_manage_password_form};
 
@@ -32,12 +33,12 @@ pub fn configure_webapp(pool: &PgPool) -> Box<dyn FnOnce(&mut ServiceConfig)> {
     let bike_scope = web::scope("bike")
         .app_data(web::Data::new(model_repository.clone()))
         .app_data(web::Data::new(brand_repository.clone()))
+        .service(get_bikes)
         .service(create_bike)
         .service(upload_bike)
         .service(create_bike_page)
-    //     .service(edit_bike_page)
-    //     .service(edit_bike_content)
-    //     .service(edit_bike)
+        .service(edit_bike)
+        .service(edit_bike_page)
         .service(upload_bike_form)
     //     .service(get_bike)
         .service(manage_bike)
@@ -55,23 +56,16 @@ pub fn configure_webapp(pool: &PgPool) -> Box<dyn FnOnce(&mut ServiceConfig)> {
     //     .service(recommend_bikes)
         .service(restore_bike)
         .service(hard_remove_bike);
-    //
-    // let chapter_scope = web::scope("chapter")
-    //     .app_data(web::Data::new(chapter_repository.clone()))
-    //     .service(audio_selection_for_chapter)
-    //     .service(get_chapter_timeline)
-    //     .service(get_chapter_list)
-    //     .service(create_chapter)
-    //     .service(remove_chapter)
-    //     .service(get_manage_chapter_list);
-    //
-    // let genre_scope = web::scope("genre")
-    //     .app_data(web::Data::new(genre_repository.clone()))
-    //     .app_data(web::Data::new(bike_repository.clone()))
-    //     .service(get_genres_page)
-    //     .service(get_genres_content)
-    //     .service(get_bikes_by_genre)
-    //     .service(get_bikes_by_genre_content);
+
+    let brand_scope = web::scope("brand")
+        .app_data(web::Data::new(brand_repository.clone()))
+        .service(create_brand)
+        .service(get_brands)
+        .service(create_brand_page);
+
+    let model_scope = web::scope("model")
+        .app_data(web::Data::new(brand_repository.clone()))
+        .service(create_brand_page);
     //
     // let rating_scope = web::scope("rating")
     //     .app_data(web::Data::new(rating_repository.clone()))
@@ -88,6 +82,7 @@ pub fn configure_webapp(pool: &PgPool) -> Box<dyn FnOnce(&mut ServiceConfig)> {
             .app_data(web::Data::new(user_repo.clone()))
             .service(bike_scope)
             .service(user_scope)
+            .service(brand_scope)
             .service(index)
             .service(studio::studio_index)
             .service(ActixFiles::new("/media", "./media").prefer_utf8(true))

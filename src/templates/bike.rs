@@ -3,45 +3,108 @@ use crate::database::models::bike::{BikeDetail, BikeImage};
 use crate::database::models::brand::Brand;
 use crate::database::models::model::Model;
 
+
 #[derive(Template)]
-#[template(path = "studio_create_bike.html")]
-pub struct BikeCreatePageTemplate {
-    pub brands: Vec<Brand>,
-    pub models: Vec<Model>,
+#[template(path = "bike/page.html")]
+pub struct BikeTemplate {
+    pub logged_in: bool,
+    pub bikes: Vec<BikeDetail>,
 }
 
 #[derive(Template)]
-#[template(path = "bike/bike_create.html")]
+#[template(path = "bike/content.html")]
+pub struct BikeContentTemplate {
+    pub logged_in: bool,
+    pub bikes: Vec<BikeDetail>,
+}
+
+pub struct BikeBase {
+    pub logged_in: bool,
+    pub bikes: Vec<BikeDetail>,
+}
+
+impl From<BikeBase> for BikeContentTemplate {
+    fn from(value: BikeBase) -> Self {
+        Self {
+            logged_in: value.logged_in,
+            bikes: value.bikes,
+        }
+    }
+}
+
+impl From<BikeBase> for BikeTemplate {
+    fn from(value: BikeBase) -> Self {
+        Self {
+            logged_in: value.logged_in,
+            bikes: value.bikes,
+        }
+    }
+}
+
+
+#[derive(Template)]
+#[template(path = "bike/admin/create/page.html")]
+pub struct BikeCreatePageTemplate {
+    pub brands: Vec<Brand>,
+    pub models: Vec<Model>,
+    pub logged_in: bool,
+}
+
+#[derive(Template)]
+#[template(path = "bike/admin/create/content.html")]
 pub struct BikeCreateContentTemplate {
     pub brands: Vec<Brand>,
     pub models: Vec<Model>,
+    pub logged_in: bool,
+}
+
+#[derive(Template)]
+#[template(path = "bike/admin/edit/page.html")]
+pub struct BikeEditPageTemplate {
+    pub bike: BikeDetail,
+    pub brands: Vec<Brand>,
+    pub models: Vec<Model>,
+    pub logged_in: bool,
+}
+
+#[derive(Template)]
+#[template(path = "bike/admin/edit/content.html")]
+pub struct BikeEditContentTemplate {
+    pub bike: BikeDetail,
+    pub brands: Vec<Brand>,
+    pub models: Vec<Model>,
+    pub logged_in: bool,
 }
 
 pub struct BikeDetailBase {
     pub bike: BikeDetail,
-    pub bike_images: Vec<String>
+    pub bike_images: Vec<String>,
+    pub logged_in: bool,
 }
 
 
 #[derive(Template)]
-#[template(path = "detail.html")]
+#[template(path = "bike/detail/page.html")]
 pub struct BikeDetailPageTemplate {
     pub bike: BikeDetail,
-    pub bike_images: Vec<String>
+    pub bike_images: Vec<String>,
+    pub logged_in: bool,
 }
 
 #[derive(Template)]
-#[template(path = "bike/detail-content.html")]
+#[template(path = "bike/detail/content.html")]
 pub struct BikeDetailContentTemplate {
     pub bike: BikeDetail,
-    pub bike_images: Vec<String>
+    pub bike_images: Vec<String>,
+    pub logged_in: bool,
 }
 
 impl From<BikeDetailBase> for BikeDetailPageTemplate {
     fn from(value: BikeDetailBase) -> Self {
         Self {
             bike: value.bike,
-            bike_images: value.bike_images
+            bike_images: value.bike_images,
+            logged_in: value.logged_in,
         }
     }
 }
@@ -50,24 +113,27 @@ impl From<BikeDetailBase> for BikeDetailContentTemplate {
     fn from(value: BikeDetailBase) -> Self {
         Self {
             bike: value.bike,
-            bike_images: value.bike_images
+            bike_images: value.bike_images,
+            logged_in: value.logged_in,
         }
     }
 }
 
 
 #[derive(Template)]
-#[template(path = "detail_admin.html")]
+#[template(path = "bike/admin/detail/page.html")]
 pub struct BikeDetailAdminPageTemplate {
     pub bike: BikeDetail,
-    pub bike_images: Vec<String>
+    pub bike_images: Vec<String>,
+    pub logged_in: bool,
 }
 
 #[derive(Template)]
-#[template(path = "bike/detail_admin-content.html")]
+#[template(path = "bike/admin/detail/content.html")]
 pub struct BikeDetailAdminContentTemplate {
     pub bike: BikeDetail,
-    pub bike_images: Vec<String>
+    pub bike_images: Vec<String>,
+    pub logged_in: bool,
 }
 
 impl From<BikeDetailBase> for BikeDetailAdminPageTemplate {
@@ -75,6 +141,7 @@ impl From<BikeDetailBase> for BikeDetailAdminPageTemplate {
         Self {
             bike: value.bike,
             bike_images: value.bike_images,
+            logged_in: value.logged_in,
         }
     }
 }
@@ -84,12 +151,14 @@ impl From<BikeDetailBase> for BikeDetailAdminContentTemplate {
         Self {
             bike: value.bike,
             bike_images: value.bike_images,
+            logged_in: value.logged_in,
         }
     }
 }
 
 #[derive(Template)]
-#[template(path = "bike/bike_upload.html")]
+#[template(path = "bike/admin/upload/content.html")]
 pub struct BikeUploadFormTemplate {
     pub message: String,
 }
+

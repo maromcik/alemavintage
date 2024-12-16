@@ -259,3 +259,65 @@ impl BikeImageCreate {
         Self { bike_id, paths }
     }
 }
+
+pub struct BikeUpdate {
+    pub id: Id,
+    pub brand_id: Option<Id>,
+    pub model_id: Option<Id>,
+    pub name: Option<String>,
+    pub thumbnail: Option<String>,
+    pub description: Option<String>,
+    pub view_count: Option<i64>,
+    pub like_count: Option<i64>,
+}
+
+impl BikeUpdate {
+    #[inline]
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: &Id,
+        name: Option<&str>,
+        brand_id: Option<&Id>,
+        model_id: Option<&Id>,
+        thumbnail: Option<&str>,
+        description: Option<&str>,
+        view_count: Option<&i64>,
+        like_count: Option<&i64>,
+    ) -> Self {
+        let change_to_owned = |value: &str| Some(value.to_owned());
+        Self {
+            id: *id,
+            name: name.and_then(change_to_owned),
+            brand_id: brand_id.copied(),
+            model_id: model_id.copied(),
+            thumbnail: thumbnail.and_then(change_to_owned),
+            description: description.and_then(change_to_owned),
+            view_count: view_count.copied(),
+            like_count: like_count.copied(),
+        }
+    }
+
+    #[must_use]
+    pub const fn update_fields_none(&self) -> bool {
+        self.name.is_none()
+            && self.brand_id.is_none()
+            && self.model_id.is_none()
+            && self.view_count.is_none()
+            && self.like_count.is_none()
+            && self.description.is_none()
+            && self.thumbnail.is_none()
+    }
+
+    pub fn update_views(id: Id, view_count: i64) -> Self {
+        Self {
+            id,
+            brand_id: None,
+            model_id: None,
+            name: None,
+            thumbnail: None,
+            description: None,
+            view_count: Some(view_count),
+            like_count: None,
+        }
+    }
+}
