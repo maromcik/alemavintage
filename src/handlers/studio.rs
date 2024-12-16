@@ -1,6 +1,6 @@
 use crate::database::common::query_parameters::DbQueryParams;
 use crate::database::common::DbReadMany;
-use crate::database::models::bike::BikeSearch;
+use crate::database::models::bike::{BikeDisplay, BikeSearch};
 use crate::database::repositories::bike::repository::BikeRepository;
 use crate::error::AppError;
 use crate::{authorized, AppState};
@@ -28,7 +28,7 @@ pub async fn studio_index(
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(StudioTemplate {
-        bikes,
+        bikes: bikes.into_iter().map(BikeDisplay::from).collect(),
         logged_in: true,
     })?;
     

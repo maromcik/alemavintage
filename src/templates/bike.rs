@@ -1,8 +1,7 @@
-use askama::Template;
-use serde::Serialize;
-use crate::database::models::bike::{BikeDisplay, BikeImage};
+use crate::database::models::bike::BikeDisplay;
 use crate::database::models::brand::Brand;
 use crate::database::models::model::Model;
+use serde::Serialize;
 
 
 #[derive(Serialize)]

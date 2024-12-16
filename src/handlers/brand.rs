@@ -9,7 +9,6 @@ use crate::{authorized, AppState};
 use actix_identity::Identity;
 use actix_web::http::header::LOCATION;
 use actix_web::{get, post, web, HttpRequest, HttpResponse};
-use askama::Template;
 
 #[get("/create")]
 pub async fn create_brand_page(
@@ -49,16 +48,17 @@ pub async fn create_brand(
 pub async fn get_brands(
     request: HttpRequest,
     brand_repo: web::Data<BrandRepository>,
+    identity: Option<Identity>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
     let brands = brand_repo.read_many(&BrandSearch::new(None)).await?;
 
-    let template_name = get_template_name(&request, "bike");
+    let template_name = get_template_name(&request, "brand");
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(BrandTemplate {
         brands,
-        logged_in: false,
+        logged_in: identity.is_some(),
     })?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))

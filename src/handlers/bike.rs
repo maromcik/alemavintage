@@ -25,7 +25,6 @@ use actix_multipart::form::MultipartForm;
 use actix_session::Session;
 use actix_web::http::header::LOCATION;
 use actix_web::{delete, get, post, put, web, HttpRequest, HttpResponse};
-use askama::Template;
 use rayon::iter::ParallelIterator;
 use rayon::prelude::IntoParallelIterator;
 use uuid::Uuid;
