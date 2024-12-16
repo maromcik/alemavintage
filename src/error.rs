@@ -142,11 +142,6 @@ impl From<std::io::Error> for AppError {
     }
 }
 
-impl From<lofty::LoftyError> for AppError {
-    fn from(value: lofty::LoftyError) -> Self {
-        Self::new(AppErrorKind::FileError, value.to_string().as_str())
-    }
-}
 
 impl From<actix_session::SessionGetError> for AppError {
     fn from(value: actix_session::SessionGetError) -> Self {
@@ -195,8 +190,8 @@ fn render_generic(error: &AppError) -> HttpResponse {
         code: error.status_code().to_string(),
         description: error.message.clone(),
     };
-    let body = template.render().unwrap_or_default();
+    // let body = template.render().unwrap_or_default();
     HttpResponse::build(error.status_code())
         .insert_header(ContentType::html())
-        .body(body)
+        .body("")
 }

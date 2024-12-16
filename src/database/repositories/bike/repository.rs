@@ -4,7 +4,6 @@ use crate::database::common::{
     DbCreate, DbDelete, DbPoolHandler, DbReadMany, DbReadOne, DbRepository, DbUpdate, EntityById,
     PoolHandler,
 };
-use serde::Serialize;
 
 use sqlx::{Postgres, Transaction};
 

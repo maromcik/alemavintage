@@ -6,39 +6,31 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-actix-files = { version = "0.6.5" }
-actix-web = "4.4.1"
-anyhow = { version = "1.0.79", features = [] }
+actix-files = { version = "0.6.6" }
+actix-web = "4.9.0"
+anyhow = { version = "1.0.94", features = [] }
 askama = "0.12.1"
-async-trait = "0.1.77"
 chrono = { version = "0.4.39", features = ["serde"] }
 dotenv = "0.15.0"
 dotenvy = "0.15.7"
-env_logger = "0.10.1"
-futures = "0.3.30"
-hmac = "0.12.1"
-log = "0.4.20"
-serde = { version = "1.0.195", features = ["derive"] }
-sqlx = { version = "0.7.3", features = ["chrono", "runtime-tokio-native-tls", "postgres", "bigdecimal"] }
-thiserror = "1.0.56"
-tokio = { version = "1.35.1", features = ["full"] }
-uuid = { version = "1.6.1", features = ["v4"] }
-pbkdf2 = { version = "0.12", features = ["simple"] }
-rand_core = { version = "0.6", features = ["std"] }
-actix-identity = "0.7.0"
+env_logger = "0.11.5"
+futures = "0.3.31"
+hmac = "0.13.0-pre.4"
+log = "0.4.22"
+serde = { version = "1.0.216", features = ["derive"] }
+sqlx = { version = "0.8.2", features = ["chrono", "runtime-tokio-native-tls", "postgres", "bigdecimal"] }
+thiserror = "2.0.7"
+uuid = { version = "1.11.0", features = ["v4"] }
+pbkdf2 = { version = "0.12.2", features = ["simple"] }
+rand_core = { version = "0.6.4", features = ["std"] }
+actix-identity = "0.8.0"
 actix-session = { version = "0.9.0", features = ["redis-rs-session", "redis-actor-session", "cookie-session"]}
 actix-cors = "0.7.0"
-actix-multipart = "0.6.1"
-futures-util = "0.3.30"
-lazy_static = "1.4.0"
-lofty = "0.18.0"
-tonic = "0.10"
-prost = "0.12"
+actix-multipart = "0.7.2"
+futures-util = "0.3.31"
+lazy_static = "1.5.0"
 image = "0.25.5"
 rayon = "1.10.0"
 rexiv2 = "0.10.0"
 minijinja = { version = "2.5.0", features = ["loader"] }
 minijinja-autoreload = "2.5.0"
-
-[build-dependencies]
-tonic-build = "0.10"

@@ -245,7 +245,7 @@ pub fn validate_password(password: &str) -> bool {
     lower && upper && numeric && special && password.len() >= MIN_PASS_LEN
 }
 
-pub fn is_htmx(request: HttpRequest) -> bool {
+pub fn is_htmx(request: &HttpRequest) -> bool {
     request
         .headers()
         .get("HX-Request")

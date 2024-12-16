@@ -1,5 +1,3 @@
-use async_trait::async_trait;
-use chrono::Utc;
 use pbkdf2::password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString};
 use pbkdf2::Pbkdf2;
 use rand_core::OsRng;
@@ -12,9 +10,9 @@ use crate::database::common::error::BackendErrorKind::{
 use crate::database::common::error::{BackendError, DbError, EntityError};
 use crate::database::common::error::{DbResultMultiple, DbResultSingle};
 use crate::database::common::utilities::entity_is_correct;
-use crate::database::common::{DbCreate, DbDelete, DbPoolHandler, DbReadMany, DbReadOne, DbRepository, DbUpdate, EntityById, PoolHandler};
-use crate::database::models::GetById;
+use crate::database::common::{DbPoolHandler, DbReadOne, DbRepository, DbUpdate, EntityById, PoolHandler};
 use crate::database::models::user::{User, UserLogin, UserUpdate, UserUpdatePassword};
+use crate::database::models::GetById;
 
 fn generate_salt() -> SaltString {
     SaltString::generate(&mut OsRng)

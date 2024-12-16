@@ -1,6 +1,5 @@
 use std::env;
 
-use async_trait::async_trait;
 use dotenv::dotenv;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;

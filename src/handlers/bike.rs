@@ -3,9 +3,7 @@ use crate::database::common::query_parameters::{
 };
 use crate::database::common::repository::DbCreate;
 use crate::database::common::{DbDelete, DbReadMany, DbReadOne, DbUpdate};
-use crate::database::models::bike::{
-    BikeCreate, BikeDetail, BikeImageCreate, BikeImageSearch, BikeSearch, BikeUpdate,
-};
+use crate::database::models::bike::{BikeCreate, BikeDetail, BikeDisplay, BikeImageCreate, BikeImageSearch, BikeSearch, BikeUpdate};
 use crate::database::models::brand::BrandSearch;
 use crate::database::models::model::ModelSearch;
 use crate::database::models::{GetById, Id};
@@ -15,16 +13,12 @@ use crate::database::repositories::model::repository::ModelRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::error::AppError;
 use crate::forms::bike::{BikeCreateForm, BikeEditForm, BikeUploadForm};
-use crate::handlers::helpers::get_bike_detail_base;
+use crate::handlers::helpers::{get_bike_detail_base, get_template_name};
 use crate::handlers::utilities::{
-    get_metadata_from_session, get_user_from_identity, is_htmx, remove_file, save_file,
+    get_metadata_from_session, get_user_from_identity, remove_file, save_file,
     validate_file, BikeCreateSessionKeys, ImageDimensions,
 };
-use crate::templates::bike::{BikeCreateContentTemplate, BikeCreatePageTemplate,
-    BikeDetailAdminContentTemplate, BikeDetailAdminPageTemplate, BikeDetailContentTemplate,
-    BikeDetailPageTemplate, BikeEditContentTemplate, BikeEditPageTemplate, BikeTemplate,
-    BikeUploadFormTemplate,
-};
+use crate::templates::bike::{BikeCreateTemplate, BikeEditTemplate, BikesTemplate, BikeUploadFormTemplate};
 use crate::{authorized, AppState};
 use actix_identity::Identity;
 use actix_multipart::form::MultipartForm;
@@ -50,20 +44,15 @@ pub async fn get_bikes(
         )))
         .await?;
 
-    let template_name = if is_htmx(request) {
-        "bike/content.html"
-    } else {
-        "bike/page.html"
-    };
-
+    let template_name = get_template_name(&request, "bike");
     let env = state.jinja.acquire_env()?;
-    let temp = env.get_template(template_name)?;
-    let rendered = temp.render(BikeTemplate {
+    let template = env.get_template(&template_name)?;
+    let body = template.render(BikesTemplate {
         logged_in: identity.is_some(),
-        bikes,
+        bikes: bikes.into_iter().map(BikeDisplay::from).collect(),
     })?;
 
-    Ok(HttpResponse::Ok().content_type("text/html").body(rendered))
+    Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
 
 #[get("/{id}/detail")]
@@ -71,15 +60,16 @@ pub async fn get_bike_detail(
     request: HttpRequest,
     identity: Option<Identity>,
     bike_repo: web::Data<BikeRepository>,
+    state: web::Data<AppState>,
     path: web::Path<(Id,)>,
 ) -> Result<HttpResponse, AppError> {
-    let base = get_bike_detail_base(&identity, bike_repo, path.into_inner().0, false).await?;
+    let base = get_bike_detail_base(identity.as_ref(), bike_repo, path.into_inner().0, false).await?;
 
-    let body = match is_htmx(request) {
-        true => BikeDetailContentTemplate::from(base).render()?,
-        false => BikeDetailPageTemplate::from(base).render()?,
-    };
-
+    let template_name = get_template_name(&request, "bike/detail");
+    let env = state.jinja.acquire_env()?;
+    let template = env.get_template(&template_name)?;
+    let body = template.render(base)?;
+    
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
 
@@ -89,27 +79,22 @@ pub async fn create_bike_page(
     identity: Option<Identity>,
     brand_repo: web::Data<BrandRepository>,
     model_repo: web::Data<ModelRepository>,
+    state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
     authorized!(identity, request.path());
 
     let brands = brand_repo.read_many(&BrandSearch::default()).await?;
     let models = model_repo.read_many(&ModelSearch::default()).await?;
 
-    let body = match is_htmx(request) {
-        true => BikeCreateContentTemplate {
-            brands,
-            models,
-            logged_in: true,
-        }
-        .render()?,
-        false => BikeCreatePageTemplate {
-            brands,
-            models,
-            logged_in: true,
-        }
-        .render()?,
-    };
-
+    let template_name = get_template_name(&request, "bike/admin/create");
+    let env = state.jinja.acquire_env()?;
+    let template = env.get_template(&template_name)?;
+    let body = template.render(BikeCreateTemplate {
+        brands,
+        models,
+        logged_in: true,
+    })?;
+    
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
 
@@ -117,12 +102,18 @@ pub async fn create_bike_page(
 pub async fn upload_bike_form(
     request: HttpRequest,
     identity: Option<Identity>,
+    state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
     authorized!(identity, request.path());
-    let template = BikeUploadFormTemplate {
+    
+    let template_name = get_template_name(&request, "bike/admin/upload");
+    let env = state.jinja.acquire_env()?;
+    let template = env.get_template(&template_name)?;
+    let body = template.render(BikeUploadFormTemplate {
         message: "".to_string(),
-    };
-    let body = template.render()?;
+
+    })?;
+    
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
 
@@ -217,15 +208,16 @@ pub async fn manage_bike(
     identity: Option<Identity>,
     bike_repo: web::Data<BikeRepository>,
     path: web::Path<(Id,)>,
+    state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
     let u = authorized!(identity, request.path());
 
-    let base = get_bike_detail_base(&Some(u), bike_repo, path.into_inner().0, true).await?;
+    let base = get_bike_detail_base(Some(&u), bike_repo, path.into_inner().0, true).await?;
 
-    let body = match is_htmx(request) {
-        true => BikeDetailAdminContentTemplate::from(base).render()?,
-        false => BikeDetailAdminPageTemplate::from(base).render()?,
-    };
+    let template_name = get_template_name(&request, "bike/admin/detail");
+    let env = state.jinja.acquire_env()?;
+    let template = env.get_template(&template_name)?;
+    let body = template.render(base)?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
@@ -305,6 +297,7 @@ pub async fn edit_bike_page(
     brand_repo: web::Data<BrandRepository>,
     model_repo: web::Data<ModelRepository>,
     path: web::Path<(Id,)>,
+    state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
     let _ = authorized!(identity, request.path());
     let bike_id = path.into_inner().0;
@@ -317,23 +310,16 @@ pub async fn edit_bike_page(
     let brands = brand_repo.read_many(&BrandSearch::default()).await?;
     let models = model_repo.read_many(&ModelSearch::default()).await?;
 
-    let body = match is_htmx(request) {
-        true => BikeEditContentTemplate {
-            bike,
-            brands,
-            models,
-            logged_in: true,
-        }
-        .render()?,
-        false => BikeEditPageTemplate {
-            bike,
-            brands,
-            models,
-            logged_in: true,
-        }
-        .render()?,
-    };
-
+    let template_name = get_template_name(&request, "bike/admin/edit");
+    let env = state.jinja.acquire_env()?;
+    let template = env.get_template(&template_name)?;
+    let body = template.render(BikeEditTemplate {
+        bike: BikeDisplay::from(bike),
+        brands,
+        models,
+        logged_in: true,
+    })?;
+    
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
 

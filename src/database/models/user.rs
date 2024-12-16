@@ -1,9 +1,9 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use crate::database::common::EntityById;
 use crate::database::models::Id;
 
 
-#[derive(sqlx::FromRow, Debug, Clone, PartialEq, Eq)]
+#[derive(sqlx::FromRow, Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct User {
     pub id: Id,
     // --------------

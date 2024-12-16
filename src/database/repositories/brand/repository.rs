@@ -8,7 +8,6 @@ use crate::database::common::utilities::entity_is_correct;
 use crate::database::common::{
     DbCreate, DbDelete, DbPoolHandler, DbReadMany, DbReadOne, DbRepository, DbUpdate, PoolHandler,
 };
-use async_trait::async_trait;
 use sqlx::{Postgres, Transaction};
 
 use crate::database::models::brand::*;

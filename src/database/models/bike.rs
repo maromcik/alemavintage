@@ -59,6 +59,41 @@ impl EntityById for BikeDetail {
     }
 }
 
+#[derive(Serialize)]
+pub struct BikeDisplay {
+    pub id: Id,
+    // --------------
+    pub name: String,
+    pub brand_id: Id,
+    pub model_id: Id,
+    pub view_count: i64,
+    pub like_count: i64,
+    pub thumbnail: String,
+    pub description: String,
+    pub deleted: bool,
+
+    pub brand_name: String,
+    pub model_name: String,
+}
+
+impl From<BikeDetail> for BikeDisplay {
+    fn from(value: BikeDetail) -> Self {
+        Self {
+            id: value.id,
+            name: value.name,
+            brand_id: value.brand_id,
+            model_id: value.model_id,
+            view_count: value.view_count,
+            like_count: value.like_count,
+            thumbnail: value.thumbnail,
+            description: value.description,
+            deleted: value.deleted_at.is_some(),
+            brand_name: value.brand_name,
+            model_name: value.model_name,
+        }
+    }
+}
+
 pub struct BikeCreate {
     pub name: String,
     pub brand_id: Id,

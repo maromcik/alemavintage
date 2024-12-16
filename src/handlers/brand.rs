@@ -1,39 +1,28 @@
-use actix_identity::Identity;
-use actix_session::Session;
-use actix_web::{get, post, web, HttpRequest, HttpResponse};
-use crate::authorized;
+use crate::database::common::{DbCreate, DbReadMany};
 use crate::database::models::brand::{BrandCreate, BrandSearch};
-use crate::database::models::model::ModelSearch;
 use crate::database::repositories::brand::repository::BrandRepository;
-use crate::database::repositories::model::repository::ModelRepository;
 use crate::error::AppError;
-use crate::handlers::utilities::{get_user_from_identity, is_htmx, BikeCreateSessionKeys};
-use crate::templates::bike::BikeCreateContentTemplate;
-use actix_web::http::header::LOCATION;
-use crate::templates::brand::{BrandContentTemplate, BrandCreateContentTemplate, BrandCreatePageTemplate, BrandPageTemplate};
-use askama::Template;
-use crate::database::common::{DbCreate, DbReadMany, DbReadOne};
-use crate::database::models::GetById;
-use crate::database::repositories::user::repository::UserRepository;
-use crate::forms::bike::BikeCreateForm;
 use crate::forms::brand::BrandCreateForm;
+use crate::handlers::helpers::get_template_name;
+use crate::templates::brand::{BrandCreateTemplate, BrandTemplate};
+use crate::{authorized, AppState};
+use actix_identity::Identity;
+use actix_web::http::header::LOCATION;
+use actix_web::{get, post, web, HttpRequest, HttpResponse};
+use askama::Template;
 
 #[get("/create")]
 pub async fn create_brand_page(
     request: HttpRequest,
     identity: Option<Identity>,
+    state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
     authorized!(identity, request.path());
-    let body = match is_htmx(request) {
-        true => BrandCreateContentTemplate {
-            logged_in: true,
-        }
-            .render()?,
-        false => BrandCreatePageTemplate {
-            logged_in: true,
-        }
-            .render()?,
-    };
+
+    let template_name = get_template_name(&request, "brand/create");
+    let env = state.jinja.acquire_env()?;
+    let template = env.get_template(&template_name)?;
+    let body = template.render(BrandCreateTemplate { logged_in: true })?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
@@ -46,8 +35,10 @@ pub async fn create_brand(
     form: web::Form<BrandCreateForm>,
 ) -> Result<HttpResponse, AppError> {
     let _ = authorized!(identity, request.path());
-    
-    let brand = brand_repo.create(&BrandCreate::new(&form.name, &form.description)).await?;
+
+    let brand = brand_repo
+        .create(&BrandCreate::new(&form.name, &form.description))
+        .await?;
 
     Ok(HttpResponse::SeeOther()
         .insert_header((LOCATION, "/brand"))
@@ -58,22 +49,17 @@ pub async fn create_brand(
 pub async fn get_brands(
     request: HttpRequest,
     brand_repo: web::Data<BrandRepository>,
-) -> Result<HttpResponse, AppError>
-{
+    state: web::Data<AppState>,
+) -> Result<HttpResponse, AppError> {
     let brands = brand_repo.read_many(&BrandSearch::new(None)).await?;
 
-    let body = match is_htmx(request) {
-        true => BrandContentTemplate {
-            brands,
-            logged_in: true,
-        }
-            .render()?,
-        false => BrandPageTemplate {
-            brands,
-            logged_in: true,
-        }
-            .render()?,
-    };
+    let template_name = get_template_name(&request, "bike");
+    let env = state.jinja.acquire_env()?;
+    let template = env.get_template(&template_name)?;
+    let body = template.render(BrandTemplate {
+        brands,
+        logged_in: false,
+    })?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }

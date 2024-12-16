@@ -1,9 +1,10 @@
+use serde::Serialize;
 use crate::database::common::EntityById;
 use crate::database::models::brand::Brand;
 use crate::database::models::Id;
 
 
-#[derive(sqlx::FromRow, Debug, PartialEq, Eq, Clone)]
+#[derive(sqlx::FromRow, Debug, PartialEq, Eq, Clone, Serialize)]
 pub struct Model {
     pub id: Id,
     pub name: String,

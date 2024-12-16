@@ -48,7 +48,7 @@
                     class="bg-cyan-950 rounded-md p-3 text-xl hover:bg-blue-300 mr-2">
                 <i class="fa-solid fa-pencil text-white"></i>
             </button>
-            {% if bike.deleted_at.is_some() %}
+            {% if bike.deleted %}
             <button class="bg-cyan-950 rounded-md p-3 text-xl hover:bg-blue-300 mr-2"
                     hx-target-error="#content-area"
                     hx-put="/bike/{{ bike.id }}/restore" hx-target="#content-area">

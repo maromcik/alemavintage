@@ -14,11 +14,7 @@ use log::{info, warn};
 use minijinja::{path_loader, Environment, Error, Value};
 use minijinja_autoreload::AutoReloader;
 use std::env;
-use std::path::PathBuf;
 use std::sync::Arc;
-use chrono::{DateTime, Utc};
-use chrono::serde::ts_seconds::deserialize;
-use serde::Deserializer;
 
 mod database;
 mod error;
@@ -62,7 +58,7 @@ async fn main() -> anyhow::Result<()> {
         let mut env = Environment::new();
         env.set_loader(path_loader(&template_path));
         notifier.set_fast_reload(true);
-        notifier.watch_path(&template_path, true);
+        notifier.watch_path(template_path, true);
         Ok(env)
     });
 

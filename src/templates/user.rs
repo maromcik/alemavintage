@@ -1,18 +1,19 @@
 use crate::database::models::bike::BikeDetail;
 use crate::database::models::user::User;
 use askama::Template;
+use serde::Serialize;
 
 const WEAK_PASSWORD_MESSAGE: &str = "Weak password! Password must contain at least one from each: {lower case character, upper case character, number, special character} and must be at least 6 characters long";
 
-#[derive(Template, Default)]
-#[template(path = "user/login.html")]
+
+
+#[derive(Serialize)]
 pub struct LoginTemplate {
     pub message: String,
     pub return_url: String,
 }
 
-#[derive(Template, Default)]
-#[template(path = "user/manage/password/content.html")]
+#[derive(Serialize)]
 pub struct UserManagePasswordTemplate {
     pub message: String,
     pub success: bool,
@@ -29,18 +30,9 @@ impl UserManagePasswordTemplate {
     }
 }
 
-#[derive(Template)]
-#[template(path = "user/manage/profile/page.html")]
-pub struct UserManageProfilePageTemplate {
-    pub user: User,
-    pub message: String,
-    pub success: bool,
-    pub logged_in: bool,
-}
 
-#[derive(Template)]
-#[template(path = "user/manage/profile/content.html")]
-pub struct UserManageProfileContentTemplate {
+#[derive(Serialize)]
+pub struct UserManageProfileTemplate {
     pub user: User,
     pub message: String,
     pub success: bool,
@@ -48,8 +40,7 @@ pub struct UserManageProfileContentTemplate {
 }
 
 
-#[derive(Template)]
-#[template(path = "user/profile_user_form.html")]
+#[derive(Serialize)]
 pub struct UserManageProfileUserFormTemplate {
     pub user: User,
     pub message: String,
