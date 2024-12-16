@@ -1,8 +1,8 @@
 use crate::database::common::DbReadOne;
+use crate::database::models::{GetById, Id};
+use rexiv2::Metadata;
 use std::fs::File;
 use std::io::{BufWriter, Read};
-use rexiv2::Metadata;
-use crate::database::models::{GetById, Id};
 
 use crate::error::{AppError, AppErrorKind};
 use actix_identity::Identity;
@@ -17,7 +17,8 @@ use crate::database::repositories::user::repository::UserRepository;
 use crate::MIN_PASS_LEN;
 use actix_web::http::header::LOCATION;
 use futures_util::TryFutureExt;
-use image::{ImageFormat, ImageResult};
+use image::metadata::Orientation;
+use image::{metadata, DynamicImage, ImageFormat, ImageResult};
 use uuid::Uuid;
 
 pub struct ImageDimensions {
@@ -145,22 +146,36 @@ pub fn save_file(file: TempFile, path: &str, dimensions: &ImageDimensions) -> Re
     let mut buffer = Vec::default();
     file.file.into_file().read_to_end(&mut buffer)?;
     let metadata = Metadata::new_from_buffer(&buffer)?;
+    let orientation = metadata.get_orientation();
+
     let img = image::load_from_memory(&buffer)?;
-    let format = image::guess_format(&*buffer)?;
-    let resized_img = img.resize(
+    let format = image::guess_format(&buffer)?;
+    let mut resized_img = img.resize(
         dimensions.width,
         dimensions.height,
         image::imageops::FilterType::Nearest,
     );
 
+    resized_img.apply_orientation(map_orientation(orientation));
+
     let path = format!(".{path}");
     let mut output_file = BufWriter::new(File::create(&path)?);
     resized_img.write_to(&mut output_file, format)?;
-    let resized_metadata = Metadata::new_from_path(&path)?;
-    resized_metadata.set_tag_string("Exif.Image.ImageWidth", &dimensions.width.to_string())?;
-    resized_metadata.set_tag_string("Exif.Image.ImageLength", &dimensions.height.to_string())?;
-    metadata.save_to_file(&path)?;
+
     Ok(())
+}
+
+fn map_orientation(orientation: rexiv2::Orientation) -> Orientation {
+    match orientation {
+        rexiv2::Orientation::Unspecified | rexiv2::Orientation::Normal => Orientation::NoTransforms,
+        rexiv2::Orientation::HorizontalFlip => Orientation::FlipHorizontal,
+        rexiv2::Orientation::Rotate180 => Orientation::Rotate180,
+        rexiv2::Orientation::VerticalFlip => Orientation::FlipVertical,
+        rexiv2::Orientation::Rotate90HorizontalFlip => Orientation::Rotate90FlipH,
+        rexiv2::Orientation::Rotate90 => Orientation::Rotate90,
+        rexiv2::Orientation::Rotate90VerticalFlip => Orientation::Rotate270FlipH,
+        rexiv2::Orientation::Rotate270 => Orientation::Rotate270,
+    }
 }
 
 pub fn remove_file(path: &str) -> Result<(), AppError> {
