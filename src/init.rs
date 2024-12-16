@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use crate::database::common::PoolHandler;
 use crate::database::common::{DbPoolHandler, DbRepository};
 
@@ -5,7 +6,9 @@ use crate::handlers::*;
 use actix_files::Files as ActixFiles;
 use actix_web::web;
 use actix_web::web::{service, ServiceConfig};
+use minijinja::{path_loader, Environment};
 use sqlx::PgPool;
+use crate::AppState;
 use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::brand::repository::BrandRepository;
 use crate::database::repositories::model::repository::ModelRepository;
@@ -15,7 +18,8 @@ use crate::handlers::brand::{create_brand, create_brand_page, get_brands};
 use crate::handlers::index::{index};
 use crate::handlers::user::{user_manage_form_page, user_manage_password, user_manage_password_form};
 
-pub fn configure_webapp(pool: &PgPool) -> Box<dyn FnOnce(&mut ServiceConfig)> {
+
+pub fn configure_webapp(pool: &PgPool, jinja: Arc<Environment<'static>>) -> Box<dyn FnOnce(&mut ServiceConfig)> {
     let user_repo = UserRepository::new(PoolHandler::new(pool.clone()));
     let bike_repo = BikeRepository::new(PoolHandler::new(pool.clone()));
     let model_repository = ModelRepository::new(PoolHandler::new(pool.clone()));
@@ -76,10 +80,12 @@ pub fn configure_webapp(pool: &PgPool) -> Box<dyn FnOnce(&mut ServiceConfig)> {
     //     .service(get_pagination)
     //     .service(remove_rating_for_bike);
     //
+
     Box::new(move |cfg: &mut ServiceConfig| {
         cfg
             .app_data(web::Data::new(bike_repo.clone()))
             .app_data(web::Data::new(user_repo.clone()))
+            .app_data(web::Data::new(AppState::new(jinja.clone())))
             .service(bike_scope)
             .service(user_scope)
             .service(brand_scope)

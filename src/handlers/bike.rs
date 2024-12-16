@@ -1,4 +1,4 @@
-use crate::authorized;
+use crate::{authorized, AppState};
 use crate::database::common::query_parameters::{DbColumn, DbOrder, DbOrderColumn, DbQueryParams, DbTable};
 use crate::database::common::repository::DbCreate;
 use crate::database::common::{DbDelete, DbReadMany, DbReadOne, DbUpdate};
@@ -28,12 +28,15 @@ use rayon::iter::ParallelIterator;
 use rayon::prelude::IntoParallelIterator;
 use uuid::Uuid;
 
+
 #[get("")]
 pub async fn get_bikes(
     request: HttpRequest,
     identity: Option<Identity>,
     bike_repo: web::Data<BikeRepository>,
+    state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
+    
     let bikes = bike_repo
         .read_many(&BikeSearch::with_params(DbQueryParams::order(
             DbOrderColumn::new_column_only(DbColumn::ViewCount, DbOrder::Desc),
@@ -41,17 +44,17 @@ pub async fn get_bikes(
         )))
         .await?;
 
+    let template_name = if is_htmx(request) { "bike/content.html" } else { "bike/page.html" };
+    
     let template = BikeBase {
         logged_in: identity.is_some(),
         bikes
     };
-
-    let body = match is_htmx(request) {
-        true => BikeContentTemplate::from(template).render()?,
-        false => BikeTemplate::from(template).render()?,
-    };
-
-    Ok(HttpResponse::Ok().content_type("text/html").body(body))
+    
+    let temp = state.jinja.get_template(template_name)?;
+    let rendered = temp.render(BikeTemplate::from(template))?;
+    
+    Ok(HttpResponse::Ok().content_type("text/html").body(rendered))
 }
 
 #[get("/{id}/detail")]

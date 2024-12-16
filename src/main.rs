@@ -12,6 +12,8 @@ use actix_web::{cookie::Key, App, HttpServer};
 use env_logger::Env;
 use log::{info, warn};
 use std::env;
+use std::sync::Arc;
+use minijinja::{path_loader, Environment};
 
 mod database;
 mod error;
@@ -26,6 +28,22 @@ const SECS_IN_WEEK: i64 = 60 * 60 * 24 * 7;
 const PAYLOAD_LIMIT: usize = 16 * 1024 * 1024 * 1024; // 16GiB
 const MIN_PASS_LEN: usize = 6;
 
+pub struct AppState {
+    pub jinja: Arc<Environment<'static>>,
+}
+
+impl AppState {
+    pub fn new(jinja: Arc<Environment<'static>>) -> Self {
+        AppState { jinja }
+    }
+}
+
+fn create_env() -> Arc<Environment<'static>> {
+    let mut env = Environment::new();
+    env.set_loader(path_loader("templates"));
+
+    Arc::new(env)
+}
 
 #[actix_web::main]
 async fn main() -> anyhow::Result<()> {
@@ -40,6 +58,7 @@ async fn main() -> anyhow::Result<()> {
     let _dir = env::temp_dir();
 
     let pool = setup_pool(10_u32).await?;
+    let jinja = create_env();
     let host = parse_host();
     let host2 = host.clone();
 
@@ -90,7 +109,7 @@ async fn main() -> anyhow::Result<()> {
                     .max_age(3600),
             )
             .wrap(Logger::default())
-            .configure(configure_webapp(&pool))
+            .configure(configure_webapp(&pool, jinja.clone()))
     })
     .bind(host2)?
     .run()

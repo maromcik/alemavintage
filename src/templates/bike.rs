@@ -1,17 +1,18 @@
 use askama::Template;
+use serde::Serialize;
 use crate::database::models::bike::{BikeDetail, BikeImage};
 use crate::database::models::brand::Brand;
 use crate::database::models::model::Model;
 
 
-#[derive(Template)]
+#[derive(Template, Serialize)]
 #[template(path = "bike/page.html")]
 pub struct BikeTemplate {
     pub logged_in: bool,
     pub bikes: Vec<BikeDetail>,
 }
 
-#[derive(Template)]
+#[derive(Template, Serialize)]
 #[template(path = "bike/content.html")]
 pub struct BikeContentTemplate {
     pub logged_in: bool,

@@ -4,6 +4,7 @@ use crate::database::common::query_parameters::{
 use crate::database::common::EntityById;
 use crate::database::models::Id;
 use chrono::{DateTime, Utc};
+use serde::Serialize;
 
 #[derive(sqlx::FromRow, Debug, Clone, PartialEq)]
 pub struct Bike {
@@ -30,7 +31,7 @@ impl EntityById for Bike {
     }
 }
 
-#[derive(sqlx::FromRow, Debug, Clone, PartialEq)]
+#[derive(sqlx::FromRow, Debug, Clone, PartialEq, Serialize)]
 pub struct BikeDetail {
     pub id: Id,
     // --------------

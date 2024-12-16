@@ -118,6 +118,12 @@ impl From<actix_session::SessionInsertError> for AppError {
     }
 }
 
+impl From<minijinja::Error> for AppError {
+    fn from(value: minijinja::Error) -> Self {
+        Self::new(AppErrorKind::TemplatingError, value.to_string().as_str())
+    }
+}
+
 impl From<Rexiv2Error> for AppError {
     fn from(value: Rexiv2Error) -> Self {
         Self::new(AppErrorKind::FileError, value.to_string().as_str())

@@ -5,13 +5,11 @@
                     <img class="w-full h-full" src="{{ bike.thumbnail }}" alt="bike Image">
                 </div>
                 <div class="font-bold text-lg text-black mb-2">
-                    {{ bike.name }}
+                    {{ bike.id }}
                 </div>
                 <div class="w-full flex flex-col justify-between mt-auto mb-2">
                     <div class="flex flex-row justify-between">
-                        {% if bike.deleted_at.is_some() %}
-                        <p class="text-red-400 text-sm">hidden</p>
-                        {% endif %}
+
                     </div>
                 </div>
             </div>
