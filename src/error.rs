@@ -9,6 +9,7 @@ use std::fmt::{Debug, Display, Formatter};
 use std::io::Error;
 use std::num::ParseIntError;
 use image::ImageError;
+use minijinja::{path_loader, Environment};
 use rexiv2::Rexiv2Error;
 use thiserror::Error;
 
@@ -185,12 +186,15 @@ impl ResponseError for AppError {
 }
 
 fn render_generic(error: &AppError) -> HttpResponse {
-    let template = GenericError {
+    let mut env = Environment::new();
+    env.set_loader(path_loader("templates"));
+    let template = env.get_template("error.html").expect("Failed to read the error template");
+    let context = GenericError {
         code: error.status_code().to_string(),
         description: error.message.clone(),
     };
-    // let body = template.render().unwrap_or_default();
+    let body = template.render(context).unwrap_or_default();
     HttpResponse::build(error.status_code())
         .insert_header(ContentType::html())
-        .body("")
+        .body(body)
 }
