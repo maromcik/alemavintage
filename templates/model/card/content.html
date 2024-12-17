@@ -1,0 +1,7 @@
+<div class="container h-40 w-full mx-auto bg-white p-4">
+    <a class="cursor-pointer" hx-get="/model/{{ model.id }}/detail"  hx-push-url="/model/{{ model.id }}/detail" hx-target-error="#content-area" hx-target="#content-area">
+        <div class="flex w-full h-full flex-row items-center justify-center overflow-hidden rounded border border-gray-800 hover:shadow-sm hover:shadow-gray-500 hover:border-gray-500 shadow-inner px-4 py-2">
+            <div class="text-center text-lg font-bold text-black">{{ model.name }}</div>
+        </div>
+    </a>
+</div>

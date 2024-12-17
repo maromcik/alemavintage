@@ -63,17 +63,17 @@ where
         let maybe_model = sqlx::query_as!(
             ModelDetail,
             r#"
-            SELECT 
+            SELECT
                 model.id,
                 model.brand_id,
                 model.name,
                 model.description,
-                
+
                 brand.name AS brand_name,
                 brand.description AS brand_description
-            FROM 
+            FROM
             "Model" as model
-                INNER JOIN 
+                INNER JOIN
             "Brand" as brand ON (model.brand_id = brand.id)
             WHERE model.id = $1
             "#,
@@ -96,17 +96,17 @@ impl DbReadMany<ModelSearch, ModelDetail> for ModelRepository {
         let models = sqlx::query_as!(
             ModelDetail,
             r#"
-            SELECT 
+            SELECT
                 model.id,
                 model.brand_id,
                 model.name,
                 model.description,
-                
+
                 brand.name AS brand_name,
                 brand.description AS brand_description
-            FROM 
+            FROM
             "Model" as model
-                INNER JOIN 
+                INNER JOIN
             "Brand" as brand ON (model.brand_id = brand.id)
             WHERE
                 (model.name = $1 OR $1 IS NULL)

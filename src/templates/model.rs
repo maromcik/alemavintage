@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use serde::Serialize;
 use crate::database::models::bike::BikeDetail;
 use crate::database::models::brand::Brand;
@@ -11,7 +12,7 @@ pub struct ModelCreateTemplate {
 
 #[derive(Serialize)]
 pub struct ModelTemplate {
-    pub models: Vec<ModelDetail>,
+    pub models: HashMap<String, Vec<ModelDetail>>,
     pub logged_in: bool,
 }
 

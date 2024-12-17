@@ -1,4 +1,4 @@
-use crate::database::models::bike::BikeDisplay;
+use crate::database::models::bike::{BikeDetail, BikeDisplay};
 use crate::database::models::brand::Brand;
 use crate::database::models::model::{Model, ModelDetail};
 use serde::Serialize;
@@ -19,7 +19,7 @@ pub struct BikeCreateTemplate {
 
 #[derive(Serialize)]
 pub struct BikeEditTemplate {
-    pub bike: BikeDisplay,
+    pub bike: BikeDetail,
     pub models: Vec<ModelDetail>,
     pub logged_in: bool,
 }

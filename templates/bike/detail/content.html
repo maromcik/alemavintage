@@ -19,15 +19,22 @@
         <div class="mb-4 sm:ml-0 xl:ml-10 sm:mb-0 xl:col-span-1">
             <div class="flex flex-row justify-between">
                 <div class="flex flex-col">
-                    <div class="pt-1">{{ bike.model_name }}</div>
                     <div class="book-name  text-6xl font-bold">{{bike.name}}</div>
                 </div>
             </div>
             <div class="pt-5 items-center">
                 <div class="w-auto h-10 md:h-12 lg:h-24 pt-1 md:pt-2 lg:pt-8">
-                    <a class="cursor-pointer text-3xl pl-5" hx-get="/brand/{{ bike.brand_id }}/author" hx-target="#content-area"
-                       hx-push-url="/brand/{{ bike.brand_id }}">
+                    <a class="cursor-pointer text-3xl pl-5" hx-get="/brand/{{ bike.brand_id }}/detail" hx-target="#content-area"
+                       hx-push-url="/brand/{{ bike.brand_id }}/detail">
                         {{ bike.brand_name }}
+                    </a>
+                </div>
+            </div>
+            <div class="pt-5 items-center">
+                <div class="w-auto h-10 md:h-12 lg:h-24 pt-1 md:pt-2 lg:pt-8">
+                    <a class="cursor-pointer text-3xl pl-5" hx-get="/model/{{ bike.model_id }}/detail" hx-target="#content-area"
+                       hx-push-url="/model/{{ bike.model_id }}/detail">
+                        {{ bike.model_name }}
                     </a>
                 </div>
             </div>
@@ -37,7 +44,7 @@
 
     <div class="flex flex-col justify-between pt-4 overflow-hidden">
         <h2 class="text-2xl font-bold mb-4">Description</h2>
-        <p class="mb-4"> {{bike.description}}</p>
+        {{bike.description | safe }}
     </div>
     <div class="flex flex-col justify-between pt-4 overflow-hidden">
         <h2 class="text-2xl font-bold mb-4">Images</h2>

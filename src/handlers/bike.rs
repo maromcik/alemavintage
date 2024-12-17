@@ -1,3 +1,4 @@
+use std::fs::metadata;
 use crate::database::common::query_parameters::{
     DbColumn, DbOrder, DbOrderColumn, DbQueryParams, DbTable,
 };
@@ -26,6 +27,7 @@ use actix_web::{delete, get, post, put, web, HttpRequest, HttpResponse};
 use rayon::iter::ParallelIterator;
 use rayon::prelude::IntoParallelIterator;
 use uuid::Uuid;
+use markdown;
 
 #[get("")]
 pub async fn get_bikes(
@@ -151,6 +153,7 @@ pub async fn upload_bike(
     let metadata = get_metadata_from_session(&session, &session_keys)?;
 
     let thumbnail_path = validate_file(&form.thumbnail, Uuid::new_v4(), "image", "thumbnail")?;
+    
 
     let bike_create = BikeCreate::new(
         &metadata.name,
@@ -300,7 +303,7 @@ pub async fn edit_bike_page(
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(BikeEditTemplate {
-        bike: BikeDisplay::from(bike),
+        bike,
         models,
         logged_in: true,
     })?;

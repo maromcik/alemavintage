@@ -9,14 +9,16 @@
 {% endif %}
 <div class="pl-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
 
+    {% for (brand, models) in models | items %}
+    <h3 class="text-2xl font-bold text-gray-900">{{ brand }}</h3>
     {% for model in models %}
     <div class="container h-40 w-full mx-auto bg-white p-4">
         <a class="cursor-pointer" hx-get="/model/{{ model.id }}/detail"  hx-push-url="/model/{{ model.id }}/detail" hx-target-error="#content-area" hx-target="#content-area">
             <div class="flex w-full h-full flex-row items-center justify-center overflow-hidden rounded border border-gray-800 hover:shadow-sm hover:shadow-gray-500 hover:border-gray-500 shadow-inner px-4 py-2">
-                <div class="text-center text-lg font-bold text-black">{{ model.name }} - {{ model.brand_name }} - {{ model.description }}</div>
+                <div class="text-center text-lg font-bold text-black">{{ model.name }}</div>
             </div>
         </a>
     </div>
-
+    {% endfor %}
     {% endfor %}
 </div>

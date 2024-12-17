@@ -85,7 +85,7 @@ impl From<BikeDetail> for BikeDisplay {
             view_count: value.view_count,
             like_count: value.like_count,
             thumbnail: value.thumbnail,
-            description: value.description,
+            description: markdown::to_html(&value.description),
             deleted: value.deleted_at.is_some(),
             brand_name: value.brand_name,
             model_name: value.model_name,

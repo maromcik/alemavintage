@@ -1,5 +1,6 @@
+use std::collections::HashMap;
 use crate::database::common::{DbCreate, DbReadMany, DbReadOne};
-use crate::database::models::model::{ModelCreate, ModelSearch};
+use crate::database::models::model::{ModelCreate, ModelDetail, ModelSearch};
 use crate::database::repositories::model::repository::ModelRepository;
 use crate::error::AppError;
 use crate::forms::model::ModelCreateForm;
@@ -9,6 +10,7 @@ use crate::{authorized, AppState};
 use actix_identity::Identity;
 use actix_web::http::header::LOCATION;
 use actix_web::{get, post, web, HttpRequest, HttpResponse};
+use itertools::Itertools;
 use crate::database::common::query_parameters::{DbColumn, DbOrder, DbOrderColumn, DbQueryParams, DbTable};
 use crate::database::models::brand::BrandSearch;
 use crate::database::models::{GetById, Id};
@@ -61,12 +63,19 @@ pub async fn get_models(
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
     let models = model_repo.read_many(&ModelSearch::default()).await?;
-
+    
+    let models_grouped = models
+        .into_iter()
+        .chunk_by(|m| m.brand_name.clone())
+        .into_iter()
+        .map(|group| (group.0, group.1.collect::<Vec<ModelDetail>>()))
+        .collect::<HashMap<String, Vec<ModelDetail>>>();
+    
     let template_name = get_template_name(&request, "model");
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(ModelTemplate {
-        models,
+        models: models_grouped,
         logged_in: identity.is_some(),
     })?;
 

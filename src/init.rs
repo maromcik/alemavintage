@@ -7,7 +7,7 @@ use crate::database::repositories::brand::repository::BrandRepository;
 use crate::database::repositories::model::repository::ModelRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::handlers::bike::{create_bike, create_bike_page, edit_bike, edit_bike_page, get_bike_detail, get_bikes, hard_remove_bike, manage_bike, remove_bike, restore_bike, upload_bike, upload_bike_form};
-use crate::handlers::brand::{create_brand, create_brand_page, get_brands};
+use crate::handlers::brand::{create_brand, create_brand_page, get_brand, get_brands};
 use crate::handlers::index::index;
 use crate::handlers::user::{user_manage_form_page, user_manage_password, user_manage_password_form};
 use crate::handlers::*;
@@ -58,9 +58,11 @@ pub fn configure_webapp(pool: &PgPool, jinja: Arc<AutoReloader>) -> Box<dyn FnOn
 
     let brand_scope = web::scope("brand")
         .app_data(web::Data::new(brand_repository.clone()))
+        .app_data(web::Data::new(model_repository.clone()))
         .service(create_brand)
         .service(get_brands)
-        .service(create_brand_page);
+        .service(create_brand_page)
+        .service(get_brand);
 
     let model_scope = web::scope("model")
         .app_data(web::Data::new(bike_repo.clone()))
