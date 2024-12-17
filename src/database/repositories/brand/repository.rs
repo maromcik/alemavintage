@@ -1,13 +1,9 @@
-use crate::database::common::error::BackendErrorKind::{
-    BrandDeleted, BrandDoesNotExist, BrandUpdateParametersEmpty,
-};
+use crate::database::common::error::BackendErrorKind::{BikeDeleted, BikeDoesNotExist, BrandDeleted, BrandDoesNotExist, BrandUpdateParametersEmpty};
 use crate::database::common::error::{
     BackendError, DbError, DbResultMultiple, DbResultSingle, EntityError,
 };
 use crate::database::common::utilities::entity_is_correct;
-use crate::database::common::{
-    DbCreate, DbDelete, DbPoolHandler, DbReadMany, DbReadOne, DbRepository, DbUpdate, PoolHandler,
-};
+use crate::database::common::{DbCreate, DbDelete, DbPoolHandler, DbReadMany, DbReadOne, DbRepository, DbUpdate, EntityById, PoolHandler};
 use sqlx::{Postgres, Transaction};
 
 use crate::database::models::brand::*;
@@ -20,33 +16,25 @@ pub struct BrandRepository {
 
 impl BrandRepository {
     pub async fn get_brand<'a>(
-        params: GetById,
+        params: &impl EntityById,
         transaction_handle: &mut Transaction<'a, Postgres>,
-    ) -> DbResultSingle<Option<Brand>> {
+    ) -> DbResultSingle<Brand> {
         let query = sqlx::query_as!(
             Brand,
             r#"
             SELECT * FROM "Brand"
             WHERE id = $1
             "#,
-            params.id
+            params.id()
         )
         .fetch_optional(transaction_handle.as_mut())
         .await?;
-
-        if let Some(brand) = query {
-            return Ok(Some(brand));
-        }
-
-        Err(DbError::from(BackendError::new(BrandDoesNotExist)))
-    }
-
-    pub fn brand_is_correct(brand: Option<Brand>) -> DbResultSingle<Brand> {
         entity_is_correct(
-            brand,
+            query,
             EntityError::new(BrandDeleted, BrandDoesNotExist),
-            false,
+            params.fetch_deleted(),
         )
+
     }
 }
 
@@ -62,20 +50,21 @@ impl DbRepository for BrandRepository {
     }
 }
 
-impl DbReadOne<GetById, Brand> for BrandRepository {
-    async fn read_one(&self, params: &GetById) -> DbResultSingle<Brand> {
+impl<T> DbReadOne<T, Brand> for BrandRepository where T: EntityById {
+    async fn read_one(&self, params: &T) -> DbResultSingle<Brand> {
         let maybe_brand = sqlx::query_as!(
             Brand,
             r#"
             SELECT * FROM "Brand"
             WHERE id = $1
             "#,
-            params.id
+            params.id()
         )
         .fetch_optional(&self.pool_handler.pool)
         .await?;
 
-        let brand = BrandRepository::brand_is_correct(maybe_brand)?;
+        let brand = entity_is_correct(maybe_brand,             EntityError::new(BrandDeleted, BrandDoesNotExist),
+                                      params.fetch_deleted(),)?;
         Ok(brand)
     }
 }
@@ -123,10 +112,14 @@ impl DbUpdate<BrandUpdate, Brand> for BrandRepository {
         }
 
         let mut transaction = self.pool_handler.pool.begin().await?;
-        let brand_id = GetById::new(params.id);
 
-        let query_brand = BrandRepository::get_brand(brand_id, &mut transaction).await?;
-        let _ = BrandRepository::brand_is_correct(query_brand);
+        let brand = BrandRepository::get_brand(
+            &GetById {
+                id: params.id,
+                fetch_deleted: true,
+            },
+            &mut transaction,
+        ).await?;
 
         let brands = sqlx::query_as!(
             Brand,
@@ -140,7 +133,7 @@ impl DbUpdate<BrandUpdate, Brand> for BrandRepository {
             "#,
             params.name,
             params.description,
-            params.id
+            brand.id
         )
         .fetch_all(transaction.as_mut())
         .await?;
@@ -156,7 +149,7 @@ impl DbDelete<GetById, Brand> for BrandRepository {
 
         // Check existence
         let _ =
-            BrandRepository::get_brand(GetById::new(params.id), &mut transaction).await?;
+            BrandRepository::get_brand(params, &mut transaction).await?;
 
         let brands = sqlx::query_as!(
             Brand,

@@ -1,6 +1,6 @@
 use crate::database::models::bike::BikeDisplay;
 use crate::database::models::brand::Brand;
-use crate::database::models::model::Model;
+use crate::database::models::model::{Model, ModelDetail};
 use serde::Serialize;
 
 
@@ -13,16 +13,14 @@ pub struct BikesTemplate {
 
 #[derive(Serialize)]
 pub struct BikeCreateTemplate {
-    pub brands: Vec<Brand>,
-    pub models: Vec<Model>,
+    pub models: Vec<ModelDetail>,
     pub logged_in: bool,
 }
 
 #[derive(Serialize)]
 pub struct BikeEditTemplate {
     pub bike: BikeDisplay,
-    pub brands: Vec<Brand>,
-    pub models: Vec<Model>,
+    pub models: Vec<ModelDetail>,
     pub logged_in: bool,
 }
 

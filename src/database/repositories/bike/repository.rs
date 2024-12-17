@@ -122,7 +122,6 @@ where
             r#"
             SELECT
                 bike.id,
-                bike.brand_id,
                 bike.model_id,
                 bike.name,
                 bike.thumbnail,
@@ -132,15 +131,16 @@ where
                 bike.created_at,
                 bike.edited_at,
                 bike.deleted_at,
-
+                
+                brand.id as brand_id,
                 brand.name as brand_name,
                 model.name as model_name                
             FROM
                 "Bike" AS bike
                     INNER JOIN
-                "Brand" AS brand ON brand.id = bike.brand_id
-                    INNER JOIN
                 "Model" AS model ON model.id = bike.model_id
+                    INNER JOIN
+                "Brand" AS brand ON brand.id = model.brand_id
             WHERE
                 bike.id = $1
             "#,
@@ -163,7 +163,6 @@ impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
         let mut query = r#"
             SELECT
                 bike.id,
-                bike.brand_id,
                 bike.model_id,
                 bike.name,
                 bike.thumbnail,
@@ -174,17 +173,18 @@ impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
                 bike.edited_at,
                 bike.deleted_at,
 
+                brand.id   AS brand_id,
                 brand.name AS brand_name,
                 model.name AS model_name
             FROM
                 "Bike" AS bike
                     INNER JOIN
-                "Brand" AS brand ON brand.id = bike.brand_id
+                "Model" AS model ON model.id = bike.model_id
                     INNER JOIN
-                "Model" AS model ON model.id = bike.model_id  
+                "Brand" AS brand ON brand.id = model.brand_id  
             WHERE
                 (bike.name = $1 OR $1 IS NULL)
-                AND (bike.brand_id = $2 OR $2 IS NULL)
+                AND (brand_id = $2 OR $2 IS NULL)
                 AND (bike.model_id = $3 OR $3 IS NULL)
                 AND (brand.name = $4 OR $4 IS NULL)
                 AND (model.name = $5 OR $5 IS NULL)
@@ -211,12 +211,11 @@ impl DbCreate<BikeCreate, Bike> for BikeRepository {
         let book = sqlx::query_as!(
             Bike,
             r#"
-            INSERT INTO "Bike" (name, brand_id, model_id, thumbnail, description)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO "Bike" (name, model_id, thumbnail, description)
+            VALUES ($1, $2, $3, $4)
             RETURNING *
             "#,
             params.name,
-            params.brand_id,
             params.model_id,
             params.thumbnail,
             params.description
@@ -251,18 +250,16 @@ impl DbUpdate<BikeUpdate, Bike> for BikeRepository {
             UPDATE "Bike"
             SET
                 name = COALESCE($1, name),
-                brand_id = COALESCE($2, brand_id),
-                model_id = COALESCE($3, model_id),
-                thumbnail = COALESCE($4, thumbnail),
-                description = COALESCE($5, description),
-                view_count = COALESCE($6, view_count),
-                like_count = COALESCE($7, like_count),
+                model_id = COALESCE($2, model_id),
+                thumbnail = COALESCE($3, thumbnail),
+                description = COALESCE($4, description),
+                view_count = COALESCE($5, view_count),
+                like_count = COALESCE($6, like_count),
                 edited_at = current_timestamp
-            WHERE id = $8
+            WHERE id = $7
             RETURNING *
             "#,
             params.name,
-            params.brand_id,
             params.model_id,
             params.thumbnail,
             params.description,

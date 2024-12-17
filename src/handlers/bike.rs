@@ -76,20 +76,17 @@ pub async fn get_bike_detail(
 pub async fn create_bike_page(
     request: HttpRequest,
     identity: Option<Identity>,
-    brand_repo: web::Data<BrandRepository>,
     model_repo: web::Data<ModelRepository>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
     authorized!(identity, request.path());
 
-    let brands = brand_repo.read_many(&BrandSearch::default()).await?;
     let models = model_repo.read_many(&ModelSearch::default()).await?;
 
     let template_name = get_template_name(&request, "bike/admin/create");
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(BikeCreateTemplate {
-        brands,
         models,
         logged_in: true,
     })?;
@@ -122,7 +119,6 @@ pub async fn create_bike(
     identity: Option<Identity>,
     session: Session,
     user_repo: web::Data<UserRepository>,
-    brand_repo: web::Data<BrandRepository>,
     model_repo: web::Data<ModelRepository>,
     form: web::Form<BikeCreateForm>,
 ) -> Result<HttpResponse, AppError> {
@@ -131,12 +127,9 @@ pub async fn create_bike(
     let session_keys = BikeCreateSessionKeys::new(user.id);
 
     let model = model_repo.read_one(&GetById::new(form.model_id)).await?;
-
-    let brand = brand_repo.read_one(&GetById::new(form.brand_id)).await?;
-
+    
     session.insert(session_keys.name.as_str(), &form.name)?;
     session.insert(session_keys.description.as_str(), &form.description)?;
-    session.insert(session_keys.brand_id.as_str(), brand.id)?;
     session.insert(session_keys.model_id.as_str(), model.id)?;
 
     Ok(HttpResponse::SeeOther()
@@ -163,7 +156,6 @@ pub async fn upload_bike(
 
     let bike_create = BikeCreate::new(
         &metadata.name,
-        &metadata.brand_id,
         &metadata.model_id,
         &thumbnail_path,
         &metadata.description,
@@ -193,7 +185,6 @@ pub async fn upload_bike(
 
     session.remove(session_keys.name.as_str());
     session.remove(session_keys.description.as_str());
-    session.remove(session_keys.brand_id.as_str());
     session.remove(session_keys.model_id.as_str());
 
     Ok(HttpResponse::SeeOther()
@@ -305,8 +296,7 @@ pub async fn edit_bike_page(
         &GetById::new_with_deleted(bike_id),
     )
     .await?;
-
-    let brands = brand_repo.read_many(&BrandSearch::default()).await?;
+    
     let models = model_repo.read_many(&ModelSearch::default()).await?;
 
     let template_name = get_template_name(&request, "bike/admin/edit");
@@ -314,7 +304,6 @@ pub async fn edit_bike_page(
     let template = env.get_template(&template_name)?;
     let body = template.render(BikeEditTemplate {
         bike: BikeDisplay::from(bike),
-        brands,
         models,
         logged_in: true,
     })?;
@@ -334,7 +323,6 @@ pub async fn edit_bike(
     let book_update = BikeUpdate::new(
         &form.bike_id,
         Some(&form.name),
-        Some(&form.brand_id),
         Some(&form.model_id),
         None,
         Some(&form.description),

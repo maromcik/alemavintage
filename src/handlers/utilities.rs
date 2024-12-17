@@ -64,14 +64,7 @@ pub fn get_metadata_from_session(
             "New bike could not be found in the active session",
         ));
     };
-
-    let Some(brand_id) = session.get::<i64>(session_keys.brand_id.as_str())? else {
-        return Err(AppError::new(
-            AppErrorKind::NotFound,
-            "New bike could not be found in the active session",
-        ));
-    };
-
+    
     let Some(model_id) = session.get::<i64>(session_keys.model_id.as_str())? else {
         return Err(AppError::new(
             AppErrorKind::NotFound,
@@ -89,7 +82,6 @@ pub fn get_metadata_from_session(
     Ok(BikeMetadataForm {
         name,
         description,
-        brand_id,
         model_id,
     })
 }

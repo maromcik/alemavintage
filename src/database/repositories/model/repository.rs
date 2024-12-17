@@ -1,16 +1,12 @@
-use crate::database::common::error::BackendErrorKind::{
-    ModelDeleted, ModelDoesNotExist, ModelUpdateParametersEmpty,
-};
+use crate::database::common::error::BackendErrorKind::{BrandDeleted, BrandDoesNotExist, ModelDeleted, ModelDoesNotExist, ModelUpdateParametersEmpty};
 use crate::database::common::error::{
     BackendError, DbError, DbResultMultiple, DbResultSingle, EntityError,
 };
 use crate::database::common::utilities::entity_is_correct;
-use crate::database::common::{
-    DbCreate, DbDelete, DbPoolHandler, DbReadMany, DbReadOne, DbRepository, DbUpdate, PoolHandler,
-};
+use crate::database::common::{DbCreate, DbDelete, DbPoolHandler, DbReadMany, DbReadOne, DbRepository, DbUpdate, EntityById, PoolHandler};
 use sqlx::{Postgres, Transaction};
 
-use crate::database::models::model::{Model, ModelCreate, ModelSearch, ModelUpdate};
+use crate::database::models::model::{Model, ModelCreate, ModelDetail, ModelSearch, ModelUpdate};
 use crate::database::models::GetById;
 
 #[derive(Clone)]
@@ -19,35 +15,25 @@ pub struct ModelRepository {
 }
 
 impl ModelRepository {
-    pub async fn get_brand<'a>(
-        params: GetById,
+    pub async fn get_model<'a>(
+        params: &impl EntityById,
         transaction_handle: &mut Transaction<'a, Postgres>,
-    ) -> DbResultSingle<Option<Model>> {
+    ) -> DbResultSingle<Model> {
         let query = sqlx::query_as!(
             Model,
             r#"
             SELECT * FROM "Model"
             WHERE id = $1
             "#,
-            params.id
+            params.id()
         )
         .fetch_optional(transaction_handle.as_mut())
         .await?;
 
-        if let Some(brand) = query {
-            return Ok(Some(brand));
-        }
-
-        Err(DbError::from(BackendError::new(ModelDoesNotExist)))
+        entity_is_correct(query,             EntityError::new(ModelDeleted, ModelDoesNotExist),
+                          params.fetch_deleted(),)
     }
-
-    pub fn brand_is_correct(brand: Option<Model>) -> DbResultSingle<Model> {
-        entity_is_correct(
-            brand,
-            EntityError::new(ModelDeleted, ModelDoesNotExist),
-            false,
-        )
-    }
+    
 }
 
 impl DbRepository for ModelRepository {
@@ -62,57 +48,84 @@ impl DbRepository for ModelRepository {
     }
 }
 
-impl DbReadOne<GetById, Model> for ModelRepository {
-    async fn read_one(&self, params: &GetById) -> DbResultSingle<Model> {
-        let maybe_brand = sqlx::query_as!(
-            Model,
+impl<T> DbReadOne<T, ModelDetail> for ModelRepository where T: EntityById{
+    async fn read_one(&self, params: &T) -> DbResultSingle<ModelDetail> {
+        let maybe_model = sqlx::query_as!(
+            ModelDetail,
             r#"
-            SELECT * FROM "Model"
-            WHERE id = $1
+            SELECT 
+                model.id,
+                model.brand_id,
+                model.name,
+                model.description,
+                
+                brand.name AS brand_name,
+                brand.description AS brand_description
+            FROM 
+            "Model" as model
+                INNER JOIN 
+            "Brand" as brand ON (model.brand_id = brand.id)
+            WHERE model.id = $1
             "#,
-            params.id
+            params.id()
         )
         .fetch_optional(&self.pool_handler.pool)
         .await?;
 
-        let brand = ModelRepository::brand_is_correct(maybe_brand)?;
-        Ok(brand)
+        let model = entity_is_correct(maybe_model,             EntityError::new(ModelDeleted, ModelDoesNotExist),
+                                                   params.fetch_deleted(),)?;
+        Ok(model)
     }
 }
 
-impl DbReadMany<ModelSearch, Model> for ModelRepository {
-    async fn read_many(&self, params: &ModelSearch) -> DbResultMultiple<Model> {
-        let brands = sqlx::query_as!(
-            Model,
+impl DbReadMany<ModelSearch, ModelDetail> for ModelRepository {
+    async fn read_many(&self, params: &ModelSearch) -> DbResultMultiple<ModelDetail> {
+        let models = sqlx::query_as!(
+            ModelDetail,
             r#"
-            SELECT * FROM "Model"
-            WHERE name = $1 OR $1 IS NULL
-            ORDER BY name"#,
-            params.name
+            SELECT 
+                model.id,
+                model.brand_id,
+                model.name,
+                model.description,
+                
+                brand.name AS brand_name,
+                brand.description AS brand_description
+            FROM 
+            "Model" as model
+                INNER JOIN 
+            "Brand" as brand ON (model.brand_id = brand.id)
+            WHERE
+                (model.name = $1 OR $1 IS NULL)
+                AND (brand.id = $2 OR $2 IS NULL)
+            "#,
+            params.name,
+            params.brand_id
         )
         .fetch_all(&self.pool_handler.pool)
         .await?;
-        Ok(brands)
+        Ok(models)
     }
 }
 
 impl DbCreate<ModelCreate, Model> for ModelRepository {
-    /// Create a new brand with the given data
+    /// Create a new model with the given data
     async fn create(&self, params: &ModelCreate) -> DbResultSingle<Model> {
-        let brand = sqlx::query_as!(
+        let model = sqlx::query_as!(
             Model,
             r#"
-            INSERT INTO "Model" (name, description)
-            VALUES ($1, $2)
+            INSERT INTO "Model" (brand_id, name, description)
+            VALUES ($1, $2, $3)
             RETURNING *
             "#,
+            params.brand_id,
             params.name,
             params.description
         )
         .fetch_one(&self.pool_handler.pool)
         .await?;
 
-        Ok(brand)
+        Ok(model)
     }
 }
 
@@ -123,30 +136,34 @@ impl DbUpdate<ModelUpdate, Model> for ModelRepository {
         }
 
         let mut transaction = self.pool_handler.pool.begin().await?;
-        let brand_id = GetById::new(params.id);
 
-        let query_brand = ModelRepository::get_brand(brand_id, &mut transaction).await?;
-        let _ = ModelRepository::brand_is_correct(query_brand);
+        let model = ModelRepository::get_model(&GetById {
+            id: params.id,
+            fetch_deleted: true,
+        }, &mut transaction).await?;
+     
 
-        let brands = sqlx::query_as!(
+        let models = sqlx::query_as!(
             Model,
             r#"
             UPDATE "Model"
             SET
-                name = COALESCE($1, name),
-                description = COALESCE($2, description)
-            WHERE id = $3
+                brand_id = COALESCE($1, brand_id),
+                name = COALESCE($2, name),
+                description = COALESCE($3, description)
+            WHERE id = $4
             RETURNING *
             "#,
+            params.brand_id,
             params.name,
             params.description,
-            params.id
+            model.id
         )
         .fetch_all(transaction.as_mut())
         .await?;
 
         transaction.commit().await?;
-        Ok(brands)
+        Ok(models)
     }
 }
 
@@ -155,10 +172,9 @@ impl DbDelete<GetById, Model> for ModelRepository {
         let mut transaction = self.pool_handler.pool.begin().await?;
 
         // Check existence
-        let _ =
-            ModelRepository::get_brand(GetById::new(params.id), &mut transaction).await?;
+        let _bike = ModelRepository::get_model(params, &mut transaction).await?;
 
-        let brands = sqlx::query_as!(
+        let models = sqlx::query_as!(
             Model,
             r#"
                 DELETE FROM "Model"
@@ -172,6 +188,6 @@ impl DbDelete<GetById, Model> for ModelRepository {
 
         transaction.commit().await?;
 
-        Ok(brands)
+        Ok(models)
     }
 }

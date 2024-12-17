@@ -11,7 +11,6 @@ pub struct Bike {
     pub id: Id,
     // --------------
     pub name: String,
-    pub brand_id: Id,
     pub model_id: Id,
     pub view_count: i64,
     pub like_count: i64,
@@ -96,7 +95,6 @@ impl From<BikeDetail> for BikeDisplay {
 
 pub struct BikeCreate {
     pub name: String,
-    pub brand_id: Id,
     pub model_id: Id,
     pub thumbnail: String,
     pub description: String,
@@ -105,14 +103,12 @@ pub struct BikeCreate {
 impl BikeCreate {
     pub fn new(
         name: &str,
-        brand_id: &Id,
         model_id: &Id,
         thumbnail: &str,
         description: &str,
     ) -> Self {
         Self {
             name: name.to_owned(),
-            brand_id: *brand_id,
             model_id: *model_id,
             thumbnail: thumbnail.to_owned(),
             description: description.to_owned(),
@@ -233,7 +229,6 @@ impl BikeSearch {
 pub struct BikeMetadataForm {
     pub name: String,
     pub description: String,
-    pub brand_id: Id,
     pub model_id: Id,
 }
 
@@ -298,7 +293,6 @@ impl BikeImageCreate {
 
 pub struct BikeUpdate {
     pub id: Id,
-    pub brand_id: Option<Id>,
     pub model_id: Option<Id>,
     pub name: Option<String>,
     pub thumbnail: Option<String>,
@@ -313,7 +307,6 @@ impl BikeUpdate {
     pub fn new(
         id: &Id,
         name: Option<&str>,
-        brand_id: Option<&Id>,
         model_id: Option<&Id>,
         thumbnail: Option<&str>,
         description: Option<&str>,
@@ -324,7 +317,6 @@ impl BikeUpdate {
         Self {
             id: *id,
             name: name.and_then(change_to_owned),
-            brand_id: brand_id.copied(),
             model_id: model_id.copied(),
             thumbnail: thumbnail.and_then(change_to_owned),
             description: description.and_then(change_to_owned),
@@ -336,7 +328,6 @@ impl BikeUpdate {
     #[must_use]
     pub const fn update_fields_none(&self) -> bool {
         self.name.is_none()
-            && self.brand_id.is_none()
             && self.model_id.is_none()
             && self.view_count.is_none()
             && self.like_count.is_none()
@@ -347,7 +338,6 @@ impl BikeUpdate {
     pub fn update_views(id: Id, view_count: i64) -> Self {
         Self {
             id,
-            brand_id: None,
             model_id: None,
             name: None,
             thumbnail: None,

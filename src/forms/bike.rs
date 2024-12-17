@@ -8,7 +8,6 @@ use serde::Deserialize;
 pub struct BikeCreateForm {
     pub name: String,
     pub description: String,
-    pub brand_id: Id,
     pub model_id: Id
 }
 #[derive(Debug, MultipartForm)]
@@ -30,7 +29,6 @@ pub struct BikeThumbnailEditForm {
 pub struct BikeEditForm {
     pub bike_id: Id,
     pub name: String,
-    pub brand_id: Id,
     pub model_id: Id,
     pub description: String,
 }

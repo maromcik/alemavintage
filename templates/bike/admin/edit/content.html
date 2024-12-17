@@ -7,28 +7,24 @@
             <input name="name" class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none" id="bike-name" type="text" value="{{bike.name}}" />
         </div>
 
-        <div class="mb-4">
-            <label class="mb-2 block text-sm font-bold text-gray-300" for="brand"> Brand </label>
-            <select name="brand_id" class="focus:shadow-outline w-full rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none" id="brand">
-                {% for brand in brands %}
-                    {% if bike.brand_id == brand.id %}
-                        <option selected value="{{ brand.id }}">{{ brand.name }}</option>
-                    {% else %}
-                        <option value="{{ brand.id }}">{{ brand.name }}</option>
-                    {% endif %}
-                {% endfor %}
-            </select>
-        </div>
+<!--        <div class="mb-4">-->
+<!--            <label class="mb-2 block text-sm font-bold text-gray-300" for="brand"> Brand </label>-->
+<!--            <select name="brand_id" class="focus:shadow-outline w-full rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none" id="brand">-->
+<!--                {% for brand in brands %}-->
+<!--                    {% if bike.brand_id == brand.id %}-->
+<!--                        <option selected value="{{ brand.id }}">{{ brand.name }}</option>-->
+<!--                    {% else %}-->
+<!--                        <option value="{{ brand.id }}">{{ brand.name }}</option>-->
+<!--                    {% endif %}-->
+<!--                {% endfor %}-->
+<!--            </select>-->
+<!--        </div>-->
 
         <div class="mb-4">
             <label class="mb-2 block text-sm font-bold text-gray-300" for="model"> Model </label>
             <select name="model_id" class="focus:shadow-outline w-full rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none" id="model">
                 {% for model in models %}
-                {% if bike.model_id == model.id %}
-                <option selected value="{{ model.id }}">{{ model.name }}</option>
-                {% else %}
-                <option value="{{ model.id }}">{{ model.name }}</option>
-                {% endif %}
+                <option value="{{ model.id }}">{{ model.brand_name }} - {{ model.name }}</option>
                 {% endfor %}
             </select>
         </div>
