@@ -1,10 +1,9 @@
 use crate::database::common::error::{BackendError, BackendErrorKind, DbError, DbErrorKind};
 use crate::templates::error::GenericError;
-use actix_identity;
+
 use actix_web::http::header::ContentType;
 use actix_web::http::StatusCode;
 use actix_web::{HttpResponse, ResponseError};
-use askama::Template;
 use serde::Serialize;
 use std::fmt::{Debug, Display, Formatter};
 use std::io::Error;
@@ -36,11 +35,11 @@ pub enum AppErrorKind {
     Unauthorized,
 }
 
-impl From<askama::Error> for AppError {
-    fn from(_error: askama::Error) -> Self {
-        Self::new(AppErrorKind::TemplatingError, "Templating error")
-    }
-}
+// impl From<askama::Error> for AppError {
+//     fn from(_error: askama::Error) -> Self {
+//         Self::new(AppErrorKind::TemplatingError, "Templating error")
+//     }
+// }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct AppError {

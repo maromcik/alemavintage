@@ -11,7 +11,7 @@ use actix_web::web::PayloadConfig;
 use actix_web::{cookie::Key, App, HttpServer};
 use env_logger::Env;
 use log::{info, warn};
-use minijinja::{path_loader, Environment, Error, Value};
+use minijinja::{path_loader, Environment};
 use minijinja_autoreload::AutoReloader;
 use std::env;
 use std::sync::Arc;
@@ -41,13 +41,6 @@ impl AppState {
 
 #[actix_web::main]
 async fn main() -> anyhow::Result<()> {
-    // We are forced to change the TMP dir because TmpFile that is used in Actix multipart stores uploaded files in the /tmp dir.
-    // by default, and I was not able to alter the default configuration,
-    // then, after calling function persist, it uses the rename(2) syscall to unlink the file from /tmp and link
-    // it to another folder. However, this syscall fails on an attempt to move the file across file system boundaries.
-    // On many distros /tmp uses tmpfs and is mounted separately. Also, we are deploying in Kubernetes, and while the /tmp
-    // dir is not mounted separately, we use persistent volume claims to take advantage of the large NFS storage,
-    // so the target file path is on a different FS as well.
     env::set_var("TMPDIR", "./media");
     let _dir = env::temp_dir();
 
@@ -61,9 +54,7 @@ async fn main() -> anyhow::Result<()> {
         notifier.watch_path(template_path, true);
         Ok(env)
     });
-
-    // let mut env = Environment::new();
-    // env.set_loader(path_loader("templates"));
+    
     let jinja = Arc::new(reloader);
 
     let host = parse_host();

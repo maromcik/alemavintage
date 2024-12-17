@@ -1,6 +1,4 @@
-use crate::database::models::bike::BikeDetail;
 use crate::database::models::user::User;
-use askama::Template;
 use serde::Serialize;
 
 const WEAK_PASSWORD_MESSAGE: &str = "Weak password! Password must contain at least one from each: {lower case character, upper case character, number, special character} and must be at least 6 characters long";
