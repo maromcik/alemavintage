@@ -4,11 +4,9 @@ use crate::database::common::query_parameters::{
 use crate::database::common::repository::DbCreate;
 use crate::database::common::{DbDelete, DbReadMany, DbReadOne, DbUpdate};
 use crate::database::models::bike::{BikeCreate, BikeDetail, BikeDisplay, BikeImageCreate, BikeImageSearch, BikeSearch, BikeUpdate};
-use crate::database::models::brand::BrandSearch;
 use crate::database::models::model::ModelSearch;
 use crate::database::models::{GetById, Id};
 use crate::database::repositories::bike::repository::BikeRepository;
-use crate::database::repositories::brand::repository::BrandRepository;
 use crate::database::repositories::model::repository::ModelRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::error::AppError;
@@ -18,7 +16,7 @@ use crate::handlers::utilities::{
     get_metadata_from_session, get_user_from_identity, remove_file, save_file,
     validate_file, BikeCreateSessionKeys, ImageDimensions,
 };
-use crate::templates::bike::{BikeCreateTemplate, BikeEditTemplate, BikesTemplate, BikeUploadFormTemplate};
+use crate::templates::bike::{BikeCreateTemplate, BikeEditTemplate, BikeUploadFormTemplate, BikesTemplate};
 use crate::{authorized, AppState};
 use actix_identity::Identity;
 use actix_multipart::form::MultipartForm;
@@ -284,7 +282,6 @@ pub async fn edit_bike_page(
     request: HttpRequest,
     identity: Option<Identity>,
     bike_repo: web::Data<BikeRepository>,
-    brand_repo: web::Data<BrandRepository>,
     model_repo: web::Data<ModelRepository>,
     path: web::Path<(Id,)>,
     state: web::Data<AppState>,

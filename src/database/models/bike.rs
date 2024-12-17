@@ -168,14 +168,14 @@ impl BikeSearch {
         }
     }
 
-    pub fn search_by_model_id(model_id: Id) -> Self {
+    pub fn search_by_model_id(model_id: Id, query_params: DbQueryParams) -> Self {
         Self {
             name: None,
             model_name: None,
             brand_name: None,
             brand_id: None,
             model_id: Some(model_id),
-            query_params: DbQueryParams::default(),
+            query_params,
         }
     }
 

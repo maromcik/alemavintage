@@ -35,7 +35,7 @@ pub async fn create_brand(
 ) -> Result<HttpResponse, AppError> {
     let _ = authorized!(identity, request.path());
 
-    let brand = brand_repo
+    let _ = brand_repo
         .create(&BrandCreate::new(&form.name, &form.description))
         .await?;
 
@@ -51,7 +51,7 @@ pub async fn get_brands(
     identity: Option<Identity>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
-    let brands = brand_repo.read_many(&BrandSearch::new(None)).await?;
+    let brands = brand_repo.read_many(&BrandSearch::default()).await?;
 
     let template_name = get_template_name(&request, "brand");
     let env = state.jinja.acquire_env()?;

@@ -1,9 +1,14 @@
-use crate::database::common::error::BackendErrorKind::{BikeDeleted, BikeDoesNotExist, BrandDeleted, BrandDoesNotExist, BrandUpdateParametersEmpty};
+use crate::database::common::error::BackendErrorKind::{
+    BikeDeleted, BikeDoesNotExist, BrandDeleted, BrandDoesNotExist, BrandUpdateParametersEmpty,
+};
 use crate::database::common::error::{
     BackendError, DbError, DbResultMultiple, DbResultSingle, EntityError,
 };
 use crate::database::common::utilities::entity_is_correct;
-use crate::database::common::{DbCreate, DbDelete, DbPoolHandler, DbReadMany, DbReadOne, DbRepository, DbUpdate, EntityById, PoolHandler};
+use crate::database::common::{
+    DbCreate, DbDelete, DbPoolHandler, DbReadMany, DbReadOne, DbRepository, DbUpdate, EntityById,
+    PoolHandler,
+};
 use sqlx::{Postgres, Transaction};
 
 use crate::database::models::brand::*;
@@ -34,7 +39,6 @@ impl BrandRepository {
             EntityError::new(BrandDeleted, BrandDoesNotExist),
             params.fetch_deleted(),
         )
-
     }
 }
 
@@ -50,7 +54,10 @@ impl DbRepository for BrandRepository {
     }
 }
 
-impl<T> DbReadOne<T, Brand> for BrandRepository where T: EntityById {
+impl<T> DbReadOne<T, Brand> for BrandRepository
+where
+    T: EntityById,
+{
     async fn read_one(&self, params: &T) -> DbResultSingle<Brand> {
         let maybe_brand = sqlx::query_as!(
             Brand,
@@ -63,8 +70,11 @@ impl<T> DbReadOne<T, Brand> for BrandRepository where T: EntityById {
         .fetch_optional(&self.pool_handler.pool)
         .await?;
 
-        let brand = entity_is_correct(maybe_brand,             EntityError::new(BrandDeleted, BrandDoesNotExist),
-                                      params.fetch_deleted(),)?;
+        let brand = entity_is_correct(
+            maybe_brand,
+            EntityError::new(BrandDeleted, BrandDoesNotExist),
+            params.fetch_deleted(),
+        )?;
         Ok(brand)
     }
 }
@@ -119,7 +129,8 @@ impl DbUpdate<BrandUpdate, Brand> for BrandRepository {
                 fetch_deleted: true,
             },
             &mut transaction,
-        ).await?;
+        )
+        .await?;
 
         let brands = sqlx::query_as!(
             Brand,
@@ -148,8 +159,7 @@ impl DbDelete<GetById, Brand> for BrandRepository {
         let mut transaction = self.pool_handler.pool.begin().await?;
 
         // Check existence
-        let _ =
-            BrandRepository::get_brand(params, &mut transaction).await?;
+        let _ = BrandRepository::get_brand(params, &mut transaction).await?;
 
         let brands = sqlx::query_as!(
             Brand,

@@ -1,9 +1,14 @@
-use crate::database::common::error::BackendErrorKind::{BrandDeleted, BrandDoesNotExist, ModelDeleted, ModelDoesNotExist, ModelUpdateParametersEmpty};
+use crate::database::common::error::BackendErrorKind::{
+    BrandDeleted, BrandDoesNotExist, ModelDeleted, ModelDoesNotExist, ModelUpdateParametersEmpty,
+};
 use crate::database::common::error::{
     BackendError, DbError, DbResultMultiple, DbResultSingle, EntityError,
 };
 use crate::database::common::utilities::entity_is_correct;
-use crate::database::common::{DbCreate, DbDelete, DbPoolHandler, DbReadMany, DbReadOne, DbRepository, DbUpdate, EntityById, PoolHandler};
+use crate::database::common::{
+    DbCreate, DbDelete, DbPoolHandler, DbReadMany, DbReadOne, DbRepository, DbUpdate, EntityById,
+    PoolHandler,
+};
 use sqlx::{Postgres, Transaction};
 
 use crate::database::models::model::{Model, ModelCreate, ModelDetail, ModelSearch, ModelUpdate};
@@ -30,10 +35,12 @@ impl ModelRepository {
         .fetch_optional(transaction_handle.as_mut())
         .await?;
 
-        entity_is_correct(query,             EntityError::new(ModelDeleted, ModelDoesNotExist),
-                          params.fetch_deleted(),)
+        entity_is_correct(
+            query,
+            EntityError::new(ModelDeleted, ModelDoesNotExist),
+            params.fetch_deleted(),
+        )
     }
-    
 }
 
 impl DbRepository for ModelRepository {
@@ -48,7 +55,10 @@ impl DbRepository for ModelRepository {
     }
 }
 
-impl<T> DbReadOne<T, ModelDetail> for ModelRepository where T: EntityById{
+impl<T> DbReadOne<T, ModelDetail> for ModelRepository
+where
+    T: EntityById,
+{
     async fn read_one(&self, params: &T) -> DbResultSingle<ModelDetail> {
         let maybe_model = sqlx::query_as!(
             ModelDetail,
@@ -72,8 +82,11 @@ impl<T> DbReadOne<T, ModelDetail> for ModelRepository where T: EntityById{
         .fetch_optional(&self.pool_handler.pool)
         .await?;
 
-        let model = entity_is_correct(maybe_model,             EntityError::new(ModelDeleted, ModelDoesNotExist),
-                                                   params.fetch_deleted(),)?;
+        let model = entity_is_correct(
+            maybe_model,
+            EntityError::new(ModelDeleted, ModelDoesNotExist),
+            params.fetch_deleted(),
+        )?;
         Ok(model)
     }
 }
@@ -137,11 +150,14 @@ impl DbUpdate<ModelUpdate, Model> for ModelRepository {
 
         let mut transaction = self.pool_handler.pool.begin().await?;
 
-        let model = ModelRepository::get_model(&GetById {
-            id: params.id,
-            fetch_deleted: true,
-        }, &mut transaction).await?;
-     
+        let model = ModelRepository::get_model(
+            &GetById {
+                id: params.id,
+                fetch_deleted: true,
+            },
+            &mut transaction,
+        )
+        .await?;
 
         let models = sqlx::query_as!(
             Model,

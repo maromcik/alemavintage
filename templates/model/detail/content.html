@@ -1,0 +1,11 @@
+<div class="w-full h-full">
+    <h2 class="text-6xl font-bold mb-6 pl-10">
+        {{ model.brand_name }} {{ model.name }}
+    </h2>
+    <div class="pl-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {% for bike in bikes %}
+        {% include "bike/box/content.html" %}
+        {% endfor %}
+    </div>
+</div>
+

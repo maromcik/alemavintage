@@ -95,7 +95,7 @@ impl Default for DbOrderColumn {
         Self {
             table: None,
             column: DbColumn::Id,
-            order: DbOrder::Asc,
+            order: DbOrder::Desc,
         }
     }
 }

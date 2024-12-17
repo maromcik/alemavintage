@@ -17,7 +17,7 @@ use actix_web::web;
 use actix_web::web::ServiceConfig;
 use minijinja_autoreload::AutoReloader;
 use sqlx::PgPool;
-
+use crate::handlers::model::{create_model, create_model_page, get_model, get_models};
 
 pub fn configure_webapp(pool: &PgPool, jinja: Arc<AutoReloader>) -> Box<dyn FnOnce(&mut ServiceConfig)> {
     let user_repo = UserRepository::new(PoolHandler::new(pool.clone()));
@@ -26,9 +26,11 @@ pub fn configure_webapp(pool: &PgPool, jinja: Arc<AutoReloader>) -> Box<dyn FnOn
     let brand_repository = BrandRepository::new(PoolHandler::new(pool.clone()));
     
     let studio_scope = web::scope("studio")
+        .app_data(web::Data::new(bike_repo.clone()))
         .service(studio::studio_index);
     
     let user_scope = web::scope("user")
+        .app_data(web::Data::new(user_repo.clone()))
         .service(user_login_page)
         .service(user_login)
         .service(user_logout)
@@ -61,19 +63,24 @@ pub fn configure_webapp(pool: &PgPool, jinja: Arc<AutoReloader>) -> Box<dyn FnOn
         .service(create_brand_page);
 
     let model_scope = web::scope("model")
+        .app_data(web::Data::new(bike_repo.clone()))
+        .app_data(web::Data::new(model_repository.clone()))
         .app_data(web::Data::new(brand_repository.clone()))
-        .service(create_brand_page);
+        .service(create_model)
+        .service(get_models)
+        .service(get_model)
+        .service(create_model_page);
     
 
     Box::new(move |cfg: &mut ServiceConfig| {
         cfg
-            .app_data(web::Data::new(bike_repo.clone()))
             .app_data(web::Data::new(user_repo.clone()))
             .app_data(web::Data::new(AppState::new(jinja.clone())))
             .service(studio_scope)
             .service(bike_scope)
             .service(user_scope)
             .service(brand_scope)
+            .service(model_scope)
             .service(index)
             .service(ActixFiles::new("/media", "./media").prefer_utf8(true))
             .service(ActixFiles::new("/static", "./static").prefer_utf8(true));

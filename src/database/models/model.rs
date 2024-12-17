@@ -61,7 +61,7 @@ impl ModelCreate {
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ModelSearch {
+pub struct  ModelSearch {
     pub name: Option<String>,
     pub brand_id: Option<Id>
 }
