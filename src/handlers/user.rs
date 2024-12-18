@@ -8,7 +8,7 @@ use crate::forms::user::{
     UserLoginForm, UserLoginReturnURL, UserUpdateForm, UserUpdatePasswordForm,
 };
 use crate::handlers::helpers::{get_template_name, parse_user_id};
-use crate::handlers::utilities::{validate_password};
+use crate::handlers::utilities::validate_password;
 use crate::templates::user::{
     LoginTemplate, UserManagePasswordTemplate, UserManageProfileTemplate,
     UserManageProfileUserFormTemplate,
@@ -22,11 +22,17 @@ use actix_web::{get, post, web, HttpMessage, HttpRequest, HttpResponse, Responde
 
 #[get("/login")]
 pub async fn login(
+    request: HttpRequest,
     identity: Option<Identity>,
     query: web::Query<UserLoginReturnURL>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
-    let return_url = query.ret.clone().unwrap_or("/".to_string());
+    let referer = request
+        .headers()
+        .get(actix_web::http::header::REFERER)
+        .map_or("/", |header_value| header_value.to_str().unwrap_or("/"));
+
+    let return_url = query.ret.clone().unwrap_or(referer.to_string());
     if identity.is_some() {
         return Ok(HttpResponse::SeeOther()
             .insert_header((LOCATION, return_url))
@@ -98,7 +104,7 @@ pub async fn user_manage_form_page(
     state: web::Data<AppState>,
 ) -> Result<impl Responder, AppError> {
     let u = authorized!(identity, request.path());
-    let user = user_repo.read_one(&GetById::new(parse_user_id(u)?)).await?;
+    let user = user_repo.read_one(&GetById::new(parse_user_id(&u)?)).await?;
 
     let template_name = get_template_name(&request, "user/manage/profile");
     let env = state.jinja.acquire_env()?;
@@ -141,7 +147,7 @@ pub async fn user_manage_profile_form(
     state: web::Data<AppState>,
 ) -> Result<impl Responder, AppError> {
     let u = authorized!(identity, request.path());
-    let user = user_repo.read_one(&GetById::new(parse_user_id(u)?)).await?;
+    let user = user_repo.read_one(&GetById::new(parse_user_id(&u)?)).await?;
 
     let template_name = "user/profile_user_form.html";
     let env = state.jinja.acquire_env()?;
@@ -166,7 +172,7 @@ pub async fn user_manage(
 ) -> Result<impl Responder, AppError> {
     let u = authorized!(identity, request.path());
     let user_update = UserUpdate::new(
-        &parse_user_id(u)?,
+        &parse_user_id(&u)?,
         Some(&form.email),
         Some(&form.name),
         Some(&form.surname),
@@ -228,7 +234,7 @@ pub async fn user_manage_password(
 
     let update_status = user_repo
         .update_password(&UserUpdatePassword::new(
-            &parse_user_id(u)?,
+            &parse_user_id(&u)?,
             &form.old_password,
             &form.new_password,
         ))

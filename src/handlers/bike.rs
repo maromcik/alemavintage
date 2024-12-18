@@ -72,7 +72,7 @@ pub async fn get_bike_detail(
     let params = match session.get::<bool>(session_keys.visited.as_str())? {
         None => {
             session.insert(session_keys.visited, true)?;
-            BikeGetById::new(bike_id, identity.is_some(), true)
+            BikeGetById::new(bike_id, identity.is_some(), identity.is_none())
         }
         Some(_) => BikeGetById::new(bike_id, identity.is_some(), false),
     };

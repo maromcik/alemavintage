@@ -41,7 +41,7 @@ pub async fn bike_hard_delete(
     Ok(())
 }
 
-pub fn parse_user_id(identity: Identity) -> Result<Id, AppError> {
+pub fn parse_user_id(identity: &Identity) -> Result<Id, AppError> {
     Ok(identity.id()?.parse::<i64>()?)
 }
 
@@ -52,21 +52,21 @@ pub fn get_metadata_from_session(
     let Some(name) = session.get::<String>(session_keys.name.as_str())? else {
         return Err(AppError::new(
             AppErrorKind::NotFound,
-            "New bike could not be found in the active session",
+            "Bike name could not be found in the active session",
         ));
     };
 
     let Some(model_id) = session.get::<i64>(session_keys.model_id.as_str())? else {
         return Err(AppError::new(
             AppErrorKind::NotFound,
-            "New bike could not be found in the active session",
+            "Bike model could not be found in the active session",
         ));
     };
 
     let Some(description) = session.get::<String>(session_keys.description.as_str())? else {
         return Err(AppError::new(
             AppErrorKind::NotFound,
-            "New bike could not be found in the active session",
+            "Bike description could not be found in the active session",
         ));
     };
 
@@ -82,6 +82,6 @@ pub async fn get_user_from_identity(
     user_repo: &web::Data<UserRepository>,
 ) -> Result<User, AppError> {
     Ok(user_repo
-        .read_one(&GetById::new(parse_user_id(identity)?))
+        .read_one(&GetById::new(parse_user_id(&identity)?))
         .await?)
 }
