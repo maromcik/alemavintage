@@ -40,7 +40,7 @@ pub async fn get_bikes(
 ) -> Result<HttpResponse, AppError> {
     let bikes = bike_repo
         .read_many(&BikeSearch::with_params(DbQueryParams::order(
-            DbOrderColumn::new_column_only(DbColumn::ViewCount, DbOrder::Desc),
+            DbOrderColumn::new_column_only(DbColumn::CreatedAt, DbOrder::Desc),
             identity.is_none().then_some(DbTable::Bike),
         )))
         .await?;
