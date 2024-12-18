@@ -12,10 +12,7 @@ use crate::database::common::{
 use sqlx::{Postgres, Transaction};
 
 use crate::database::common::utilities::{entity_is_correct, generate_query_param_string};
-use crate::database::models::bike::{
-    Bike, BikeCreate, BikeDetail, BikeImage, BikeImageCreate, BikeImageSearch, BikeSearch,
-    BikeUpdate,
-};
+use crate::database::models::bike::{Bike, BikeCreate, BikeDetail, BikeGetById, BikeImage, BikeImageCreate, BikeImageSearch, BikeSearch, BikeUpdate};
 use crate::database::models::GetById;
 
 #[derive(Clone)]
@@ -44,7 +41,7 @@ impl BikeRepository {
             params.fetch_deleted(),
         )
     }
-
+    
     pub async fn increment_view_count<'a>(
         params: &impl EntityById,
         transaction_handle: &mut Transaction<'a, Postgres>,
@@ -119,12 +116,15 @@ where
     }
 }
 
-impl<ById> DbReadOne<ById, BikeDetail> for BikeRepository
-where
-    ById: EntityById,
+impl DbReadOne<BikeGetById, BikeDetail> for BikeRepository
 {
-    async fn read_one(&self, params: &ById) -> DbResultSingle<BikeDetail> {
+    async fn read_one(&self, params: &BikeGetById) -> DbResultSingle<BikeDetail> {
         let mut transaction = self.pool_handler.pool.begin().await?;
+
+        if params.update_view_count {
+            BikeRepository::increment_view_count(params, &mut transaction).await?;
+        }
+        
         let maybe_bike = sqlx::query_as!(
             BikeDetail,
             r#"
@@ -156,9 +156,7 @@ where
         )
         .fetch_optional(transaction.as_mut())
         .await?;
-
-        BikeRepository::increment_view_count(params, &mut transaction).await?;
-
+        
         transaction.commit().await?;
         
         let bike = entity_is_correct(

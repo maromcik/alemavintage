@@ -7,8 +7,8 @@ use crate::error::AppError;
 use crate::forms::user::{
     UserLoginForm, UserLoginReturnURL, UserUpdateForm, UserUpdatePasswordForm,
 };
-use crate::handlers::helpers::get_template_name;
-use crate::handlers::utilities::{parse_user_id, validate_password};
+use crate::handlers::helpers::{get_template_name, parse_user_id};
+use crate::handlers::utilities::{validate_password};
 use crate::templates::user::{
     LoginTemplate, UserManagePasswordTemplate, UserManageProfileTemplate,
     UserManageProfileUserFormTemplate,

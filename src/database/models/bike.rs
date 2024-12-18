@@ -331,7 +331,7 @@ impl BikeUpdate {
             && self.description.is_none()
             && self.thumbnail.is_none()
     }
-    
+
     #[allow(dead_code)]
     pub fn update_views(id: Id, view_count: i64) -> Self {
         Self {
@@ -342,6 +342,68 @@ impl BikeUpdate {
             description: None,
             view_count: Some(view_count),
             like_count: None,
+        }
+    }
+}
+
+pub struct BikeGetById {
+    pub id: Id,
+    pub fetch_deleted: bool,
+    pub update_view_count: bool,
+}
+
+impl EntityById for BikeGetById {
+    fn id(&self) -> Id {
+        self.id
+    }
+
+    fn fetch_deleted(&self) -> bool {
+        self.fetch_deleted
+    }
+}
+
+impl BikeGetById {
+    pub fn new(id: Id, fetch_deleted: bool, update_view_count: bool) -> Self {
+        Self {
+            id,
+            fetch_deleted,
+            update_view_count,
+        }
+    }
+
+    pub fn new_admin(id: Id) -> Self {
+        Self {
+            id,
+            fetch_deleted: true,
+            update_view_count: false,
+        }
+    }
+}
+
+pub struct BikeCreateSessionKeys {
+    pub name: String,
+    pub description: String,
+    pub model_id: String,
+}
+
+impl BikeCreateSessionKeys {
+    pub fn new(user_id: Id) -> Self {
+        Self {
+            name: format!("bike_create_{user_id}_name"),
+            description: format!("bike_create_{user_id}_description"),
+            model_id: format!("bike_create_{user_id}_model_id"),
+        }
+    }
+}
+
+pub struct BikeDetailSessionKeys {
+    pub visited: String,
+}
+
+impl BikeDetailSessionKeys {
+    pub fn new(bike_id: Id) -> Self {
+        Self {
+            visited: format!("bike_{bike_id}_visited"),
         }
     }
 }

@@ -4,7 +4,8 @@ use crate::database::common::query_parameters::{
 use crate::database::common::repository::DbCreate;
 use crate::database::common::{DbDelete, DbReadMany, DbReadOne, DbUpdate};
 use crate::database::models::bike::{
-    BikeCreate, BikeDetail, BikeDisplay, BikeImageCreate, BikeImageSearch, BikeSearch, BikeUpdate,
+    BikeCreate, BikeCreateSessionKeys, BikeDetail, BikeDetailSessionKeys, BikeDisplay, BikeGetById,
+    BikeImageCreate, BikeImageSearch, BikeSearch, BikeUpdate,
 };
 use crate::database::models::model::ModelSearch;
 use crate::database::models::{GetById, Id};
@@ -13,10 +14,8 @@ use crate::database::repositories::model::repository::ModelRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::error::AppError;
 use crate::forms::bike::{BikeCreateForm, BikeEditForm, BikeUploadForm};
-use crate::handlers::helpers::{bike_hard_delete, get_template_name};
-use crate::handlers::utilities::{
-    get_metadata_from_session, get_user_from_identity, save_file, validate_file,
-    BikeCreateSessionKeys, ImageDimensions,
+use crate::handlers::helpers::{bike_hard_delete, get_metadata_from_session, get_template_name, get_user_from_identity};
+use crate::handlers::utilities::{save_file, validate_file, ImageDimensions,
 };
 use crate::templates::bike::{
     BikeCreateTemplate, BikeDisplayTemplate, BikeEditTemplate, BikeUploadFormTemplate,
@@ -63,16 +62,24 @@ pub async fn get_bike_detail(
     identity: Option<Identity>,
     bike_repo: web::Data<BikeRepository>,
     state: web::Data<AppState>,
+    session: Session,
     path: web::Path<(Id,)>,
 ) -> Result<HttpResponse, AppError> {
     let bike_id = path.into_inner().0;
 
-    let bike: BikeDetail = <BikeRepository as DbReadOne<GetById, BikeDetail>>::read_one(
+    let session_keys = BikeDetailSessionKeys::new(bike_id);
+
+    let params = match session.get::<bool>(session_keys.visited.as_str())? {
+        None => {
+            session.insert(session_keys.visited, true)?;
+            BikeGetById::new(bike_id, identity.is_some(), true)
+        }
+        Some(_) => BikeGetById::new(bike_id, identity.is_some(), false),
+    };
+
+    let bike: BikeDetail = <BikeRepository as DbReadOne<BikeGetById, BikeDetail>>::read_one(
         bike_repo.as_ref(),
-        &GetById {
-            id: bike_id,
-            fetch_deleted: identity.is_some(),
-        },
+        &params,
     )
     .await?;
 
@@ -129,7 +136,7 @@ pub async fn upload_bike_form(
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(BikeUploadFormTemplate {
-        message: "".to_string(),
+        message: String::new(),
     })?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
@@ -280,9 +287,9 @@ pub async fn edit_bike_page(
 ) -> Result<HttpResponse, AppError> {
     authorized!(identity, request.path());
     let bike_id = path.into_inner().0;
-    let bike: BikeDetail = <BikeRepository as DbReadOne<GetById, BikeDetail>>::read_one(
+    let bike: BikeDetail = <BikeRepository as DbReadOne<BikeGetById, BikeDetail>>::read_one(
         bike_repo.as_ref(),
-        &GetById::new_with_deleted(bike_id),
+        &BikeGetById::new_admin(bike_id),
     )
     .await?;
 

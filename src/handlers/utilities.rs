@@ -1,18 +1,11 @@
-use crate::database::common::DbReadOne;
-use crate::database::models::{GetById, Id};
 use rexiv2::Metadata;
 use std::fs::File;
 use std::io::{BufWriter, Read};
 
 use crate::error::{AppError, AppErrorKind};
-use actix_identity::Identity;
 use actix_multipart::form::tempfile::TempFile;
-use actix_session::Session;
-use actix_web::{web, HttpRequest};
+use actix_web::HttpRequest;
 
-use crate::database::models::bike::BikeMetadataForm;
-use crate::database::models::user::User;
-use crate::database::repositories::user::repository::UserRepository;
 use crate::MIN_PASS_LEN;
 use image::metadata::Orientation;
 use uuid::Uuid;
@@ -28,66 +21,6 @@ impl ImageDimensions {
     }
 }
 
-pub struct BikeCreateSessionKeys {
-    pub name: String,
-    pub description: String,
-    pub model_id: String,
-}
-
-impl BikeCreateSessionKeys {
-    pub fn new(user_id: Id) -> Self {
-        Self {
-            name: format!("bike_create_{user_id}_name"),
-            description: format!("bike_create_{user_id}_description"),
-            model_id: format!("bike_create_{user_id}_model_id"),
-        }
-    }
-}
-
-pub fn parse_user_id(identity: Identity) -> Result<Id, AppError> {
-    Ok(identity.id()?.parse::<i64>()?)
-}
-
-pub fn get_metadata_from_session(
-    session: &Session,
-    session_keys: &BikeCreateSessionKeys,
-) -> Result<BikeMetadataForm, AppError> {
-    let Some(name) = session.get::<String>(session_keys.name.as_str())? else {
-        return Err(AppError::new(
-            AppErrorKind::NotFound,
-            "New bike could not be found in the active session",
-        ));
-    };
-
-    let Some(model_id) = session.get::<i64>(session_keys.model_id.as_str())? else {
-        return Err(AppError::new(
-            AppErrorKind::NotFound,
-            "New bike could not be found in the active session",
-        ));
-    };
-
-    let Some(description) = session.get::<String>(session_keys.description.as_str())? else {
-        return Err(AppError::new(
-            AppErrorKind::NotFound,
-            "New bike could not be found in the active session",
-        ));
-    };
-
-    Ok(BikeMetadataForm {
-        name,
-        description,
-        model_id,
-    })
-}
-
-pub async fn get_user_from_identity(
-    identity: Identity,
-    user_repo: &web::Data<UserRepository>,
-) -> Result<User, AppError> {
-    Ok(user_repo
-        .read_one(&GetById::new(parse_user_id(identity)?))
-        .await?)
-}
 
 pub fn validate_file(
     file: &TempFile,
