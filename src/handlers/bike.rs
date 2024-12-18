@@ -2,7 +2,7 @@ use crate::database::common::query_parameters::{
     DbColumn, DbOrder, DbOrderColumn, DbQueryParams, DbTable,
 };
 use crate::database::common::repository::DbCreate;
-use crate::database::common::{DbDelete, DbReadMany, DbReadOne, DbUpdate};
+use crate::database::common::{DbReadMany, DbReadOne, DbUpdate};
 use crate::database::models::bike::{
     BikeCreate, BikeCreateSessionKeys, BikeDetail, BikeDetailSessionKeys, BikeDisplay, BikeGetById,
     BikeImageSearch, BikeSearch, BikeUpdate,
