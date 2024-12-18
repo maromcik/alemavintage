@@ -1,6 +1,6 @@
 use crate::database::common::{DbCreate, DbReadMany, DbReadOne, DbUpdate};
 use crate::database::models::bike::{
-    BikeCreateSessionKeys, BikeDetail, BikeGetById, BikeImageCreate, BikeImageSearch,
+    Bike, BikeCreateSessionKeys, BikeImageCreate, BikeImageSearch,
     BikeMetadataForm, BikeUpdate,
 };
 use crate::database::models::user::User;
@@ -79,28 +79,23 @@ pub async fn upload_bike_helper(
     bike_id: Id,
     bike_repo: &web::Data<BikeRepository>,
     form: BikeUploadForm,
-) -> Result<BikeDetail, AppError> {
+) -> Result<Bike, AppError> {
     let thumbnail_path = validate_file(&form.thumbnail, Uuid::new_v4(), "image", "thumbnail")?;
 
-    let bike: BikeDetail = <BikeRepository as DbReadOne<BikeGetById, BikeDetail>>::read_one(
-        bike_repo.as_ref(),
-        &BikeGetById {
-            id: bike_id,
-            fetch_deleted: false,
-            update_view_count: false,
-        },
-    )
-    .await?;
+    let bike_update = BikeUpdate::update_thumbnail(bike_id, &thumbnail_path);
+    let bikes = bike_repo.update(&bike_update).await?;
 
-    let bike_update = BikeUpdate::update_thumbnail(bike.id, &thumbnail_path);
-    bike_repo.update(&bike_update).await?;
-    
+    let bike = bikes
+        .into_iter()
+        .next()
+        .ok_or_else(|| AppError::new(AppErrorKind::NotFound, "Bike {bike_id} not found"))?;
+
     save_file(
         form.thumbnail,
         &thumbnail_path,
         &ImageDimensions::new(300, 300),
     )?;
-    
+
     let image_dimensions = ImageDimensions::new(2000, 2000);
 
     let paths = form
