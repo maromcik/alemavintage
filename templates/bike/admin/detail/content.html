@@ -42,6 +42,7 @@
         </div>
     </div>
     <div class="flex mt-3 items-center mb-3 flex-row justify-between">
+        <h2 class="text-2xl font-bold pt-4 mb-4">Description</h2>
         <div class="mr-4">
             <button hx-get="/bike/{{ bike.id }}/edit" hx-target-error="#content-area"
                     hx-push-url="/bike/{{ bike.id }}/edit" hx-target="#content-area"
@@ -71,7 +72,6 @@
 </div>
 
 <div class="flex flex-col justify-between pt-4 overflow-hidden">
-    <h2 class="text-2xl font-bold mb-4">Description</h2>
 {{ bike.description | safe }}
 </div>
 <div class="flex flex-col justify-between pt-4 overflow-hidden">

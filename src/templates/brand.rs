@@ -9,6 +9,12 @@ pub struct BrandCreateTemplate {
 }
 
 #[derive(Serialize)]
+pub struct BrandEditTemplate {
+    pub brand: Brand,
+    pub logged_in: bool,
+}
+
+#[derive(Serialize)]
 pub struct BrandTemplate {
     pub brands: Vec<Brand>,
     pub logged_in: bool,

@@ -12,7 +12,7 @@ use crate::database::repositories::model::repository::ModelRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::error::AppError;
 use crate::forms::bike::{BikeCreateForm, BikeEditForm, BikeUploadForm};
-use crate::handlers::helpers::{get_bike_detail_base, get_template_name};
+use crate::handlers::helpers::{bike_hard_delete, get_bike_detail_base, get_template_name};
 use crate::handlers::utilities::{
     get_metadata_from_session, get_user_from_identity, remove_file, save_file,
     validate_file, BikeCreateSessionKeys, ImageDimensions,
@@ -188,8 +188,9 @@ pub async fn upload_bike(
     session.remove(session_keys.description.as_str());
     session.remove(session_keys.model_id.as_str());
 
+    let url = format!("/bike/{}/manage", bike.id);
     Ok(HttpResponse::SeeOther()
-        .insert_header((LOCATION, "/studio".to_string()))
+        .insert_header((LOCATION, url))
         .finish())
 }
 
@@ -242,25 +243,13 @@ pub async fn hard_remove_bike(
     let u = authorized!(identity, request.path());
     let bike_id = path.into_inner().0;
 
-    let bike_images = bike_repo
-        .read_many(&BikeImageSearch::new(Some(bike_id)))
-        .await?;
-
-    for image in bike_images {
-        remove_file(&image.path)?;
-    }
-
-    let bikes = bike_repo
-        .hard_delete(&GetById::new_with_deleted(bike_id))
-        .await?;
-    for bike in bikes {
-        remove_file(&bike.thumbnail)?;
-    }
+    bike_hard_delete(&bike_repo, vec![bike_id]).await?;
 
     Ok(HttpResponse::SeeOther()
         .insert_header((LOCATION, "/studio"))
         .finish())
 }
+
 
 #[put("/{id}/restore")]
 pub async fn restore_bike(

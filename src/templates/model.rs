@@ -11,6 +11,13 @@ pub struct ModelCreateTemplate {
 }
 
 #[derive(Serialize)]
+pub struct ModelEditTemplate {
+    pub model: ModelDetail,
+    pub brands: Vec<Brand>,
+    pub logged_in: bool,
+}
+
+#[derive(Serialize)]
 pub struct ModelTemplate {
     pub models: HashMap<String, Vec<ModelDetail>>,
     pub logged_in: bool,

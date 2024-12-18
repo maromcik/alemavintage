@@ -1,0 +1,45 @@
+<div class="container mx-auto p-6 bg-white max-w-5xl">
+    <form hx-post="/model/edit" hx-target="#content-area" hx-target-error="#content-area"
+          class="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <h2 class="block text-gray-300 text-xl font-bold mb-2 text-center">Edit Model</h2>
+        <input class="hidden" name="id" value="{{model.id}}">
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="brand">
+                Brand
+            </label>
+            <select name="brand_id"
+                    class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="brand"  value="{{model.id}}" >
+                {% for brand in brands %}
+                <option value="{{ brand.id }}">{{ brand.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="model-name">
+                Name
+            </label>
+            <input name="name"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   id="model-name" type="text" value="{{model.name}}" placeholder="Model Name">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="description">
+                Description
+            </label>
+            <textarea name="description"
+                      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      id="description" placeholder="Description"></textarea>
+        </div>
+
+        <div class="flex justify-end">
+            <button hx-target="#content-area"
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    type="submit">
+                Save
+            </button>
+        </div>
+    </form>
+</div>

@@ -75,7 +75,7 @@ impl BikeRepository {
     }
 
     pub async fn hard_delete(&self, params: &impl EntityById) -> DbResultMultiple<Bike> {
-        let books = sqlx::query_as!(
+        let bikes = sqlx::query_as!(
             Bike,
             r#"
             DELETE FROM "Bike"
@@ -86,7 +86,7 @@ impl BikeRepository {
         )
         .fetch_all(&self.pool_handler.pool)
         .await?;
-        Ok(books)
+        Ok(bikes)
     }
 }
 

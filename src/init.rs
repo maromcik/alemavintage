@@ -7,7 +7,7 @@ use crate::database::repositories::brand::repository::BrandRepository;
 use crate::database::repositories::model::repository::ModelRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::handlers::bike::{create_bike, create_bike_page, edit_bike, edit_bike_page, get_bike_detail, get_bikes, hard_remove_bike, manage_bike, remove_bike, restore_bike, upload_bike, upload_bike_form};
-use crate::handlers::brand::{create_brand, create_brand_page, get_brand, get_brands};
+use crate::handlers::brand::{create_brand, create_brand_page, edit_brand, edit_brand_page, get_brand, get_brands, remove_brand};
 use crate::handlers::index::index;
 use crate::handlers::user::{user_manage_form_page, user_manage_password, user_manage_password_form};
 use crate::handlers::*;
@@ -17,7 +17,7 @@ use actix_web::web;
 use actix_web::web::ServiceConfig;
 use minijinja_autoreload::AutoReloader;
 use sqlx::PgPool;
-use crate::handlers::model::{create_model, create_model_page, get_model, get_models};
+use crate::handlers::model::{create_model, create_model_page, edit_model, edit_model_page, get_model, get_models, remove_model};
 
 pub fn configure_webapp(pool: &PgPool, jinja: Arc<AutoReloader>) -> Box<dyn FnOnce(&mut ServiceConfig)> {
     let user_repo = UserRepository::new(PoolHandler::new(pool.clone()));
@@ -57,12 +57,16 @@ pub fn configure_webapp(pool: &PgPool, jinja: Arc<AutoReloader>) -> Box<dyn FnOn
         .service(hard_remove_bike);
 
     let brand_scope = web::scope("brand")
+        .app_data(web::Data::new(bike_repo.clone()))
         .app_data(web::Data::new(brand_repository.clone()))
         .app_data(web::Data::new(model_repository.clone()))
         .service(create_brand)
         .service(get_brands)
         .service(create_brand_page)
-        .service(get_brand);
+        .service(edit_brand)
+        .service(edit_brand_page)
+        .service(get_brand)
+        .service(remove_brand);
 
     let model_scope = web::scope("model")
         .app_data(web::Data::new(bike_repo.clone()))
@@ -71,7 +75,10 @@ pub fn configure_webapp(pool: &PgPool, jinja: Arc<AutoReloader>) -> Box<dyn FnOn
         .service(create_model)
         .service(get_models)
         .service(get_model)
-        .service(create_model_page);
+        .service(edit_model)
+        .service(edit_model_page)
+        .service(create_model_page)
+        .service(remove_model);
     
 
     Box::new(move |cfg: &mut ServiceConfig| {
