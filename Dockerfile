@@ -3,7 +3,7 @@ FROM rust:1.83
 WORKDIR /usr/src/alemavintage
 
 RUN apt-get update
-RUN apt-get install -y postgresql-client zip build-essential
+RUN apt-get install -y libgexiv2-dev
 
 ENV SQLX_OFFLINE=true
 COPY ./.sqlx ./.sqlx

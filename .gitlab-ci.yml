@@ -6,7 +6,7 @@ default:
   image: rust:1.83-bullseye
   before_script:
     - apt-get update
-    - apt install -y protobuf-compiler libprotobuf-dev
+    - apt install -y libgexiv2-dev
     - apt-get install -y postgresql-client
     - rustc --version
     - cargo --version
