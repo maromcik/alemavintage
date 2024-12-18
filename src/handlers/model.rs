@@ -85,10 +85,10 @@ pub async fn edit_model(
 ) -> Result<HttpResponse, AppError> {
     let _ = authorized!(identity, request.path());
 
-    let model = model_repo
+    let _ = model_repo
         .update(&ModelUpdate::new(&form.id, Some(&form.brand_id), Some(&form.name), Some(&form.description)))
         .await?;
-    let url = format!("/model/{}/detail", form.id);
+    let url = format!("/model/{}", form.id);
     Ok(HttpResponse::SeeOther()
         .insert_header((LOCATION, url))
         .finish())
@@ -121,7 +121,7 @@ pub async fn get_models(
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
 
-#[get("{id}/detail")]
+#[get("{id}")]
 pub async fn get_model(
     request: HttpRequest,
     model_repo: web::Data<ModelRepository>,

@@ -1,17 +1,47 @@
+{% if logged_in %}
+<div class="pl-10 pt-10 pb-10 flex mt-3 items-center mb-3 flex-row justify-between">
+    <div class="mr-4">
+        <button hx-get="/bike/{{ bike.id }}/edit" hx-target-error="#content-area"
+                hx-push-url="/bike/{{ bike.id }}/edit" hx-target="#content-area"
+                class="bg-cyan-950 rounded-md p-3 text-xl hover:bg-blue-300 mr-2">
+            <i class="fa-solid fa-pencil text-white"></i>
+        </button>
+        {% if bike.deleted %}
+        <button class="bg-cyan-950 rounded-md p-3 text-xl hover:bg-blue-300 mr-2"
+                hx-target-error="#content-area"
+                hx-put="/bike/{{ bike.id }}/restore" hx-target="#content-area">
+            <i class="fa-solid fa-rotate-right text-white"></i>
+        </button>
+        <button class="bg-cyan-950 rounded-md p-3 text-xl hover:bg-blue-300 mr-2"
+                hx-target-error="#content-area"
+                hx-delete="/bike/{{ bike.id }}/hard-delete" hx-target="#content-area">
+            <i class="fa-solid fa-trash text-white"></i>
+        </button>
+        {% else %}
+        <button class="bg-cyan-950 rounded-md p-3 text-xl hover:bg-blue-300 mr-2"
+                hx-target-error="#content-area"
+                hx-delete="/bike/{{ bike.id }}/delete" hx-target="#content-area">
+            <i class="fa-solid fa-eye-slash text-white"></i>
+        </button>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
 <div class="container pl-10 pt-10 pb-10">
     <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        <div class="mb-4 sm:mb-0 xl:col-span-1">
-            <div class="w-25 h-25 md:w-40 md:h-40 lg:w-80 lg:h-80 overflow-hidden">
-                <img class="responsive-image bg-blue-600 w-full h-full sm:h-mr-10" src="{{ bike.thumbnail }}" alt="book-cover">
+        <div id="thumbnail-box" class="mb-4 sm:mb-0 xl:col-span-1">
+            <!--            <img class="bg-cyan-900 w-80 h-80 mr-10" src="{{ bike.thumbnail }}" alt="bike-thumbnail">-->
+            <div id="bike-thumbnail-box"
+                 class="relative inline-block group w-25 h-25 md:w-45 md:h-45 lg:w-80 lg:h-80 mb-4">
+                <img class="w-25 h-25 md:w-45 md:h-45 lg:w-80 lg:h-80 mb-4" src="{{ bike.thumbnail }}" alt="book-thumbnail">
+                {% if logged_in %}
+                {% include "bike/admin/thumbnail/detail/content.html" %}
+                {% endif %}
             </div>
             <div class="flex flex-row mt-5 justify-between">
-                <button hx-patch="/bike/{{bike.id}}/likes" hx-target="#like-count" hx-swap="outerHTML" hx-target-error="#content-area">
-                    <div id="like-count" class="flex items-center pl-5 text-3xl">
-
-                    </div>
-                </button>
                 <div id="view-count" class="flex items-center pl-5 text-3xl">
-                    <i class="fa-solid fa-eye text-3xl"></i> <p class="pl-5 text-gray-300 text-2xl">{{ bike.view_count }}</p>
+                    <i class="fa-solid fa-eye text-3xl"></i>
+                    <p class="pl-5 text-gray-300 text-2xl">{{ bike.view_count }}</p>
                 </div>
 
             </div>
@@ -24,16 +54,18 @@
             </div>
             <div class="pt-5 items-center">
                 <div class="w-auto h-10 md:h-12 lg:h-24 pt-1 md:pt-2 lg:pt-8">
-                    <a class="cursor-pointer text-3xl pl-5" hx-get="/brand/{{ bike.brand_id }}/detail" hx-target="#content-area"
-                       hx-push-url="/brand/{{ bike.brand_id }}/detail">
+                    <a class="cursor-pointer text-3xl pl-5" hx-get="/brand/{{ bike.brand_id }}"
+                       hx-target="#content-area"
+                       hx-push-url="/brand/{{ bike.brand_id }}">
                         {{ bike.brand_name }}
                     </a>
                 </div>
             </div>
             <div class="pt-5 items-center">
                 <div class="w-auto h-10 md:h-12 lg:h-24 pt-1 md:pt-2 lg:pt-8">
-                    <a class="cursor-pointer text-3xl pl-5" hx-get="/model/{{ bike.model_id }}/detail" hx-target="#content-area"
-                       hx-push-url="/model/{{ bike.model_id }}/detail">
+                    <a class="cursor-pointer text-3xl pl-5" hx-get="/model/{{ bike.model_id }}"
+                       hx-target="#content-area"
+                       hx-push-url="/model/{{ bike.model_id }}">
                         {{ bike.model_name }}
                     </a>
                 </div>

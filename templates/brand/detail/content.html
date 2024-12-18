@@ -20,8 +20,8 @@
     <div class="text-center text-lg font-bold text-black">Description: {{ brand.description }}</div>
     <div class="pl-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {% for model in models %}
-            <a class="book-info-link cursor-pointer" hx-get="/model/{{ model.id }}/detail" hx-target="#content-area"
-               hx-push-url="/model/{{ model.id }}/detail">
+            <a class="book-info-link cursor-pointer" hx-get="/model/{{ model.id }}" hx-target="#content-area"
+               hx-push-url="/model/{{ model.id }}">
                 {% include "model/card/content.html"%}
                 {% endfor %}
             </a>

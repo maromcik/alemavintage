@@ -96,7 +96,7 @@ pub async fn edit_brand(
         ))
         .await?;
 
-    let url = format!("/brand/{}/detail", form.id);
+    let url = format!("/brand/{}", form.id);
     Ok(HttpResponse::SeeOther()
         .insert_header((LOCATION, url))
         .finish())
@@ -122,7 +122,7 @@ pub async fn get_brands(
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
 
-#[get("{id}/detail")]
+#[get("{id}")]
 pub async fn get_brand(
     request: HttpRequest,
     model_repo: web::Data<ModelRepository>,

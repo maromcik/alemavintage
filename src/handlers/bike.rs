@@ -1,10 +1,11 @@
-use std::fs::metadata;
 use crate::database::common::query_parameters::{
     DbColumn, DbOrder, DbOrderColumn, DbQueryParams, DbTable,
 };
 use crate::database::common::repository::DbCreate;
 use crate::database::common::{DbDelete, DbReadMany, DbReadOne, DbUpdate};
-use crate::database::models::bike::{BikeCreate, BikeDetail, BikeDisplay, BikeImageCreate, BikeImageSearch, BikeSearch, BikeUpdate};
+use crate::database::models::bike::{
+    BikeCreate, BikeDetail, BikeDisplay, BikeImageCreate, BikeImageSearch, BikeSearch, BikeUpdate,
+};
 use crate::database::models::model::ModelSearch;
 use crate::database::models::{GetById, Id};
 use crate::database::repositories::bike::repository::BikeRepository;
@@ -14,10 +15,12 @@ use crate::error::AppError;
 use crate::forms::bike::{BikeCreateForm, BikeEditForm, BikeUploadForm};
 use crate::handlers::helpers::{bike_hard_delete, get_bike_detail_base, get_template_name};
 use crate::handlers::utilities::{
-    get_metadata_from_session, get_user_from_identity, remove_file, save_file,
-    validate_file, BikeCreateSessionKeys, ImageDimensions,
+    get_metadata_from_session, get_user_from_identity, save_file, validate_file,
+    BikeCreateSessionKeys, ImageDimensions,
 };
-use crate::templates::bike::{BikeCreateTemplate, BikeEditTemplate, BikeUploadFormTemplate, BikesTemplate};
+use crate::templates::bike::{
+    BikeCreateTemplate, BikeEditTemplate, BikeUploadFormTemplate, BikesTemplate,
+};
 use crate::{authorized, AppState};
 use actix_identity::Identity;
 use actix_multipart::form::MultipartForm;
@@ -26,8 +29,8 @@ use actix_web::http::header::LOCATION;
 use actix_web::{delete, get, post, put, web, HttpRequest, HttpResponse};
 use rayon::iter::ParallelIterator;
 use rayon::prelude::IntoParallelIterator;
+use std::fs::metadata;
 use uuid::Uuid;
-use markdown;
 
 #[get("")]
 pub async fn get_bikes(
@@ -39,7 +42,7 @@ pub async fn get_bikes(
     let bikes = bike_repo
         .read_many(&BikeSearch::with_params(DbQueryParams::order(
             DbOrderColumn::new_column_only(DbColumn::ViewCount, DbOrder::Desc),
-            Some(DbTable::Bike),
+            identity.is_none().then_some(DbTable::Bike),
         )))
         .await?;
 
@@ -54,7 +57,7 @@ pub async fn get_bikes(
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
 
-#[get("/{id}/detail")]
+#[get("/{id}")]
 pub async fn get_bike_detail(
     request: HttpRequest,
     identity: Option<Identity>,
@@ -62,13 +65,19 @@ pub async fn get_bike_detail(
     state: web::Data<AppState>,
     path: web::Path<(Id,)>,
 ) -> Result<HttpResponse, AppError> {
-    let base = get_bike_detail_base(identity.as_ref(), bike_repo, path.into_inner().0, false).await?;
+    let base = get_bike_detail_base(
+        identity.as_ref(),
+        bike_repo,
+        path.into_inner().0,
+        identity.is_some(),
+    )
+    .await?;
 
     let template_name = get_template_name(&request, "bike/detail");
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(base)?;
-    
+
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
 
@@ -90,7 +99,7 @@ pub async fn create_bike_page(
         models,
         logged_in: true,
     })?;
-    
+
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
 
@@ -101,15 +110,14 @@ pub async fn upload_bike_form(
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
     authorized!(identity, request.path());
-    
+
     let template_name = get_template_name(&request, "bike/admin/upload");
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(BikeUploadFormTemplate {
         message: "".to_string(),
-
     })?;
-    
+
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
 
@@ -127,7 +135,7 @@ pub async fn create_bike(
     let session_keys = BikeCreateSessionKeys::new(user.id);
 
     let model = model_repo.read_one(&GetById::new(form.model_id)).await?;
-    
+
     session.insert(session_keys.name.as_str(), &form.name)?;
     session.insert(session_keys.description.as_str(), &form.description)?;
     session.insert(session_keys.model_id.as_str(), model.id)?;
@@ -153,7 +161,6 @@ pub async fn upload_bike(
     let metadata = get_metadata_from_session(&session, &session_keys)?;
 
     let thumbnail_path = validate_file(&form.thumbnail, Uuid::new_v4(), "image", "thumbnail")?;
-    
 
     let bike_create = BikeCreate::new(
         &metadata.name,
@@ -188,30 +195,10 @@ pub async fn upload_bike(
     session.remove(session_keys.description.as_str());
     session.remove(session_keys.model_id.as_str());
 
-    let url = format!("/bike/{}/manage", bike.id);
+    let url = format!("/bike/{}", bike.id);
     Ok(HttpResponse::SeeOther()
         .insert_header((LOCATION, url))
         .finish())
-}
-
-#[get("/{id}/manage")]
-pub async fn manage_bike(
-    request: HttpRequest,
-    identity: Option<Identity>,
-    bike_repo: web::Data<BikeRepository>,
-    path: web::Path<(Id,)>,
-    state: web::Data<AppState>,
-) -> Result<HttpResponse, AppError> {
-    let u = authorized!(identity, request.path());
-
-    let base = get_bike_detail_base(Some(&u), bike_repo, path.into_inner().0, true).await?;
-
-    let template_name = get_template_name(&request, "bike/admin/detail");
-    let env = state.jinja.acquire_env()?;
-    let template = env.get_template(&template_name)?;
-    let body = template.render(base)?;
-
-    Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
 
 #[delete("/{id}/delete")]
@@ -227,7 +214,7 @@ pub async fn remove_bike(
         .delete(&GetById::new_with_deleted(bike_id))
         .await?;
 
-    let path = format!("/bike/{}/manage", bike_id);
+    let path = format!("/bike/{}", bike_id);
     Ok(HttpResponse::SeeOther()
         .insert_header((LOCATION, path))
         .finish())
@@ -250,7 +237,6 @@ pub async fn hard_remove_bike(
         .finish())
 }
 
-
 #[put("/{id}/restore")]
 pub async fn restore_bike(
     request: HttpRequest,
@@ -263,7 +249,7 @@ pub async fn restore_bike(
     bike_repo
         .restore(&GetById::new_with_deleted(bike_id))
         .await?;
-    let path = format!("/bike/{}/manage", bike_id);
+    let path = format!("/bike/{}", bike_id);
     Ok(HttpResponse::SeeOther()
         .insert_header((LOCATION, path))
         .finish())
@@ -285,7 +271,7 @@ pub async fn edit_bike_page(
         &GetById::new_with_deleted(bike_id),
     )
     .await?;
-    
+
     let models = model_repo.read_many(&ModelSearch::default()).await?;
 
     let template_name = get_template_name(&request, "bike/admin/edit");
@@ -296,7 +282,7 @@ pub async fn edit_bike_page(
         models,
         logged_in: true,
     })?;
-    
+
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
 
@@ -320,7 +306,7 @@ pub async fn edit_bike(
     );
     bike_repo.update(&book_update).await?;
 
-    let path = format!("/bike/{}/manage", form.bike_id);
+    let path = format!("/bike/{}", form.bike_id);
     Ok(HttpResponse::SeeOther()
         .insert_header((LOCATION, path))
         .finish())

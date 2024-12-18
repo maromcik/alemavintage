@@ -6,11 +6,10 @@ use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::brand::repository::BrandRepository;
 use crate::database::repositories::model::repository::ModelRepository;
 use crate::database::repositories::user::repository::UserRepository;
-use crate::handlers::bike::{create_bike, create_bike_page, edit_bike, edit_bike_page, get_bike_detail, get_bikes, hard_remove_bike, manage_bike, remove_bike, restore_bike, upload_bike, upload_bike_form};
+use crate::handlers::bike::{create_bike, create_bike_page, edit_bike, edit_bike_page, get_bike_detail, get_bikes, hard_remove_bike, remove_bike, restore_bike, upload_bike, upload_bike_form};
 use crate::handlers::brand::{create_brand, create_brand_page, edit_brand, edit_brand_page, get_brand, get_brands, remove_brand};
 use crate::handlers::index::index;
-use crate::handlers::user::{user_manage_form_page, user_manage_password, user_manage_password_form};
-use crate::handlers::*;
+use crate::handlers::user::{login, login_user, logout_user, user_manage, user_manage_form_page, user_manage_password, user_manage_password_form};
 use crate::AppState;
 use actix_files::Files as ActixFiles;
 use actix_web::web;
@@ -25,15 +24,11 @@ pub fn configure_webapp(pool: &PgPool, jinja: Arc<AutoReloader>) -> Box<dyn FnOn
     let model_repository = ModelRepository::new(PoolHandler::new(pool.clone()));
     let brand_repository = BrandRepository::new(PoolHandler::new(pool.clone()));
     
-    let studio_scope = web::scope("studio")
-        .app_data(web::Data::new(bike_repo.clone()))
-        .service(studio::studio_index);
-    
     let user_scope = web::scope("user")
         .app_data(web::Data::new(user_repo.clone()))
-        .service(user_login_page)
-        .service(user_login)
-        .service(user_logout)
+        .service(login)
+        .service(login_user)
+        .service(logout_user)
         .service(user_manage_form_page)
         .service(user_manage_password_form)
         .service(user_manage)
@@ -50,7 +45,6 @@ pub fn configure_webapp(pool: &PgPool, jinja: Arc<AutoReloader>) -> Box<dyn FnOn
         .service(edit_bike)
         .service(edit_bike_page)
         .service(upload_bike_form)
-        .service(manage_bike)
         .service(remove_bike)
         .service(get_bike_detail)
         .service(restore_bike)
@@ -85,7 +79,6 @@ pub fn configure_webapp(pool: &PgPool, jinja: Arc<AutoReloader>) -> Box<dyn FnOn
         cfg
             .app_data(web::Data::new(user_repo.clone()))
             .app_data(web::Data::new(AppState::new(jinja.clone())))
-            .service(studio_scope)
             .service(bike_scope)
             .service(user_scope)
             .service(brand_scope)
