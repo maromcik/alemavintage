@@ -9,13 +9,14 @@
             </label>
             <select name="brand_id"
                     class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="brand"  value="{{model.id}}" >
+                    id="brand">
                 {% for brand in brands %}
-                <option value="{{ brand.id }}">{{ brand.name }}</option>
+                <option value="{{ brand.id }}" {% if brand.id == model.brand_id %}selected{% endif %}>
+                    {{ brand.name }}
+                </option>
                 {% endfor %}
             </select>
         </div>
-
         <div class="mb-4">
             <label class="block text-gray-300 text-sm font-bold mb-2" for="model-name">
                 Name
@@ -31,7 +32,7 @@
             </label>
             <textarea name="description"
                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                      id="description" placeholder="Description"></textarea>
+                      id="description" placeholder="Description">{{ model.description }}</textarea>
         </div>
 
         <div class="flex justify-end">
