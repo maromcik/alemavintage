@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT\n                bike.id,\n                bike.model_id,\n                bike.name,\n                bike.thumbnail,\n                bike.description,\n                bike.view_count,\n                bike.like_count,\n                bike.created_at,\n                bike.edited_at,\n                bike.deleted_at,\n                \n                brand.id as brand_id,\n                brand.name as brand_name,\n                model.name as model_name                \n            FROM\n                \"Bike\" AS bike\n                    INNER JOIN\n                \"Model\" AS model ON model.id = bike.model_id\n                    INNER JOIN\n                \"Brand\" AS brand ON brand.id = model.brand_id\n            WHERE\n                bike.id = $1\n            ",
+  "query": "\n            UPDATE \"Bike\" SET\n                incomplete = false,\n                deleted_at = null,\n                edited_at = current_timestamp\n            WHERE id = $1\n            RETURNING *\n            ",
   "describe": {
     "columns": [
       {
@@ -55,18 +55,8 @@
       },
       {
         "ordinal": 10,
-        "name": "brand_id",
-        "type_info": "Int8"
-      },
-      {
-        "ordinal": 11,
-        "name": "brand_name",
-        "type_info": "Text"
-      },
-      {
-        "ordinal": 12,
-        "name": "model_name",
-        "type_info": "Text"
+        "name": "incomplete",
+        "type_info": "Bool"
       }
     ],
     "parameters": {
@@ -85,10 +75,8 @@
       false,
       false,
       true,
-      false,
-      false,
       false
     ]
   },
-  "hash": "d705e0d560609d9c21e9b64936ac1f59cfcea0501104fbfa19aef1c1579e2923"
+  "hash": "b36e867eb32e2678511f87f53e1a7c3ba6274a16c3120938431679b34a4f7f4c"
 }

@@ -52,6 +52,11 @@
         "ordinal": 9,
         "name": "deleted_at",
         "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 10,
+        "name": "incomplete",
+        "type_info": "Bool"
       }
     ],
     "parameters": {
@@ -69,7 +74,8 @@
       false,
       false,
       false,
-      true
+      true,
+      false
     ]
   },
   "hash": "0074a84e7e2bf8bd0f8d9ee159f0a74382706678de66660f7b4132c1b9b200d5"
