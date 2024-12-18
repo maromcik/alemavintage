@@ -33,7 +33,7 @@ impl EntityById for GetById {
         self.id
     }
 
-    fn fetch_deleted(&self) -> bool {
+    fn fetch_hidden(&self) -> bool {
         self.fetch_deleted
     }
 }

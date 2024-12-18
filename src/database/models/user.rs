@@ -19,7 +19,7 @@ impl EntityById for User {
         self.id
     }
 
-    fn fetch_deleted(&self) -> bool {
+    fn fetch_hidden(&self) -> bool {
         false
     }
 }

@@ -38,7 +38,7 @@ impl ModelRepository {
         entity_is_correct(
             query,
             EntityError::new(ModelDeleted, ModelDoesNotExist),
-            params.fetch_deleted(),
+            params.fetch_hidden(),
         )
     }
 }
@@ -85,7 +85,7 @@ where
         let model = entity_is_correct(
             maybe_model,
             EntityError::new(ModelDeleted, ModelDoesNotExist),
-            params.fetch_deleted(),
+            params.fetch_hidden(),
         )?;
         Ok(model)
     }

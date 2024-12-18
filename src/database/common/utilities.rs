@@ -4,10 +4,10 @@ use crate::database::common::EntityById;
 
 pub fn generate_query_param_string(params: &DbQueryParams) -> String {
     let mut qp_string = String::new();
-    if let Some(table) = &params.ignore_deleted {
+    if let Some(table) = &params.ignore_hidden {
         qp_string.push_str("AND ");
         qp_string.push_str(table.to_string().as_str());
-        qp_string.push_str(".deleted_at IS NULL\n");
+        qp_string.push_str(".hidden = false\n");
     }
 
     if let Some(order) = &params.order {
@@ -39,7 +39,7 @@ pub fn entity_is_correct<T: EntityById>(
     fetch_deleted: bool,
 ) -> DbResultSingle<T> {
     if let Some(ent) = entity {
-        if fetch_deleted || !ent.fetch_deleted() {
+        if fetch_deleted || !ent.fetch_hidden() {
             return Ok(ent);
         }
         return Err(DbError::from(BackendError::new(error.deleted)));

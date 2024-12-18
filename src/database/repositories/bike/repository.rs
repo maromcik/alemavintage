@@ -41,7 +41,7 @@ impl BikeRepository {
         entity_is_correct(
             maybe_bike,
             EntityError::new(BikeDeleted, BikeDoesNotExist),
-            params.fetch_deleted(),
+            params.fetch_hidden(),
         )
     }
 
@@ -68,8 +68,7 @@ impl BikeRepository {
             Bike,
             r#"
             UPDATE "Bike" SET
-                incomplete = false,
-                deleted_at = null,
+                hidden = false,
                 edited_at = current_timestamp
             WHERE id = $1
             RETURNING *
@@ -82,19 +81,23 @@ impl BikeRepository {
         Ok(books)
     }
 
-    pub async fn hard_delete(&self, params: &impl EntityById) -> DbResultMultiple<Bike> {
-        let bikes = sqlx::query_as!(
+    pub async fn hide(&self, params: &impl EntityById) -> DbResultMultiple<Bike> {
+        let mut transaction = self.pool_handler.pool.begin().await?;
+        let books = sqlx::query_as!(
             Bike,
             r#"
-            DELETE FROM "Bike"
+            UPDATE "Bike" SET
+                hidden = true,
+                edited_at = current_timestamp
             WHERE id = $1
             RETURNING *
             "#,
             params.id(),
         )
-        .fetch_all(&self.pool_handler.pool)
+        .fetch_all(transaction.as_mut())
         .await?;
-        Ok(bikes)
+        transaction.commit().await?;
+        Ok(books)
     }
 }
 
@@ -141,8 +144,7 @@ impl DbReadOne<BikeGetById, BikeDetail> for BikeRepository {
                 bike.like_count,
                 bike.created_at,
                 bike.edited_at,
-                bike.deleted_at,
-                bike.incomplete,
+                bike.hidden,
                 
                 brand.id as brand_id,
                 brand.name as brand_name,
@@ -166,7 +168,7 @@ impl DbReadOne<BikeGetById, BikeDetail> for BikeRepository {
         let bike = entity_is_correct(
             maybe_bike,
             EntityError::new(BikeDeleted, BikeDoesNotExist),
-            params.fetch_deleted(),
+            params.fetch_hidden(),
         )?;
         Ok(bike)
     }
@@ -185,8 +187,7 @@ impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
                 bike.like_count,
                 bike.created_at,
                 bike.edited_at,
-                bike.deleted_at,
-                bike.incomplete,
+                bike.hidden,
 
                 brand.id   AS brand_id,
                 brand.name AS brand_name,
@@ -268,7 +269,7 @@ impl DbUpdate<BikeUpdate, Bike> for BikeRepository {
                 description = COALESCE($4, description),
                 view_count = COALESCE($5, view_count),
                 like_count = COALESCE($6, like_count),
-                incomplete = COALESCE($7, incomplete),
+                hidden = COALESCE($7, hidden),
                 edited_at = current_timestamp
             WHERE id = $8
             RETURNING *
@@ -279,7 +280,7 @@ impl DbUpdate<BikeUpdate, Bike> for BikeRepository {
             params.description,
             params.view_count,
             params.like_count,
-            params.incomplete,
+            params.hidden,
             bike.id,
         )
         .fetch_all(transaction.as_mut())
@@ -301,9 +302,7 @@ where
         let bikes = sqlx::query_as!(
             Bike,
             r#"
-            UPDATE "Bike" SET
-                deleted_at = current_timestamp,
-                edited_at = current_timestamp
+            DELETE FROM "Bike"
             WHERE id = $1
             RETURNING *
             "#,
@@ -385,7 +384,7 @@ where
         entity_is_correct(
             maybe_image,
             EntityError::new(BikeDeleted, BikeDoesNotExist),
-            params.fetch_deleted(),
+            params.fetch_hidden(),
         )
     }
 }

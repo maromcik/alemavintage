@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            UPDATE \"Bike\" SET\n                incomplete = false,\n                deleted_at = null,\n                edited_at = current_timestamp\n            WHERE id = $1\n            RETURNING *\n            ",
+  "query": "\n            UPDATE \"Bike\" SET\n                hidden = true,\n                edited_at = current_timestamp\n            WHERE id = $1\n            RETURNING *\n            ",
   "describe": {
     "columns": [
       {
@@ -50,12 +50,7 @@
       },
       {
         "ordinal": 9,
-        "name": "deleted_at",
-        "type_info": "Timestamptz"
-      },
-      {
-        "ordinal": 10,
-        "name": "incomplete",
+        "name": "hidden",
         "type_info": "Bool"
       }
     ],
@@ -74,9 +69,8 @@
       false,
       false,
       false,
-      true,
       false
     ]
   },
-  "hash": "b36e867eb32e2678511f87f53e1a7c3ba6274a16c3120938431679b34a4f7f4c"
+  "hash": "fff56ace3fd1ff5fdcf91e916db0c425534fd7d8e466b1341f1c58a7051e0d92"
 }

@@ -14,13 +14,13 @@
         </button>
         <button class="bg-cyan-950 rounded-md p-3 text-xl hover:bg-blue-300 mr-2"
                 hx-target-error="#content-area"
-                hx-delete="/bike/{{ bike.id }}/hard-delete" hx-target="#content-area">
+                hx-delete="/bike/{{ bike.id }}/delete" hx-target="#content-area">
             <i class="fa-solid fa-trash text-white"></i>
         </button>
         {% else %}
         <button class="bg-cyan-950 rounded-md p-3 text-xl hover:bg-blue-300 mr-2"
                 hx-target-error="#content-area"
-                hx-delete="/bike/{{ bike.id }}/delete" hx-target="#content-area">
+                hx-delete="/bike/{{ bike.id }}/hide" hx-target="#content-area">
             <i class="fa-solid fa-eye-slash text-white"></i>
         </button>
         {% endif %}

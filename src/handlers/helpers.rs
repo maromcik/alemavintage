@@ -1,4 +1,4 @@
-use crate::database::common::{DbCreate, DbReadMany, DbReadOne, DbUpdate};
+use crate::database::common::{DbCreate, DbDelete, DbReadMany, DbReadOne, DbUpdate};
 use crate::database::models::bike::{
     Bike, BikeCreateSessionKeys, BikeImageCreate, BikeImageSearch,
     BikeMetadataForm, BikeUpdate,
@@ -40,7 +40,7 @@ pub async fn bike_hard_delete(
         }
 
         let bikes = bike_repo
-            .hard_delete(&GetById::new_with_deleted(bike_id))
+            .delete(&GetById::new_with_deleted(bike_id))
             .await?;
         for bike in bikes {
             remove_file(&bike.thumbnail)?;

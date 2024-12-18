@@ -203,8 +203,8 @@ pub async fn upload_bike(
         .finish())
 }
 
-#[delete("/{id}/delete")]
-pub async fn remove_bike(
+#[delete("/{id}/hide")]
+pub async fn hide_bike(
     request: HttpRequest,
     identity: Option<Identity>,
     bike_repo: web::Data<BikeRepository>,
@@ -213,17 +213,17 @@ pub async fn remove_bike(
     authorized!(identity, request.path());
     let bike_id = path.into_inner().0;
     bike_repo
-        .delete(&GetById::new_with_deleted(bike_id))
+        .hide(&GetById::new_with_deleted(bike_id))
         .await?;
 
-    let path = format!("/bike/{}", bike_id);
+    let path = format!("/bike/{bike_id}");
     Ok(HttpResponse::SeeOther()
         .insert_header((LOCATION, path))
         .finish())
 }
 
-#[delete("/{id}/hard-delete")]
-pub async fn hard_remove_bike(
+#[delete("/{id}/delete")]
+pub async fn remove_bike(
     request: HttpRequest,
     identity: Option<Identity>,
     bike_repo: web::Data<BikeRepository>,

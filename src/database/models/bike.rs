@@ -18,16 +18,15 @@ pub struct Bike {
     pub thumbnail: String,
     pub created_at: DateTime<Utc>,
     pub edited_at: DateTime<Utc>,
-    pub deleted_at: Option<DateTime<Utc>>,
-    pub incomplete: bool,
+    pub hidden: bool,
 }
 
 impl EntityById for Bike {
     fn id(&self) -> Id {
         self.id
     }
-    fn fetch_deleted(&self) -> bool {
-        self.deleted_at.is_some()
+    fn fetch_hidden(&self) -> bool {
+        self.hidden
     }
 }
 
@@ -44,8 +43,7 @@ pub struct BikeDetail {
     pub description: String,
     pub created_at: DateTime<Utc>,
     pub edited_at: DateTime<Utc>,
-    pub deleted_at: Option<DateTime<Utc>>,
-    pub incomplete: bool,
+    pub hidden: bool,
 
     pub brand_name: String,
     pub model_name: String,
@@ -55,8 +53,8 @@ impl EntityById for BikeDetail {
     fn id(&self) -> Id {
         self.id
     }
-    fn fetch_deleted(&self) -> bool {
-        self.deleted_at.is_some()
+    fn fetch_hidden(&self) -> bool {
+        self.hidden
     }
 }
 
@@ -88,7 +86,7 @@ impl From<BikeDetail> for BikeDisplay {
             like_count: value.like_count,
             thumbnail: value.thumbnail,
             description: markdown::to_html(&value.description),
-            hidden: value.deleted_at.is_some() || value.incomplete,
+            hidden: value.hidden,
             brand_name: value.brand_name,
             model_name: value.model_name,
         }
@@ -239,7 +237,7 @@ impl EntityById for BikeImage {
         self.id
     }
 
-    fn fetch_deleted(&self) -> bool {
+    fn fetch_hidden(&self) -> bool {
         false
     }
 }
@@ -296,7 +294,7 @@ pub struct BikeUpdate {
     pub description: Option<String>,
     pub view_count: Option<i64>,
     pub like_count: Option<i64>,
-    pub incomplete: Option<bool>,
+    pub hidden: Option<bool>,
 }
 
 impl BikeUpdate {
@@ -310,7 +308,7 @@ impl BikeUpdate {
         description: Option<&str>,
         view_count: Option<&i64>,
         like_count: Option<&i64>,
-        incomplete: Option<&bool>,
+        hidden: Option<&bool>,
     ) -> Self {
         let change_to_owned = |value: &str| Some(value.to_owned());
         Self {
@@ -321,7 +319,7 @@ impl BikeUpdate {
             description: description.and_then(change_to_owned),
             view_count: view_count.copied(),
             like_count: like_count.copied(),
-            incomplete: incomplete.copied()
+            hidden: hidden.copied()
         }
     }
 
@@ -333,7 +331,7 @@ impl BikeUpdate {
             && self.like_count.is_none()
             && self.description.is_none()
             && self.thumbnail.is_none()
-            && self.incomplete.is_none()
+            && self.hidden.is_none()
     }
 
     #[allow(dead_code)]
@@ -346,7 +344,7 @@ impl BikeUpdate {
             description: None,
             view_count: Some(view_count),
             like_count: None,
-            incomplete: None,
+            hidden: None,
         }
     }
 
@@ -359,7 +357,7 @@ impl BikeUpdate {
             description: None,
             view_count: None,
             like_count: None,
-            incomplete: None,
+            hidden: None,
         }
     }
 
@@ -372,7 +370,7 @@ impl BikeUpdate {
             description: None,
             view_count: None,
             like_count: None,
-            incomplete: Some(false)
+            hidden: Some(false)
         }
     }
 }
@@ -388,7 +386,7 @@ impl EntityById for BikeGetById {
         self.id
     }
 
-    fn fetch_deleted(&self) -> bool {
+    fn fetch_hidden(&self) -> bool {
         self.fetch_deleted
     }
 }

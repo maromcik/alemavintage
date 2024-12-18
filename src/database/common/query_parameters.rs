@@ -5,7 +5,7 @@ pub struct DbQueryParams {
     pub order: Option<DbOrderColumn>,
     pub limit: Option<i64>,
     pub offset: Option<i64>,
-    pub ignore_deleted: Option<DbTable>,
+    pub ignore_hidden: Option<DbTable>,
 }
 
 impl DbQueryParams {
@@ -14,32 +14,32 @@ impl DbQueryParams {
         order: Option<DbOrderColumn>,
         limit: Option<i64>,
         offset: Option<i64>,
-        ignore_deleted: Option<DbTable>,
+        ignore_hidden: Option<DbTable>,
     ) -> Self {
         Self {
             order,
             limit,
             offset,
-            ignore_deleted,
+            ignore_hidden,
         }
     }
 
     #[allow(dead_code)]
-    pub fn limit(limit: i64, offset: i64, ignore_deleted: Option<DbTable>) -> Self {
+    pub fn limit(limit: i64, offset: i64, ignore_hidden: Option<DbTable>) -> Self {
         Self {
             order: Some(DbOrderColumn::default()),
             limit: Some(limit),
             offset: Some(offset),
-            ignore_deleted,
+            ignore_hidden,
         }
     }
 
-    pub fn order(order: DbOrderColumn, ignore_deleted: Option<DbTable>) -> Self {
+    pub fn order(order: DbOrderColumn, ignore_hidden: Option<DbTable>) -> Self {
         Self {
             order: Some(order),
             limit: None,
             offset: None,
-            ignore_deleted,
+            ignore_hidden,
         }
     }
     #[allow(dead_code)]
@@ -48,7 +48,7 @@ impl DbQueryParams {
             order: Some(DbOrderColumn::default()),
             limit: None,
             offset: None,
-            ignore_deleted: None,
+            ignore_hidden: None,
         }
     }
 }
@@ -59,7 +59,7 @@ impl Default for DbQueryParams {
             order: Some(DbOrderColumn::default()),
             limit: None,
             offset: None,
-            ignore_deleted: None,
+            ignore_hidden: None,
         }
     }
 }

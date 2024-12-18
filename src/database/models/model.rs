@@ -15,7 +15,7 @@ impl EntityById for Model {
         self.id
     }
 
-    fn fetch_deleted(&self) -> bool {
+    fn fetch_hidden(&self) -> bool {
         false
     }
 }
@@ -35,7 +35,7 @@ impl EntityById for ModelDetail {
         self.id
     }
 
-    fn fetch_deleted(&self) -> bool {
+    fn fetch_hidden(&self) -> bool {
         false
     }
 }

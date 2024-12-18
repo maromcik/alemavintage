@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            UPDATE \"Bike\"\n            SET\n                name = COALESCE($1, name),\n                model_id = COALESCE($2, model_id),\n                thumbnail = COALESCE($3, thumbnail),\n                description = COALESCE($4, description),\n                view_count = COALESCE($5, view_count),\n                like_count = COALESCE($6, like_count),\n                incomplete = COALESCE($7, incomplete),\n                edited_at = current_timestamp\n            WHERE id = $8\n            RETURNING *\n            ",
+  "query": "\n            UPDATE \"Bike\" SET\n                hidden = false,\n                edited_at = current_timestamp\n            WHERE id = $1\n            RETURNING *\n            ",
   "describe": {
     "columns": [
       {
@@ -50,24 +50,12 @@
       },
       {
         "ordinal": 9,
-        "name": "deleted_at",
-        "type_info": "Timestamptz"
-      },
-      {
-        "ordinal": 10,
-        "name": "incomplete",
+        "name": "hidden",
         "type_info": "Bool"
       }
     ],
     "parameters": {
       "Left": [
-        "Text",
-        "Int8",
-        "Text",
-        "Text",
-        "Int8",
-        "Int8",
-        "Bool",
         "Int8"
       ]
     },
@@ -81,9 +69,8 @@
       false,
       false,
       false,
-      true,
       false
     ]
   },
-  "hash": "457a1a23c6485b2267cfc438102e0f2e5a7e412f4bd2d973469ce19ddd32f800"
+  "hash": "7ac43fb82c01a9c5276f8953e749fb2452707e3bb6afabea80761bb24589ca71"
 }

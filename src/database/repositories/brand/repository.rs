@@ -37,7 +37,7 @@ impl BrandRepository {
         entity_is_correct(
             query,
             EntityError::new(BrandDeleted, BrandDoesNotExist),
-            params.fetch_deleted(),
+            params.fetch_hidden(),
         )
     }
 }
@@ -73,7 +73,7 @@ where
         let brand = entity_is_correct(
             maybe_brand,
             EntityError::new(BrandDeleted, BrandDoesNotExist),
-            params.fetch_deleted(),
+            params.fetch_hidden(),
         )?;
         Ok(brand)
     }
