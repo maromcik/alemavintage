@@ -3,8 +3,6 @@ use serde::Serialize;
 
 const WEAK_PASSWORD_MESSAGE: &str = "Weak password! Password must contain at least one from each: {lower case character, upper case character, number, special character} and must be at least 6 characters long";
 
-
-
 #[derive(Serialize)]
 pub struct LoginTemplate {
     pub message: String,
@@ -28,7 +26,6 @@ impl UserManagePasswordTemplate {
     }
 }
 
-
 #[derive(Serialize)]
 pub struct UserManageProfileTemplate {
     pub user: User,
@@ -37,7 +34,6 @@ pub struct UserManageProfileTemplate {
     pub logged_in: bool,
 }
 
-
 #[derive(Serialize)]
 pub struct UserManageProfileUserFormTemplate {
     pub user: User,
@@ -45,4 +41,3 @@ pub struct UserManageProfileUserFormTemplate {
     pub success: bool,
     pub logged_in: bool,
 }
-

@@ -25,6 +25,7 @@ pub enum BackendErrorKind {
     ModelDeleted,
     ModelUpdateParametersEmpty,
 
+    #[allow(dead_code)]
     UnauthorizedOperation,
 }
 
@@ -44,7 +45,7 @@ impl Display for BackendErrorKind {
             }
             UserPasswordVerificationFailed => {
                 write!(f, "Password verification failed.")
-            },
+            }
             BikeDoesNotExist => f.write_str(does_not_exist("bike").as_str()),
             BikeDeleted => f.write_str(deleted("bike").as_str()),
             BikeUpdateParametersEmpty => {
@@ -55,29 +56,29 @@ impl Display for BackendErrorKind {
                         " (no Bike field would be changed)."
                     )
                 )
-            },
+            }
             ModelDoesNotExist => f.write_str(does_not_exist("model").as_str()),
             ModelDeleted => f.write_str(deleted("model").as_str()),
             ModelUpdateParametersEmpty => {
                 write!(
                     f,
                     concat!(
-                    "The provided parameters for Model update query are incorrect",
-                    " (no model field would be changed)."
+                        "The provided parameters for Model update query are incorrect",
+                        " (no model field would be changed)."
                     )
                 )
-            },
+            }
             BrandDoesNotExist => f.write_str(does_not_exist("brand").as_str()),
             BrandDeleted => f.write_str(deleted("brand").as_str()),
             BrandUpdateParametersEmpty => {
                 write!(
                     f,
                     concat!(
-                    "The provided parameters for Brand update query are incorrect",
-                    " (no brand field would be changed)."
+                        "The provided parameters for Brand update query are incorrect",
+                        " (no brand field would be changed)."
                     )
                 )
-            },
+            }
             UserUpdateParametersEmpty => {
                 write!(
                     f,
@@ -86,7 +87,7 @@ impl Display for BackendErrorKind {
                         " (no User field would be changed)."
                     )
                 )
-            },
+            }
             UnauthorizedOperation => {
                 write!(
                     f,

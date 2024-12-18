@@ -1,6 +1,5 @@
 use std::fmt::{Debug, Display, Formatter};
 
-
 #[derive(Debug, Clone)]
 pub struct DbQueryParams {
     pub order: Option<DbOrderColumn>,
@@ -72,6 +71,7 @@ pub struct DbOrderColumn {
     pub order: DbOrder,
 }
 
+#[allow(dead_code)]
 impl DbOrderColumn {
     pub fn new(table: DbTable, column: DbColumn, order: DbOrder) -> Self {
         Self {
@@ -108,7 +108,7 @@ pub enum DbTable {
     Brand,
     BikeImage,
     User,
-}   
+}
 
 impl DbTable {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {

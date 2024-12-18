@@ -11,7 +11,6 @@ use actix_identity::Identity;
 use actix_web::http::header::LOCATION;
 use actix_web::{get, web, HttpRequest, HttpResponse};
 
-
 #[get("")]
 pub async fn studio_index(
     request: HttpRequest,
@@ -31,6 +30,6 @@ pub async fn studio_index(
         bikes: bikes.into_iter().map(BikeDisplay::from).collect(),
         logged_in: true,
     })?;
-    
+
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }

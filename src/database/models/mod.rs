@@ -1,24 +1,30 @@
 use crate::database::common::EntityById;
 
 pub(crate) mod bike;
-pub(crate) mod user;
-pub mod model;
 pub mod brand;
+pub mod model;
+pub(crate) mod user;
 
 pub type Id = i64;
 
 pub struct GetById {
     pub id: Id,
-    pub fetch_deleted: bool
+    pub fetch_deleted: bool,
 }
 
 impl GetById {
     pub fn new(id: Id) -> Self {
-        Self { id, fetch_deleted: false }
+        Self {
+            id,
+            fetch_deleted: false,
+        }
     }
 
     pub fn new_with_deleted(id: Id) -> Self {
-        Self { id, fetch_deleted: true }
+        Self {
+            id,
+            fetch_deleted: true,
+        }
     }
 }
 

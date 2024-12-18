@@ -7,7 +7,6 @@ use sqlx::PgPool;
 use crate::database::common::error::{DbResultMultiple, DbResultSingle};
 use crate::database::models::Id;
 
-
 pub trait DbCreate<Create, Data> {
     /// Generic call which creates a record in the database
     ///
@@ -25,7 +24,6 @@ pub trait DbCreate<Create, Data> {
     async fn create(&self, data: &Create) -> DbResultSingle<Data>;
 }
 
-
 pub trait DbReadOne<ReadOne, Data> {
     /// Generic call which reads a single record from the database
     ///
@@ -41,7 +39,6 @@ pub trait DbReadOne<ReadOne, Data> {
     /// - `sqlx::Error(_)` on any failure (SQL, DB constraints, connection, etc.)
     async fn read_one(&self, params: &ReadOne) -> DbResultSingle<Data>;
 }
-
 
 pub trait DbReadMany<ReadMany, Data> {
     /// Generic call which reads multiple records from the database
@@ -59,7 +56,6 @@ pub trait DbReadMany<ReadMany, Data> {
     async fn read_many(&self, params: &ReadMany) -> DbResultMultiple<Data>;
 }
 
-
 pub trait DbUpdate<Update, Data> {
     /// Generic call which updates record(s) present in the database
     ///
@@ -75,7 +71,6 @@ pub trait DbUpdate<Update, Data> {
     /// - `sqlx::Error(_)` on any failure (SQL, DB constraints, connection, etc.)
     async fn update(&self, params: &Update) -> DbResultMultiple<Data>;
 }
-
 
 pub trait DbDelete<Delete, Data> {
     /// Generic call which deletes record(s) present in the database
@@ -93,7 +88,6 @@ pub trait DbDelete<Delete, Data> {
     async fn delete(&self, params: &Delete) -> DbResultMultiple<Data>;
 }
 
-
 pub trait DbPoolHandler {
     /// Pool handler constructor
     #[must_use]
@@ -109,7 +103,6 @@ pub trait DbPoolHandler {
 pub struct PoolHandler {
     pub(crate) pool: PgPool,
 }
-
 
 impl DbPoolHandler for PoolHandler {
     /// Database pool constructor
@@ -133,6 +126,7 @@ pub trait DbRepository {
     fn new(pool_handler: PoolHandler) -> Self;
 
     /// Method allowing the database repository to disconnect from the database pool gracefully
+    #[allow(dead_code)]
     async fn disconnect(&self) -> ();
 }
 

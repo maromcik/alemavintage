@@ -10,7 +10,9 @@ use crate::database::common::error::BackendErrorKind::{
 use crate::database::common::error::{BackendError, DbError, EntityError};
 use crate::database::common::error::{DbResultMultiple, DbResultSingle};
 use crate::database::common::utilities::entity_is_correct;
-use crate::database::common::{DbPoolHandler, DbReadOne, DbRepository, DbUpdate, EntityById, PoolHandler};
+use crate::database::common::{
+    DbPoolHandler, DbReadOne, DbRepository, DbUpdate, EntityById, PoolHandler,
+};
 use crate::database::models::user::{User, UserLogin, UserUpdate, UserUpdatePassword};
 use crate::database::models::GetById;
 
@@ -50,8 +52,9 @@ impl UserRepository {
     pub async fn get_user<'a, T>(
         params: T,
         transaction_handle: &mut Transaction<'a, Postgres>,
-    ) -> DbResultSingle<Option<User>> 
-    where T: EntityById
+    ) -> DbResultSingle<Option<User>>
+    where
+        T: EntityById,
     {
         let query = sqlx::query_as!(
             User,
@@ -61,8 +64,8 @@ impl UserRepository {
             "#,
             params.id()
         )
-            .fetch_optional(transaction_handle.as_mut())
-            .await?;
+        .fetch_optional(transaction_handle.as_mut())
+        .await?;
 
         if let Some(user) = query {
             return Ok(Option::from(user));
@@ -94,11 +97,17 @@ impl UserRepository {
             Err(e) => Err(e),
         }
     }
-    
+
     pub async fn update_password(&self, params: &UserUpdatePassword) -> DbResultSingle<User> {
         let mut transaction = self.pool_handler.pool.begin().await?;
-        let user_query =
-            UserRepository::get_user(GetById { id: params.id, fetch_deleted: false }, &mut transaction).await?;
+        let user_query = UserRepository::get_user(
+            GetById {
+                id: params.id,
+                fetch_deleted: false,
+            },
+            &mut transaction,
+        )
+        .await?;
         let user = UserRepository::user_is_correct(user_query.clone())?;
         let user = UserRepository::verify_password(user, &params.old_password)?;
 
@@ -118,8 +127,8 @@ impl UserRepository {
             salt.to_string(),
             user.id,
         )
-            .fetch_one(transaction.as_mut())
-            .await?;
+        .fetch_one(transaction.as_mut())
+        .await?;
 
         transaction.commit().await?;
 
@@ -151,8 +160,8 @@ impl DbReadOne<UserLogin, User> for UserRepository {
             "#,
             params.email
         )
-            .fetch_optional(&self.pool_handler.pool)
-            .await?;
+        .fetch_optional(&self.pool_handler.pool)
+        .await?;
 
         let user = UserRepository::user_is_correct(user)?;
 
@@ -160,8 +169,10 @@ impl DbReadOne<UserLogin, User> for UserRepository {
     }
 }
 
-
-impl<T> DbReadOne<T, User> for UserRepository where T: EntityById{
+impl<T> DbReadOne<T, User> for UserRepository
+where
+    T: EntityById,
+{
     /// Login the user with provided parameters, if the user does not exist, is deleted or the
     /// passwords don't match, return the error about combination of email/password not working
     async fn read_one(&self, params: &T) -> DbResultSingle<User> {
@@ -173,14 +184,13 @@ impl<T> DbReadOne<T, User> for UserRepository where T: EntityById{
             "#,
             params.id()
         )
-            .fetch_optional(&self.pool_handler.pool)
-            .await?;
+        .fetch_optional(&self.pool_handler.pool)
+        .await?;
 
         let user = UserRepository::user_is_correct(maybe_user)?;
         Ok(user)
     }
 }
-
 
 impl DbUpdate<UserUpdate, User> for UserRepository {
     /// Update user information if we know their id (we're logged in as that user)
@@ -190,8 +200,7 @@ impl DbUpdate<UserUpdate, User> for UserRepository {
             return Err(DbError::from(BackendError::new(UserUpdateParametersEmpty)));
         }
         let mut transaction = self.pool_handler.pool.begin().await?;
-        let user =
-            UserRepository::get_user(GetById::new(params.id), &mut transaction).await?;
+        let user = UserRepository::get_user(GetById::new(params.id), &mut transaction).await?;
         let validated_user = UserRepository::user_is_correct(user)?;
         let (password, salt) = match &params.password {
             Some(p) => {
@@ -223,8 +232,8 @@ impl DbUpdate<UserUpdate, User> for UserRepository {
             params.admin,
             validated_user.id
         )
-            .fetch_all(transaction.as_mut())
-            .await?;
+        .fetch_all(transaction.as_mut())
+        .await?;
         transaction.commit().await?;
         Ok(updated_users)
     }
@@ -238,10 +247,10 @@ impl DbUpdate<UserUpdate, User> for UserRepository {
 //         let mut transaction = self.pool_handler.pool.begin().await?;
 //         let user_query =
 //             UserRepository::get_user(UserGetById { id: params.id }, &mut transaction).await?;
-// 
+//
 //         //user does not exist
 //         let _ = UserRepository::user_is_correct(user_query.clone())?;
-// 
+//
 //         let users = sqlx::query_as!(
 //             User,
 //             r#"
@@ -258,9 +267,9 @@ impl DbUpdate<UserUpdate, User> for UserRepository {
 //         )
 //             .fetch_all(transaction.as_mut())
 //             .await?;
-// 
+//
 //         transaction.commit().await?;
-// 
+//
 //         Ok(users)
 //     }
 // }

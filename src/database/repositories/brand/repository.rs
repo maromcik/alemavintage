@@ -1,5 +1,5 @@
 use crate::database::common::error::BackendErrorKind::{
-    BikeDeleted, BikeDoesNotExist, BrandDeleted, BrandDoesNotExist, BrandUpdateParametersEmpty,
+    BrandDeleted, BrandDoesNotExist, BrandUpdateParametersEmpty,
 };
 use crate::database::common::error::{
     BackendError, DbError, DbResultMultiple, DbResultSingle, EntityError,

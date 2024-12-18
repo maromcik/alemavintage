@@ -1,5 +1,5 @@
-use serde::Deserialize;
 use crate::database::models::Id;
+use serde::Deserialize;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct BrandCreateForm {

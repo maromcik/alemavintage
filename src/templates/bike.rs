@@ -1,15 +1,12 @@
 use crate::database::models::bike::{BikeDetail, BikeDisplay};
-use crate::database::models::brand::Brand;
-use crate::database::models::model::{Model, ModelDetail};
+use crate::database::models::model::ModelDetail;
 use serde::Serialize;
-
 
 #[derive(Serialize)]
 pub struct BikesTemplate {
     pub logged_in: bool,
     pub bikes: Vec<BikeDisplay>,
 }
-
 
 #[derive(Serialize)]
 pub struct BikeCreateTemplate {
@@ -31,9 +28,7 @@ pub struct BikeDisplayTemplate {
     pub logged_in: bool,
 }
 
-
 #[derive(Serialize)]
 pub struct BikeUploadFormTemplate {
     pub message: String,
 }
-

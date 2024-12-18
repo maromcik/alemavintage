@@ -1,22 +1,26 @@
-use std::collections::HashMap;
+use crate::database::common::query_parameters::{
+    DbColumn, DbOrder, DbOrderColumn, DbQueryParams, DbTable,
+};
 use crate::database::common::{DbCreate, DbDelete, DbReadMany, DbReadOne, DbUpdate};
+use crate::database::models::bike::BikeSearch;
+use crate::database::models::brand::BrandSearch;
 use crate::database::models::model::{ModelCreate, ModelDetail, ModelSearch, ModelUpdate};
+use crate::database::models::{GetById, Id};
+use crate::database::repositories::bike::repository::BikeRepository;
+use crate::database::repositories::brand::repository::BrandRepository;
 use crate::database::repositories::model::repository::ModelRepository;
 use crate::error::AppError;
 use crate::forms::model::{ModelCreateForm, ModelEditForm};
 use crate::handlers::helpers::{bike_hard_delete, get_template_name};
-use crate::templates::model::{ModelCreateTemplate, ModelDetailTemplate, ModelEditTemplate, ModelTemplate};
+use crate::templates::model::{
+    ModelCreateTemplate, ModelDetailTemplate, ModelEditTemplate, ModelTemplate,
+};
 use crate::{authorized, AppState};
 use actix_identity::Identity;
 use actix_web::http::header::LOCATION;
 use actix_web::{delete, get, post, web, HttpRequest, HttpResponse};
 use itertools::Itertools;
-use crate::database::common::query_parameters::{DbColumn, DbOrder, DbOrderColumn, DbQueryParams, DbTable};
-use crate::database::models::brand::BrandSearch;
-use crate::database::models::{GetById, Id};
-use crate::database::models::bike::BikeSearch;
-use crate::database::repositories::bike::repository::BikeRepository;
-use crate::database::repositories::brand::repository::BrandRepository;
+use std::collections::HashMap;
 
 #[get("/create")]
 pub async fn create_model_page(
@@ -32,7 +36,10 @@ pub async fn create_model_page(
     let template_name = get_template_name(&request, "model/create");
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
-    let body = template.render(ModelCreateTemplate { brands, logged_in: true })?;
+    let body = template.render(ModelCreateTemplate {
+        brands,
+        logged_in: true,
+    })?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
@@ -47,7 +54,11 @@ pub async fn create_model(
     let _ = authorized!(identity, request.path());
 
     let _ = model_repo
-        .create(&ModelCreate::new(&form.brand_id, &form.name, &form.description))
+        .create(&ModelCreate::new(
+            &form.brand_id,
+            &form.name,
+            &form.description,
+        ))
         .await?;
     Ok(HttpResponse::SeeOther()
         .insert_header((LOCATION, "/model"))
@@ -71,7 +82,11 @@ pub async fn edit_model_page(
     let template_name = get_template_name(&request, "model/edit");
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
-    let body = template.render(ModelEditTemplate { model, brands, logged_in: true })?;
+    let body = template.render(ModelEditTemplate {
+        model,
+        brands,
+        logged_in: true,
+    })?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
@@ -86,7 +101,12 @@ pub async fn edit_model(
     let _ = authorized!(identity, request.path());
 
     let _ = model_repo
-        .update(&ModelUpdate::new(&form.id, Some(&form.brand_id), Some(&form.name), Some(&form.description)))
+        .update(&ModelUpdate::new(
+            &form.id,
+            Some(&form.brand_id),
+            Some(&form.name),
+            Some(&form.description),
+        ))
         .await?;
     let url = format!("/model/{}", form.id);
     Ok(HttpResponse::SeeOther()
@@ -102,7 +122,7 @@ pub async fn get_models(
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
     let models = model_repo.read_many(&ModelSearch::default()).await?;
-    
+
     let models_grouped = models
         .into_iter()
         .chunk_by(|m| m.brand_name.clone())
@@ -134,10 +154,13 @@ pub async fn get_model(
     let model = model_repo.read_one(&GetById::new(model_id)).await?;
 
     let bikes = bike_repo
-        .read_many(&BikeSearch::search_by_model_id(model_id, DbQueryParams::order(
-            DbOrderColumn::new_column_only(DbColumn::ViewCount, DbOrder::Desc),
-            Some(DbTable::Bike),
-        )))
+        .read_many(&BikeSearch::search_by_model_id(
+            model_id,
+            DbQueryParams::order(
+                DbOrderColumn::new_column_only(DbColumn::ViewCount, DbOrder::Desc),
+                Some(DbTable::Bike),
+            ),
+        ))
         .await?;
 
     let template_name = get_template_name(&request, "model/detail");
@@ -162,13 +185,16 @@ pub async fn remove_model(
 ) -> Result<HttpResponse, AppError> {
     let _ = authorized!(identity, request.path());
     let model_id = path.into_inner().0;
-    
-    let bikes  = bike_repo
-        .read_many(&BikeSearch::search_by_model_id(model_id, DbQueryParams::default()))
+
+    let bikes = bike_repo
+        .read_many(&BikeSearch::search_by_model_id(
+            model_id,
+            DbQueryParams::default(),
+        ))
         .await?;
 
     bike_hard_delete(&bike_repo, bikes.iter().map(|b| b.id).collect()).await?;
-    
+
     let _ = model_repo
         .delete(&GetById::new_with_deleted(model_id))
         .await?;

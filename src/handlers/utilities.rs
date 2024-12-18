@@ -10,15 +10,11 @@ use actix_multipart::form::tempfile::TempFile;
 use actix_session::Session;
 use actix_web::{web, HttpRequest};
 
-use crate::database::common::error::{BackendError, BackendErrorKind};
 use crate::database::models::bike::BikeMetadataForm;
 use crate::database::models::user::User;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::MIN_PASS_LEN;
-use actix_web::http::header::LOCATION;
-use futures_util::TryFutureExt;
 use image::metadata::Orientation;
-use image::{metadata, DynamicImage, ImageFormat, ImageResult};
 use uuid::Uuid;
 
 pub struct ImageDimensions {
@@ -35,17 +31,15 @@ impl ImageDimensions {
 pub struct BikeCreateSessionKeys {
     pub name: String,
     pub description: String,
-    pub brand_id: String,
     pub model_id: String,
 }
 
 impl BikeCreateSessionKeys {
     pub fn new(user_id: Id) -> Self {
         Self {
-            name: format!("bike_create_{}_name", user_id),
-            description: format!("bike_create_{}_description", user_id),
-            brand_id: format!("bike_create_{}_brand_id", user_id),
-            model_id: format!("bike_create_{}_model_id", user_id),
+            name: format!("bike_create_{user_id}_name"),
+            description: format!("bike_create_{user_id}_description"),
+            model_id: format!("bike_create_{user_id}_model_id"),
         }
     }
 }
@@ -64,7 +58,7 @@ pub fn get_metadata_from_session(
             "New bike could not be found in the active session",
         ));
     };
-    
+
     let Some(model_id) = session.get::<i64>(session_keys.model_id.as_str())? else {
         return Err(AppError::new(
             AppErrorKind::NotFound,
@@ -102,13 +96,13 @@ pub fn validate_file(
     prefix: &str,
 ) -> Result<String, AppError> {
     let extension = match file.file_name.clone() {
-        None => "".to_owned(),
+        None => String::new(),
         Some(name) => {
             let split_res = name.split('.');
             let vector = split_res.collect::<Vec<&str>>();
             match vector.last() {
-                None => "".to_owned(),
-                Some(ext) => ext.to_string(),
+                None => String::new(),
+                Some(ext) => (*ext).to_string(),
             }
         }
     };
@@ -193,15 +187,6 @@ macro_rules! authorized {
     }};
 }
 
-pub fn is_authorized(user_id: Id, author_id: Id) -> Result<(), AppError> {
-    match user_id == author_id {
-        true => Ok(()),
-        false => Err(AppError::from(BackendError::new(
-            BackendErrorKind::UnauthorizedOperation,
-        ))),
-    }
-}
-
 pub fn validate_password(password: &str) -> bool {
     let (lower, upper, numeric, special) =
         password
@@ -209,27 +194,31 @@ pub fn validate_password(password: &str) -> bool {
             .fold((false, false, false, false), |(l, u, n, s), c| {
                 (
                     {
-                        match c.is_lowercase() {
-                            true => true,
-                            false => l,
+                        if c.is_lowercase() {
+                            true
+                        } else {
+                            l
                         }
                     },
                     {
-                        match c.is_uppercase() {
-                            true => true,
-                            false => u,
+                        if c.is_uppercase() {
+                            true
+                        } else {
+                            u
                         }
                     },
                     {
-                        match c.is_numeric() {
-                            true => true,
-                            false => n,
+                        if c.is_numeric() {
+                            true
+                        } else {
+                            n
                         }
                     },
                     {
-                        match !c.is_alphanumeric() {
-                            true => true,
-                            false => s,
+                        if !c.is_alphanumeric() {
+                            true
+                        } else {
+                            s
                         }
                     },
                 )

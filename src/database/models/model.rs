@@ -2,7 +2,6 @@ use crate::database::common::EntityById;
 use crate::database::models::Id;
 use serde::Serialize;
 
-
 #[derive(sqlx::FromRow, Debug, PartialEq, Eq, Clone, Serialize)]
 pub struct Model {
     pub id: Id,
@@ -61,9 +60,9 @@ impl ModelCreate {
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct  ModelSearch {
+pub struct ModelSearch {
     pub name: Option<String>,
-    pub brand_id: Option<Id>
+    pub brand_id: Option<Id>,
 }
 
 impl ModelSearch {
@@ -87,7 +86,12 @@ pub struct ModelUpdate {
 
 impl ModelUpdate {
     #[allow(dead_code)]
-    pub fn new(id: &Id, brand_id: Option<&Id>, name: Option<&str>, description: Option<&str>) -> Self {
+    pub fn new(
+        id: &Id,
+        brand_id: Option<&Id>,
+        name: Option<&str>,
+        description: Option<&str>,
+    ) -> Self {
         let change_to_owned = |value: &str| Some(value.to_owned());
         Self {
             id: *id,

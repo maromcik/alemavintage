@@ -1,6 +1,6 @@
 use crate::database::common::error::{BackendError, DbError, DbResultSingle, EntityError};
-use crate::database::common::{EntityById};
 use crate::database::common::query_parameters::DbQueryParams;
+use crate::database::common::EntityById;
 
 pub fn generate_query_param_string(params: &DbQueryParams) -> String {
     let mut qp_string = String::new();
@@ -9,7 +9,7 @@ pub fn generate_query_param_string(params: &DbQueryParams) -> String {
         qp_string.push_str(table.to_string().as_str());
         qp_string.push_str(".deleted_at IS NULL\n");
     }
-    
+
     if let Some(order) = &params.order {
         qp_string.push_str("ORDER BY ");
         if let Some(table) = &order.table {

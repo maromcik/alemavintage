@@ -13,13 +13,14 @@ use crate::database::repositories::model::repository::ModelRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::error::AppError;
 use crate::forms::bike::{BikeCreateForm, BikeEditForm, BikeUploadForm};
-use crate::handlers::helpers::{bike_hard_delete, get_bike_detail_base, get_template_name};
+use crate::handlers::helpers::{bike_hard_delete, get_template_name};
 use crate::handlers::utilities::{
     get_metadata_from_session, get_user_from_identity, save_file, validate_file,
     BikeCreateSessionKeys, ImageDimensions,
 };
 use crate::templates::bike::{
-    BikeCreateTemplate, BikeEditTemplate, BikeUploadFormTemplate, BikesTemplate,
+    BikeCreateTemplate, BikeDisplayTemplate, BikeEditTemplate, BikeUploadFormTemplate,
+    BikesTemplate,
 };
 use crate::{authorized, AppState};
 use actix_identity::Identity;
@@ -29,7 +30,6 @@ use actix_web::http::header::LOCATION;
 use actix_web::{delete, get, post, put, web, HttpRequest, HttpResponse};
 use rayon::iter::ParallelIterator;
 use rayon::prelude::IntoParallelIterator;
-use std::fs::metadata;
 use uuid::Uuid;
 
 #[get("")]
@@ -65,18 +65,32 @@ pub async fn get_bike_detail(
     state: web::Data<AppState>,
     path: web::Path<(Id,)>,
 ) -> Result<HttpResponse, AppError> {
-    let base = get_bike_detail_base(
-        identity.as_ref(),
-        bike_repo,
-        path.into_inner().0,
-        identity.is_some(),
+    let bike_id = path.into_inner().0;
+
+    let bike: BikeDetail = <BikeRepository as DbReadOne<GetById, BikeDetail>>::read_one(
+        bike_repo.as_ref(),
+        &GetById {
+            id: bike_id,
+            fetch_deleted: identity.is_some(),
+        },
     )
     .await?;
+
+    let bike_images: Vec<String> = bike_repo
+        .read_many(&BikeImageSearch::new(Some(bike.id)))
+        .await?
+        .into_iter()
+        .map(|image| image.path)
+        .collect();
 
     let template_name = get_template_name(&request, "bike/detail");
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
-    let body = template.render(base)?;
+    let body = template.render(BikeDisplayTemplate {
+        bike: BikeDisplay::from(bike),
+        bike_images,
+        logged_in: identity.is_some(),
+    })?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
@@ -164,7 +178,7 @@ pub async fn upload_bike(
 
     let bike_create = BikeCreate::new(
         &metadata.name,
-        &metadata.model_id,
+        metadata.model_id,
         &thumbnail_path,
         &metadata.description,
     );
@@ -208,7 +222,7 @@ pub async fn remove_bike(
     bike_repo: web::Data<BikeRepository>,
     path: web::Path<(Id,)>,
 ) -> Result<HttpResponse, AppError> {
-    let u = authorized!(identity, request.path());
+    authorized!(identity, request.path());
     let bike_id = path.into_inner().0;
     bike_repo
         .delete(&GetById::new_with_deleted(bike_id))
@@ -227,7 +241,7 @@ pub async fn hard_remove_bike(
     bike_repo: web::Data<BikeRepository>,
     path: web::Path<(Id,)>,
 ) -> Result<HttpResponse, AppError> {
-    let u = authorized!(identity, request.path());
+    authorized!(identity, request.path());
     let bike_id = path.into_inner().0;
 
     bike_hard_delete(&bike_repo, vec![bike_id]).await?;
@@ -244,7 +258,7 @@ pub async fn restore_bike(
     bike_repo: web::Data<BikeRepository>,
     path: web::Path<(Id,)>,
 ) -> Result<HttpResponse, AppError> {
-    let u = authorized!(identity, request.path());
+    authorized!(identity, request.path());
     let bike_id = path.into_inner().0;
     bike_repo
         .restore(&GetById::new_with_deleted(bike_id))
@@ -264,7 +278,7 @@ pub async fn edit_bike_page(
     path: web::Path<(Id,)>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
-    let _ = authorized!(identity, request.path());
+    authorized!(identity, request.path());
     let bike_id = path.into_inner().0;
     let bike: BikeDetail = <BikeRepository as DbReadOne<GetById, BikeDetail>>::read_one(
         bike_repo.as_ref(),
@@ -293,7 +307,7 @@ pub async fn edit_bike(
     bike_repo: web::Data<BikeRepository>,
     form: web::Form<BikeEditForm>,
 ) -> Result<HttpResponse, AppError> {
-    let _ = authorized!(identity, request.path());
+    authorized!(identity, request.path());
 
     let book_update = BikeUpdate::new(
         &form.bike_id,

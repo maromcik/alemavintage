@@ -1,7 +1,6 @@
-use serde::{Deserialize, Serialize};
 use crate::database::common::EntityById;
 use crate::database::models::Id;
-
+use serde::{Deserialize, Serialize};
 
 #[derive(sqlx::FromRow, Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct User {
@@ -12,7 +11,7 @@ pub struct User {
     pub surname: String,
     pub password_hash: String,
     pub password_salt: String,
-    pub admin: bool
+    pub admin: bool,
 }
 
 impl EntityById for User {

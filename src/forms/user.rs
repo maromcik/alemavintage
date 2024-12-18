@@ -1,8 +1,7 @@
-use actix_multipart::form::tempfile::TempFile;
-use actix_multipart::form::MultipartForm;
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug, Clone)]
+#[allow(dead_code)]
 pub struct UserCreateForm {
     pub email: String,
     pub password: String,

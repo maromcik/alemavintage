@@ -54,7 +54,7 @@ async fn main() -> anyhow::Result<()> {
         notifier.watch_path(template_path, true);
         Ok(env)
     });
-    
+
     let jinja = Arc::new(reloader);
 
     let host = parse_host();

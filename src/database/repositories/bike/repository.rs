@@ -1,5 +1,9 @@
-use crate::database::common::error::BackendErrorKind::{BikeDeleted, BikeDoesNotExist, BikeUpdateParametersEmpty};
-use crate::database::common::error::{BackendError, DbError, DbResultMultiple, DbResultSingle, EntityError};
+use crate::database::common::error::BackendErrorKind::{
+    BikeDeleted, BikeDoesNotExist, BikeUpdateParametersEmpty,
+};
+use crate::database::common::error::{
+    BackendError, DbError, DbResultMultiple, DbResultSingle, EntityError,
+};
 use crate::database::common::{
     DbCreate, DbDelete, DbPoolHandler, DbReadMany, DbReadOne, DbRepository, DbUpdate, EntityById,
     PoolHandler,
@@ -8,8 +12,11 @@ use crate::database::common::{
 use sqlx::{Postgres, Transaction};
 
 use crate::database::common::utilities::{entity_is_correct, generate_query_param_string};
-use crate::database::models::bike::{Bike, BikeCreate, BikeDetail, BikeImage, BikeImageCreate, BikeImageSearch, BikeSearch, BikeUpdate};
-use crate::database::models::{GetById, Id};
+use crate::database::models::bike::{
+    Bike, BikeCreate, BikeDetail, BikeImage, BikeImageCreate, BikeImageSearch, BikeSearch,
+    BikeUpdate,
+};
+use crate::database::models::GetById;
 
 #[derive(Clone)]
 pub struct BikeRepository {
@@ -39,7 +46,7 @@ impl BikeRepository {
     }
 
     pub async fn increment_view_count<'a>(
-        book_id: &Id,
+        params: &impl EntityById,
         transaction_handle: &mut Transaction<'a, Postgres>,
     ) -> DbResultSingle<()> {
         sqlx::query!(
@@ -48,7 +55,7 @@ impl BikeRepository {
             SET view_count = view_count + 1
             WHERE id = $1
             "#,
-            book_id,
+            params.id(),
         )
         .execute(transaction_handle.as_mut())
         .await?;
@@ -117,6 +124,7 @@ where
     ById: EntityById,
 {
     async fn read_one(&self, params: &ById) -> DbResultSingle<BikeDetail> {
+        let mut transaction = self.pool_handler.pool.begin().await?;
         let maybe_bike = sqlx::query_as!(
             BikeDetail,
             r#"
@@ -146,9 +154,13 @@ where
             "#,
             params.id(),
         )
-        .fetch_optional(&self.pool_handler.pool)
+        .fetch_optional(transaction.as_mut())
         .await?;
-        println!("{}", params.fetch_deleted());
+
+        BikeRepository::increment_view_count(params, &mut transaction).await?;
+
+        transaction.commit().await?;
+        
         let bike = entity_is_correct(
             maybe_bike,
             EntityError::new(BikeDeleted, BikeDoesNotExist),
@@ -230,9 +242,7 @@ impl DbCreate<BikeCreate, Bike> for BikeRepository {
 impl DbUpdate<BikeUpdate, Bike> for BikeRepository {
     async fn update(&self, params: &BikeUpdate) -> DbResultMultiple<Bike> {
         if params.update_fields_none() {
-            return Err(DbError::from(BackendError::new(
-                BikeUpdateParametersEmpty,
-            )));
+            return Err(DbError::from(BackendError::new(BikeUpdateParametersEmpty)));
         }
 
         let mut transaction = self.pool_handler.pool.begin().await?;
@@ -353,7 +363,8 @@ impl DbCreate<BikeImageCreate, Vec<BikeImage>> for BikeRepository {
 }
 
 impl<T> DbReadOne<T, BikeImage> for BikeRepository
-where T: EntityById
+where
+    T: EntityById,
 {
     async fn read_one(&self, params: &T) -> DbResultSingle<BikeImage> {
         let maybe_image = sqlx::query_as!(
@@ -364,8 +375,8 @@ where T: EntityById
             "#,
             params.id()
         )
-            .fetch_optional(&self.pool_handler.pool)
-            .await?;
+        .fetch_optional(&self.pool_handler.pool)
+        .await?;
         entity_is_correct(
             maybe_image,
             EntityError::new(BikeDeleted, BikeDoesNotExist),

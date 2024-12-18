@@ -101,15 +101,10 @@ pub struct BikeCreate {
 }
 
 impl BikeCreate {
-    pub fn new(
-        name: &str,
-        model_id: &Id,
-        thumbnail: &str,
-        description: &str,
-    ) -> Self {
+    pub fn new(name: &str, model_id: Id, thumbnail: &str, description: &str) -> Self {
         Self {
             name: name.to_owned(),
-            model_id: *model_id,
+            model_id,
             thumbnail: thumbnail.to_owned(),
             description: description.to_owned(),
         }
@@ -262,6 +257,7 @@ impl BikeImageSearch {
         }
     }
 
+    #[allow(dead_code)]
     pub fn with_params(bike_id: Option<Id>, query_params: DbQueryParams) -> Self {
         Self {
             bike_id,
@@ -269,6 +265,7 @@ impl BikeImageSearch {
         }
     }
 
+    #[allow(dead_code)]
     pub fn search_by_bike_id(bike_id: Id) -> Self {
         Self {
             bike_id: Some(bike_id),
@@ -334,7 +331,8 @@ impl BikeUpdate {
             && self.description.is_none()
             && self.thumbnail.is_none()
     }
-
+    
+    #[allow(dead_code)]
     pub fn update_views(id: Id, view_count: i64) -> Self {
         Self {
             id,

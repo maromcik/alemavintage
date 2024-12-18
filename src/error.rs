@@ -4,13 +4,13 @@ use crate::templates::error::GenericError;
 use actix_web::http::header::ContentType;
 use actix_web::http::StatusCode;
 use actix_web::{HttpResponse, ResponseError};
+use image::ImageError;
+use minijinja::{path_loader, Environment};
+use rexiv2::Rexiv2Error;
 use serde::Serialize;
 use std::fmt::{Debug, Display, Formatter};
 use std::io::Error;
 use std::num::ParseIntError;
-use image::ImageError;
-use minijinja::{path_loader, Environment};
-use rexiv2::Rexiv2Error;
 use thiserror::Error;
 
 /// User facing error type
@@ -62,8 +62,7 @@ impl AppError {
 impl From<BackendError> for AppError {
     fn from(value: BackendError) -> Self {
         match value.error_kind {
-            BackendErrorKind::UserUpdateParametersEmpty
-            | BackendErrorKind::UserDeleted => {
+            BackendErrorKind::UserUpdateParametersEmpty | BackendErrorKind::UserDeleted => {
                 Self::new(AppErrorKind::BadRequest, value.to_string().as_str())
             }
 
@@ -142,7 +141,6 @@ impl From<std::io::Error> for AppError {
     }
 }
 
-
 impl From<actix_session::SessionGetError> for AppError {
     fn from(value: actix_session::SessionGetError) -> Self {
         Self::new(AppErrorKind::SessionError, value.to_string().as_str())
@@ -188,7 +186,9 @@ impl ResponseError for AppError {
 fn render_generic(error: &AppError) -> HttpResponse {
     let mut env = Environment::new();
     env.set_loader(path_loader("templates"));
-    let template = env.get_template("error.html").expect("Failed to read the error template");
+    let template = env
+        .get_template("error.html")
+        .expect("Failed to read the error template");
     let context = GenericError {
         code: error.status_code().to_string(),
         description: error.message.clone(),

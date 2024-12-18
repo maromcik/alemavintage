@@ -8,7 +8,7 @@ use serde::Deserialize;
 pub struct BikeCreateForm {
     pub name: String,
     pub description: String,
-    pub model_id: Id
+    pub model_id: Id,
 }
 #[derive(Debug, MultipartForm)]
 pub struct BikeUploadForm {
@@ -18,6 +18,7 @@ pub struct BikeUploadForm {
     pub photos: Vec<TempFile>,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, MultipartForm)]
 pub struct BikeThumbnailEditForm {
     #[multipart(rename = "thumbnail")]
@@ -33,6 +34,7 @@ pub struct BikeEditForm {
     pub description: String,
 }
 
+#[allow(dead_code)]
 #[derive(Deserialize)]
 pub struct BikeQuickSearchQuery {
     pub query: String,
