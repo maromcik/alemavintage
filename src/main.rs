@@ -31,6 +31,9 @@ const PAYLOAD_LIMIT: usize = 16 * 1024 * 1024 * 1024; // 16GiB
 const FORM_LIMIT: usize = 16 * 1024 * 1024; // 16MiB
 const MIN_PASS_LEN: usize = 6;
 
+const THUMBNAIL_SIZE: u32 = 600;
+const IMAGE_SIZE: u32 = 2000;
+
 pub struct AppState {
     pub jinja: Arc<AutoReloader>,
 }

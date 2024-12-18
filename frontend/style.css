@@ -46,3 +46,15 @@
         @apply bg-gray-200 text-sm px-1 py-0.5 rounded;
     }
 }
+
+.image-container {
+    width: 100%; /* Set the width of the container */
+    max-width: 320px;
+    margin-left: 0;
+}
+
+.responsive-image {
+    width: 100%; /* Make the image fill the container */
+    height: 100%; /* Make the image fill the container */
+    object-fit: cover; /* Maintain aspect ratio and cover the container */
+}

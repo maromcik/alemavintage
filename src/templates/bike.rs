@@ -32,3 +32,9 @@ pub struct BikeDisplayTemplate {
 pub struct BikeUploadFormTemplate {
     pub message: String,
 }
+
+#[derive(Serialize)]
+pub struct BikeThumbnailUploadTemplate {
+    pub message: String,
+    pub bike: BikeDisplay,
+}

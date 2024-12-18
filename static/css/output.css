@@ -1382,6 +1382,23 @@ code {
   transition-duration: 500ms;
 }
 
+.image-container {
+  width: 100%;
+  /* Set the width of the container */
+  max-width: 320px;
+  margin-left: 0;
+}
+
+.responsive-image {
+  width: 100%;
+  /* Make the image fill the container */
+  height: 100%;
+  /* Make the image fill the container */
+  -o-object-fit: cover;
+     object-fit: cover;
+  /* Maintain aspect ratio and cover the container */
+}
+
 .hover\:border-gray-500:hover {
   --tw-border-opacity: 1;
   border-color: rgb(107 114 128 / var(--tw-border-opacity, 1));
@@ -1473,24 +1490,12 @@ code {
     height: 3rem;
   }
 
-  .md\:h-40 {
-    height: 10rem;
-  }
-
-  .md\:w-40 {
-    width: 10rem;
-  }
-
   .md\:w-96 {
     width: 24rem;
   }
 
   .md\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .md\:pl-12 {
-    padding-left: 3rem;
   }
 
   .md\:pl-4 {
@@ -1541,10 +1546,6 @@ code {
 
   .lg\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .lg\:pl-24 {
-    padding-left: 6rem;
   }
 
   .lg\:pt-8 {

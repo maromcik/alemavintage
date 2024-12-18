@@ -18,7 +18,6 @@ pub struct BikeUploadForm {
     pub photos: Vec<TempFile>,
 }
 
-#[allow(dead_code)]
 #[derive(Debug, MultipartForm)]
 pub struct BikeThumbnailEditForm {
     #[multipart(rename = "thumbnail")]

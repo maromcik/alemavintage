@@ -16,6 +16,7 @@ use actix_web::{web, HttpRequest};
 use rayon::iter::IntoParallelIterator;
 use rayon::iter::ParallelIterator;
 use uuid::Uuid;
+use crate::{IMAGE_SIZE, THUMBNAIL_SIZE};
 
 pub fn get_template_name(request: &HttpRequest, path: &str) -> String {
     if is_htmx(request) {
@@ -93,10 +94,10 @@ pub async fn upload_bike_helper(
     save_file(
         form.thumbnail,
         &thumbnail_path,
-        &ImageDimensions::new(300, 300),
+        &ImageDimensions::new(THUMBNAIL_SIZE, THUMBNAIL_SIZE),
     )?;
 
-    let image_dimensions = ImageDimensions::new(2000, 2000);
+    let image_dimensions = ImageDimensions::new(IMAGE_SIZE, IMAGE_SIZE);
 
     let paths = form
         .photos

@@ -33,7 +33,7 @@
             <!--            <img class="bg-cyan-900 w-80 h-80 mr-10" src="{{ bike.thumbnail }}" alt="bike-thumbnail">-->
             <div id="bike-thumbnail-box"
                  class="relative inline-block group w-25 h-25 md:w-45 md:h-45 lg:w-80 lg:h-80 mb-4">
-                <img class="w-25 h-25 md:w-45 md:h-45 lg:w-80 lg:h-80 mb-4" src="{{ bike.thumbnail }}" alt="book-thumbnail">
+                <img class="responsive-image bg-blue-600 w-full h-full sm:h-mr-10" src="{{ bike.thumbnail }}" alt="book-thumbnail">
                 {% if logged_in %}
                 {% include "bike/admin/thumbnail/detail/content.html" %}
                 {% endif %}
