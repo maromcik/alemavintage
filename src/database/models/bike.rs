@@ -19,6 +19,7 @@ pub struct Bike {
     pub created_at: DateTime<Utc>,
     pub edited_at: DateTime<Utc>,
     pub deleted_at: Option<DateTime<Utc>>,
+    pub incomplete: bool,
 }
 
 impl EntityById for Bike {
@@ -44,6 +45,7 @@ pub struct BikeDetail {
     pub created_at: DateTime<Utc>,
     pub edited_at: DateTime<Utc>,
     pub deleted_at: Option<DateTime<Utc>>,
+    pub incomplete: bool,
 
     pub brand_name: String,
     pub model_name: String,
@@ -69,7 +71,7 @@ pub struct BikeDisplay {
     pub like_count: i64,
     pub thumbnail: String,
     pub description: String,
-    pub deleted: bool,
+    pub hidden: bool,
 
     pub brand_name: String,
     pub model_name: String,
@@ -86,7 +88,7 @@ impl From<BikeDetail> for BikeDisplay {
             like_count: value.like_count,
             thumbnail: value.thumbnail,
             description: markdown::to_html(&value.description),
-            deleted: value.deleted_at.is_some(),
+            hidden: value.deleted_at.is_some() || value.incomplete,
             brand_name: value.brand_name,
             model_name: value.model_name,
         }
@@ -294,6 +296,7 @@ pub struct BikeUpdate {
     pub description: Option<String>,
     pub view_count: Option<i64>,
     pub like_count: Option<i64>,
+    pub incomplete: Option<bool>,
 }
 
 impl BikeUpdate {
@@ -307,6 +310,7 @@ impl BikeUpdate {
         description: Option<&str>,
         view_count: Option<&i64>,
         like_count: Option<&i64>,
+        incomplete: Option<&bool>,
     ) -> Self {
         let change_to_owned = |value: &str| Some(value.to_owned());
         Self {
@@ -317,6 +321,7 @@ impl BikeUpdate {
             description: description.and_then(change_to_owned),
             view_count: view_count.copied(),
             like_count: like_count.copied(),
+            incomplete: incomplete.copied()
         }
     }
 
@@ -328,6 +333,7 @@ impl BikeUpdate {
             && self.like_count.is_none()
             && self.description.is_none()
             && self.thumbnail.is_none()
+            && self.incomplete.is_none()
     }
 
     #[allow(dead_code)]
@@ -340,6 +346,7 @@ impl BikeUpdate {
             description: None,
             view_count: Some(view_count),
             like_count: None,
+            incomplete: None,
         }
     }
 
@@ -352,6 +359,20 @@ impl BikeUpdate {
             description: None,
             view_count: None,
             like_count: None,
+            incomplete: None,
+        }
+    }
+
+    pub fn update_thumbnail_and_mark_complete(id: Id, thumbnail: &str) -> Self {
+        Self {
+            id,
+            model_id: None,
+            name: None,
+            thumbnail: Some(thumbnail.to_owned()),
+            description: None,
+            view_count: None,
+            like_count: None,
+            incomplete: Some(false)
         }
     }
 }

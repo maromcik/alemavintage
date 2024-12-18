@@ -6,7 +6,7 @@
                 class="bg-cyan-950 rounded-md p-3 text-xl hover:bg-blue-300 mr-2">
             <i class="fa-solid fa-pencil text-white"></i>
         </button>
-        {% if bike.deleted %}
+        {% if bike.hidden %}
         <button class="bg-cyan-950 rounded-md p-3 text-xl hover:bg-blue-300 mr-2"
                 hx-target-error="#content-area"
                 hx-put="/bike/{{ bike.id }}/restore" hx-target="#content-area">
@@ -75,8 +75,7 @@
 
 
     <div class="flex flex-col justify-between pt-4 overflow-hidden">
-        <h2 class="text-2xl font-bold mb-4">Description</h2>
-        <h2>Description</h2>
+        <h2 class="text-2xl font-bold mb-4">Description</h2>s
         {{bike.description | safe }}
     </div>
     <div class="flex flex-col justify-between pt-4 overflow-hidden">

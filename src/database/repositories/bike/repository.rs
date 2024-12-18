@@ -68,6 +68,7 @@ impl BikeRepository {
             Bike,
             r#"
             UPDATE "Bike" SET
+                incomplete = false,
                 deleted_at = null,
                 edited_at = current_timestamp
             WHERE id = $1
@@ -141,6 +142,7 @@ impl DbReadOne<BikeGetById, BikeDetail> for BikeRepository {
                 bike.created_at,
                 bike.edited_at,
                 bike.deleted_at,
+                bike.incomplete,
                 
                 brand.id as brand_id,
                 brand.name as brand_name,
@@ -184,6 +186,7 @@ impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
                 bike.created_at,
                 bike.edited_at,
                 bike.deleted_at,
+                bike.incomplete,
 
                 brand.id   AS brand_id,
                 brand.name AS brand_name,
@@ -265,8 +268,9 @@ impl DbUpdate<BikeUpdate, Bike> for BikeRepository {
                 description = COALESCE($4, description),
                 view_count = COALESCE($5, view_count),
                 like_count = COALESCE($6, like_count),
+                incomplete = COALESCE($7, incomplete),
                 edited_at = current_timestamp
-            WHERE id = $7
+            WHERE id = $8
             RETURNING *
             "#,
             params.name,
@@ -275,6 +279,7 @@ impl DbUpdate<BikeUpdate, Bike> for BikeRepository {
             params.description,
             params.view_count,
             params.like_count,
+            params.incomplete,
             bike.id,
         )
         .fetch_all(transaction.as_mut())

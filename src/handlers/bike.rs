@@ -155,7 +155,7 @@ pub async fn create_bike(
     let user = get_user_from_identity(u, &user_repo).await?;
     let session_keys = BikeCreateSessionKeys::new(user.id);
 
-    let bike_create = BikeCreate::new(&form.name, form.model_id, "", &form.description);
+    let bike_create = BikeCreate::new(&form.name, form.model_id, "", &form.description, );
 
     let bike = bike_repo.create(&bike_create).await?;
 
@@ -305,6 +305,7 @@ pub async fn edit_bike(
         Some(&form.description),
         None,
         None,
+        None
     );
     bike_repo.update(&book_update).await?;
 
@@ -349,14 +350,14 @@ pub async fn upload_bike_thumbnail(
     MultipartForm(form): MultipartForm<BikeThumbnailEditForm>,
 ) -> Result<HttpResponse, AppError> {
     authorized!(identity, request.path());
-    
+
     let bike_id = form.bike_id.0;
-    
+
     let bike: BikeDetail = <BikeRepository as DbReadOne<BikeGetById, BikeDetail>>::read_one(
         bike_repo.as_ref(),
         &BikeGetById::new_admin(bike_id),
     )
-        .await?;
+    .await?;
 
     let thumbnail_path = validate_file(&form.thumbnail, Uuid::new_v4(), "image", "thumbnail")?;
 
@@ -365,10 +366,12 @@ pub async fn upload_bike_thumbnail(
         &thumbnail_path,
         &ImageDimensions::new(THUMBNAIL_SIZE, THUMBNAIL_SIZE),
     )?;
-    
+
     remove_file(&bike.thumbnail)?;
-    
-    bike_repo.update(&BikeUpdate::update_thumbnail(bike.id, &thumbnail_path)).await?;
+
+    bike_repo
+        .update(&BikeUpdate::update_thumbnail(bike.id, &thumbnail_path))
+        .await?;
 
     let handler = format!("/bike/{bike_id}");
     Ok(HttpResponse::SeeOther()

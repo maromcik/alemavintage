@@ -83,7 +83,7 @@ pub async fn upload_bike_helper(
 ) -> Result<Bike, AppError> {
     let thumbnail_path = validate_file(&form.thumbnail, Uuid::new_v4(), "image", "thumbnail")?;
 
-    let bike_update = BikeUpdate::update_thumbnail(bike_id, &thumbnail_path);
+    let bike_update = BikeUpdate::update_thumbnail_and_mark_complete(bike_id, &thumbnail_path);
     let bikes = bike_repo.update(&bike_update).await?;
 
     let bike = bikes
