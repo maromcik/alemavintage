@@ -92,15 +92,15 @@ pub async fn upload_bike_helper(
     )
     .await?;
 
+    let bike_update = BikeUpdate::update_thumbnail(bike.id, &thumbnail_path);
+    bike_repo.update(&bike_update).await?;
+    
     save_file(
         form.thumbnail,
         &thumbnail_path,
         &ImageDimensions::new(300, 300),
     )?;
-
-    let book_update = BikeUpdate::update_thumbnail(bike.id, &thumbnail_path);
-    bike_repo.update(&book_update).await?;
-
+    
     let image_dimensions = ImageDimensions::new(2000, 2000);
 
     let paths = form
@@ -108,7 +108,10 @@ pub async fn upload_bike_helper(
         .into_par_iter()
         .map(|photo| {
             let path = validate_file(&photo, Uuid::new_v4(), "image", "bike")?;
-            save_file(photo, &path, &image_dimensions)?;
+            if let Err(err) = save_file(photo, &path, &image_dimensions) {
+                remove_file(&path)?;
+                return Err(err);
+            }
             Ok(path)
         })
         .collect::<Result<Vec<String>, AppError>>()?;
