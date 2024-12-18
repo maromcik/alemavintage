@@ -1,0 +1,52 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT\n                model.id,\n                model.brand_id,\n                model.name,\n                model.description,\n\n                brand.name AS brand_name,\n                brand.description AS brand_description\n            FROM\n            \"Model\" as model\n                INNER JOIN\n            \"Brand\" as brand ON (model.brand_id = brand.id)\n            WHERE model.id = $1\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 1,
+        "name": "brand_id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 2,
+        "name": "name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "description",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "brand_name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "brand_description",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "c2f4ddb42d1293339f904ae139fe17daf62f08141e07a8fc9a67328605a9915e"
+}

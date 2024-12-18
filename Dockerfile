@@ -8,11 +8,10 @@ RUN apt-get install -y libgexiv2-dev
 ENV SQLX_OFFLINE=true
 COPY ./.sqlx ./.sqlx
 COPY ./migrations ./migrations
-COPY ./proto ./proto
 COPY ./src ./src
+COPY ./static ./static
 COPY ./templates ./templates
 COPY ./.env ./env
-COPY ./build.rs ./build.rs
 COPY ./Cargo.lock ./Cargo.lock
 COPY ./Cargo.toml ./Cargo.toml
 
