@@ -172,6 +172,7 @@ pub async fn upload_bike(
     user_repo: web::Data<UserRepository>,
     bike_repo: web::Data<BikeRepository>,
     MultipartForm(form): MultipartForm<BikeUploadForm>,
+    state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
     let u = authorized!(identity, request.path());
     let user = get_user_from_identity(u, &user_repo).await?;
@@ -182,7 +183,13 @@ pub async fn upload_bike(
         Ok(bike) => bike,
         Err(err) => {
             bike_hard_delete(&bike_repo, vec![metadata.bike_id]).await?;
-            return Err(err);
+            let template_name = get_template_name(&request, "bike/admin/upload");
+            let env = state.jinja.acquire_env()?;
+            let template = env.get_template(&template_name)?;
+            let body = template.render(BikeUploadFormTemplate {
+                message: err.to_string(),
+            })?;
+            return Ok(HttpResponse::Ok().content_type("text/html").body(body));
         }
     };
 
