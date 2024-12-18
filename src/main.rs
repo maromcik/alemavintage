@@ -7,7 +7,7 @@ use actix_session::config::PersistentSession;
 use actix_session::{storage::CookieSessionStore, SessionMiddleware};
 use actix_web::http::header;
 use actix_web::middleware::Logger;
-use actix_web::web::PayloadConfig;
+use actix_web::web::{FormConfig, PayloadConfig};
 use actix_web::{cookie::Key, App, HttpServer};
 use env_logger::Env;
 use log::{info, warn};
@@ -27,6 +27,8 @@ const DEFAULT_HOSTNAME: &str = "localhost";
 const DEFAULT_PORT: &str = "8000";
 const SECS_IN_WEEK: i64 = 60 * 60 * 24 * 7;
 const PAYLOAD_LIMIT: usize = 16 * 1024 * 1024 * 1024; // 16GiB
+
+const FORM_LIMIT: usize = 16 * 1024 * 1024; // 16MiB
 const MIN_PASS_LEN: usize = 6;
 
 pub struct AppState {
@@ -85,6 +87,7 @@ async fn main() -> anyhow::Result<()> {
                     .total_limit(PAYLOAD_LIMIT)
                     .memory_limit(PAYLOAD_LIMIT),
             )
+            .app_data(FormConfig::default().limit(FORM_LIMIT))
             .app_data(PayloadConfig::new(PAYLOAD_LIMIT))
             .wrap(IdentityMiddleware::default())
             .wrap(

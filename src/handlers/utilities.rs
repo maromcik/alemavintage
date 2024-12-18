@@ -21,7 +21,6 @@ impl ImageDimensions {
     }
 }
 
-
 pub fn validate_file(
     file: &TempFile,
     uuid: Uuid,

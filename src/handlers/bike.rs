@@ -5,7 +5,7 @@ use crate::database::common::repository::DbCreate;
 use crate::database::common::{DbDelete, DbReadMany, DbReadOne, DbUpdate};
 use crate::database::models::bike::{
     BikeCreate, BikeCreateSessionKeys, BikeDetail, BikeDetailSessionKeys, BikeDisplay, BikeGetById,
-    BikeImageCreate, BikeImageSearch, BikeSearch, BikeUpdate,
+    BikeImageSearch, BikeSearch, BikeUpdate,
 };
 use crate::database::models::model::ModelSearch;
 use crate::database::models::{GetById, Id};
@@ -14,8 +14,9 @@ use crate::database::repositories::model::repository::ModelRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::error::AppError;
 use crate::forms::bike::{BikeCreateForm, BikeEditForm, BikeUploadForm};
-use crate::handlers::helpers::{bike_hard_delete, get_metadata_from_session, get_template_name, get_user_from_identity};
-use crate::handlers::utilities::{save_file, validate_file, ImageDimensions,
+use crate::handlers::helpers::{
+    bike_hard_delete, get_metadata_from_session, get_template_name, get_user_from_identity,
+    upload_bike_helper,
 };
 use crate::templates::bike::{
     BikeCreateTemplate, BikeDisplayTemplate, BikeEditTemplate, BikeUploadFormTemplate,
@@ -27,9 +28,6 @@ use actix_multipart::form::MultipartForm;
 use actix_session::Session;
 use actix_web::http::header::LOCATION;
 use actix_web::{delete, get, post, put, web, HttpRequest, HttpResponse};
-use rayon::iter::ParallelIterator;
-use rayon::prelude::IntoParallelIterator;
-use uuid::Uuid;
 
 #[get("")]
 pub async fn get_bikes(
@@ -147,19 +145,19 @@ pub async fn create_bike(
     request: HttpRequest,
     identity: Option<Identity>,
     session: Session,
+    bike_repo: web::Data<BikeRepository>,
     user_repo: web::Data<UserRepository>,
-    model_repo: web::Data<ModelRepository>,
     form: web::Form<BikeCreateForm>,
 ) -> Result<HttpResponse, AppError> {
     let u = authorized!(identity, request.path());
     let user = get_user_from_identity(u, &user_repo).await?;
     let session_keys = BikeCreateSessionKeys::new(user.id);
 
-    let model = model_repo.read_one(&GetById::new(form.model_id)).await?;
+    let bike_create = BikeCreate::new(&form.name, form.model_id, "", &form.description);
 
-    session.insert(session_keys.name.as_str(), &form.name)?;
-    session.insert(session_keys.description.as_str(), &form.description)?;
-    session.insert(session_keys.model_id.as_str(), model.id)?;
+    let bike = bike_repo.create(&bike_create).await?;
+
+    session.insert(&session_keys.bike_id, bike.id)?;
 
     Ok(HttpResponse::SeeOther()
         .insert_header((LOCATION, "/bike/upload"))
@@ -178,43 +176,17 @@ pub async fn upload_bike(
     let u = authorized!(identity, request.path());
     let user = get_user_from_identity(u, &user_repo).await?;
     let session_keys = BikeCreateSessionKeys::new(user.id);
-
     let metadata = get_metadata_from_session(&session, &session_keys)?;
 
-    let thumbnail_path = validate_file(&form.thumbnail, Uuid::new_v4(), "image", "thumbnail")?;
+    let bike = match upload_bike_helper(metadata.bike_id, &bike_repo, form).await {
+        Ok(bike) => bike,
+        Err(err) => {
+            bike_hard_delete(&bike_repo, vec![metadata.bike_id]).await?;
+            return Err(err);
+        }
+    };
 
-    let bike_create = BikeCreate::new(
-        &metadata.name,
-        metadata.model_id,
-        &thumbnail_path,
-        &metadata.description,
-    );
-
-    save_file(
-        form.thumbnail,
-        &thumbnail_path,
-        &ImageDimensions::new(300, 300),
-    )?;
-
-    let image_dimensions = ImageDimensions::new(2000, 2000);
-
-    let bike = bike_repo.create(&bike_create).await?;
-    let paths = form
-        .photos
-        .into_par_iter()
-        .map(|photo| {
-            let path = validate_file(&photo, Uuid::new_v4(), "image", "bike")?;
-            save_file(photo, &path, &image_dimensions)?;
-            Ok(path)
-        })
-        .collect::<Result<Vec<String>, AppError>>()?;
-    bike_repo
-        .create(&BikeImageCreate::new(bike.id, paths))
-        .await?;
-
-    session.remove(session_keys.name.as_str());
-    session.remove(session_keys.description.as_str());
-    session.remove(session_keys.model_id.as_str());
+    session.remove(session_keys.bike_id.as_str());
 
     let url = format!("/bike/{}", bike.id);
     Ok(HttpResponse::SeeOther()
@@ -254,7 +226,7 @@ pub async fn hard_remove_bike(
     bike_hard_delete(&bike_repo, vec![bike_id]).await?;
 
     Ok(HttpResponse::SeeOther()
-        .insert_header((LOCATION, "/studio"))
+        .insert_header((LOCATION, "/bike"))
         .finish())
 }
 
@@ -270,7 +242,7 @@ pub async fn restore_bike(
     bike_repo
         .restore(&GetById::new_with_deleted(bike_id))
         .await?;
-    let path = format!("/bike/{}", bike_id);
+    let path = format!("/bike/{bike_id}");
     Ok(HttpResponse::SeeOther()
         .insert_header((LOCATION, path))
         .finish())

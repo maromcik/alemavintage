@@ -104,7 +104,9 @@ pub async fn user_manage_form_page(
     state: web::Data<AppState>,
 ) -> Result<impl Responder, AppError> {
     let u = authorized!(identity, request.path());
-    let user = user_repo.read_one(&GetById::new(parse_user_id(&u)?)).await?;
+    let user = user_repo
+        .read_one(&GetById::new(parse_user_id(&u)?))
+        .await?;
 
     let template_name = get_template_name(&request, "user/manage/profile");
     let env = state.jinja.acquire_env()?;
@@ -147,7 +149,9 @@ pub async fn user_manage_profile_form(
     state: web::Data<AppState>,
 ) -> Result<impl Responder, AppError> {
     let u = authorized!(identity, request.path());
-    let user = user_repo.read_one(&GetById::new(parse_user_id(&u)?)).await?;
+    let user = user_repo
+        .read_one(&GetById::new(parse_user_id(&u)?))
+        .await?;
 
     let template_name = "user/profile_user_form.html";
     let env = state.jinja.acquire_env()?;

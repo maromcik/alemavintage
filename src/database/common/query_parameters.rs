@@ -42,7 +42,7 @@ impl DbQueryParams {
             ignore_deleted,
         }
     }
-
+    #[allow(dead_code)]
     pub fn deleted() -> Self {
         Self {
             order: Some(DbOrderColumn::default()),

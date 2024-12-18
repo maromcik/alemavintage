@@ -1,14 +1,21 @@
-use actix_identity::Identity;
-use actix_session::Session;
-use crate::database::common::{DbReadMany, DbReadOne};
-use crate::database::models::bike::{BikeCreateSessionKeys, BikeImageSearch, BikeMetadataForm};
+use crate::database::common::{DbCreate, DbReadMany, DbReadOne, DbUpdate};
+use crate::database::models::bike::{
+    BikeCreateSessionKeys, BikeDetail, BikeGetById, BikeImageCreate, BikeImageSearch,
+    BikeMetadataForm, BikeUpdate,
+};
+use crate::database::models::user::User;
 use crate::database::models::{GetById, Id};
 use crate::database::repositories::bike::repository::BikeRepository;
-use crate::error::{AppError, AppErrorKind};
-use crate::handlers::utilities::{is_htmx, remove_file};
-use actix_web::{web, HttpRequest};
-use crate::database::models::user::User;
 use crate::database::repositories::user::repository::UserRepository;
+use crate::error::{AppError, AppErrorKind};
+use crate::forms::bike::BikeUploadForm;
+use crate::handlers::utilities::{is_htmx, remove_file, save_file, validate_file, ImageDimensions};
+use actix_identity::Identity;
+use actix_session::Session;
+use actix_web::{web, HttpRequest};
+use rayon::iter::IntoParallelIterator;
+use rayon::iter::ParallelIterator;
+use uuid::Uuid;
 
 pub fn get_template_name(request: &HttpRequest, path: &str) -> String {
     if is_htmx(request) {
@@ -49,32 +56,14 @@ pub fn get_metadata_from_session(
     session: &Session,
     session_keys: &BikeCreateSessionKeys,
 ) -> Result<BikeMetadataForm, AppError> {
-    let Some(name) = session.get::<String>(session_keys.name.as_str())? else {
+    let Some(bike_id) = session.get::<i64>(session_keys.bike_id.as_str())? else {
         return Err(AppError::new(
             AppErrorKind::NotFound,
-            "Bike name could not be found in the active session",
+            "Bike ID could not be found in the active session",
         ));
     };
 
-    let Some(model_id) = session.get::<i64>(session_keys.model_id.as_str())? else {
-        return Err(AppError::new(
-            AppErrorKind::NotFound,
-            "Bike model could not be found in the active session",
-        ));
-    };
-
-    let Some(description) = session.get::<String>(session_keys.description.as_str())? else {
-        return Err(AppError::new(
-            AppErrorKind::NotFound,
-            "Bike description could not be found in the active session",
-        ));
-    };
-
-    Ok(BikeMetadataForm {
-        name,
-        description,
-        model_id,
-    })
+    Ok(BikeMetadataForm { bike_id })
 }
 
 pub async fn get_user_from_identity(
@@ -84,4 +73,47 @@ pub async fn get_user_from_identity(
     Ok(user_repo
         .read_one(&GetById::new(parse_user_id(&identity)?))
         .await?)
+}
+
+pub async fn upload_bike_helper(
+    bike_id: Id,
+    bike_repo: &web::Data<BikeRepository>,
+    form: BikeUploadForm,
+) -> Result<BikeDetail, AppError> {
+    let thumbnail_path = validate_file(&form.thumbnail, Uuid::new_v4(), "image", "thumbnail")?;
+
+    let bike: BikeDetail = <BikeRepository as DbReadOne<BikeGetById, BikeDetail>>::read_one(
+        bike_repo.as_ref(),
+        &BikeGetById {
+            id: bike_id,
+            fetch_deleted: false,
+            update_view_count: false,
+        },
+    )
+    .await?;
+
+    save_file(
+        form.thumbnail,
+        &thumbnail_path,
+        &ImageDimensions::new(300, 300),
+    )?;
+
+    let book_update = BikeUpdate::update_thumbnail(bike.id, &thumbnail_path);
+    bike_repo.update(&book_update).await?;
+
+    let image_dimensions = ImageDimensions::new(2000, 2000);
+
+    let paths = form
+        .photos
+        .into_par_iter()
+        .map(|photo| {
+            let path = validate_file(&photo, Uuid::new_v4(), "image", "bike")?;
+            save_file(photo, &path, &image_dimensions)?;
+            Ok(path)
+        })
+        .collect::<Result<Vec<String>, AppError>>()?;
+    bike_repo
+        .create(&BikeImageCreate::new(bike.id, paths))
+        .await?;
+    Ok(bike)
 }

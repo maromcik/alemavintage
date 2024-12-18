@@ -222,9 +222,7 @@ impl BikeSearch {
 
 #[derive(Debug, Clone)]
 pub struct BikeMetadataForm {
-    pub name: String,
-    pub description: String,
-    pub model_id: Id,
+    pub bike_id: Id,
 }
 
 #[derive(sqlx::FromRow, Debug, Clone, PartialEq)]
@@ -344,6 +342,18 @@ impl BikeUpdate {
             like_count: None,
         }
     }
+
+    pub fn update_thumbnail(id: Id, thumbnail: &str) -> Self {
+        Self {
+            id,
+            model_id: None,
+            name: None,
+            thumbnail: Some(thumbnail.to_owned()),
+            description: None,
+            view_count: None,
+            like_count: None,
+        }
+    }
 }
 
 pub struct BikeGetById {
@@ -381,17 +391,13 @@ impl BikeGetById {
 }
 
 pub struct BikeCreateSessionKeys {
-    pub name: String,
-    pub description: String,
-    pub model_id: String,
+    pub bike_id: String,
 }
 
 impl BikeCreateSessionKeys {
     pub fn new(user_id: Id) -> Self {
         Self {
-            name: format!("bike_create_{user_id}_name"),
-            description: format!("bike_create_{user_id}_description"),
-            model_id: format!("bike_create_{user_id}_model_id"),
+            bike_id: format!("bike_create_{user_id}_book_id"),
         }
     }
 }
