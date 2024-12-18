@@ -1,8 +1,6 @@
-use crate::database::common::query_parameters::{
-    DbColumn, DbOrder, DbOrderColumn, DbQueryParams, DbTable,
-};
+use crate::database::common::query_parameters::DbQueryParams;
 use crate::database::common::{DbCreate, DbDelete, DbReadMany, DbReadOne, DbUpdate};
-use crate::database::models::bike::{BikeImageSearch, BikeSearch};
+use crate::database::models::bike::BikeSearch;
 use crate::database::models::brand::{BrandCreate, BrandSearch, BrandUpdate};
 use crate::database::models::model::ModelSearch;
 use crate::database::models::{GetById, Id};
@@ -12,11 +10,9 @@ use crate::database::repositories::model::repository::ModelRepository;
 use crate::error::AppError;
 use crate::forms::brand::{BrandCreateForm, BrandEditForm};
 use crate::handlers::helpers::{bike_hard_delete, get_template_name};
-use crate::handlers::utilities::remove_file;
 use crate::templates::brand::{
     BrandCreateTemplate, BrandDetailTemplate, BrandEditTemplate, BrandTemplate,
 };
-use crate::templates::model::ModelDetailTemplate;
 use crate::{authorized, AppState};
 use actix_identity::Identity;
 use actix_web::http::header::LOCATION;

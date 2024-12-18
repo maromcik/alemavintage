@@ -1,13 +1,15 @@
-{% if logged_in %}
+
 <div class="flex justify-between">
     <h1 class="text-6xl font-bold">Models</h1>
+    {% if logged_in %}
     <button hx-get="/model/create" hx-target-error="#content-area" hx-push-url="/model/create" hx-target="#content-area"
             class="bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="submit">
         New Model
     </button>
+    {% endif %}
 </div>
-{% endif %}
+
 <div class="pl-10 grid gap-4">
     {% for (brand, models) in models | items %}
     <h3 class="text-2xl font-bold text-gray-900">{{ brand }}</h3>
