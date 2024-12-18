@@ -18,6 +18,7 @@ use crate::handlers::helpers::{
     bike_hard_delete, get_metadata_from_session, get_template_name, get_user_from_identity,
     upload_bike_helper,
 };
+use crate::handlers::utilities::{remove_file, save_file, validate_file, ImageDimensions};
 use crate::templates::bike::{
     BikeCreateTemplate, BikeDisplayTemplate, BikeEditTemplate, BikeThumbnailUploadTemplate,
     BikeUploadFormTemplate, BikesTemplate,
@@ -27,9 +28,8 @@ use actix_identity::Identity;
 use actix_multipart::form::MultipartForm;
 use actix_session::Session;
 use actix_web::http::header::LOCATION;
-use actix_web::{delete, get, post, put, web, HttpRequest, HttpResponse, Responder};
+use actix_web::{delete, get, post, put, web, HttpRequest, HttpResponse};
 use uuid::Uuid;
-use crate::handlers::utilities::{remove_file, save_file, validate_file, ImageDimensions};
 
 #[get("")]
 pub async fn get_bikes(
