@@ -71,7 +71,7 @@ pub fn save_file(file: TempFile, path: &str, dimensions: &ImageDimensions) -> Re
     let mut resized_img = img.resize(
         dimensions.width,
         dimensions.height,
-        image::imageops::FilterType::Nearest,
+        image::imageops::FilterType::CatmullRom,
     );
 
     resized_img.apply_orientation(map_orientation(orientation));
