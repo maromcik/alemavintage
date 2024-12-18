@@ -3,7 +3,7 @@ workflow:
     - when: always
 
 default:
-  image: rust:1.75-bullseye
+  image: rust:1.83-bullseye
   before_script:
     - apt-get update
     - apt install -y protobuf-compiler libprotobuf-dev
