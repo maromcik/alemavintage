@@ -54,24 +54,24 @@ pub fn configure_webapp(pool: &PgPool, jinja: Arc<AutoReloader>) -> Box<dyn FnOn
         .app_data(web::Data::new(bike_repo.clone()))
         .app_data(web::Data::new(brand_repository.clone()))
         .app_data(web::Data::new(model_repository.clone()))
+        .service(create_brand_page)
         .service(create_brand)
         .service(get_brands)
-        .service(create_brand_page)
+        .service(get_brand)
         .service(edit_brand)
         .service(edit_brand_page)
-        .service(get_brand)
         .service(remove_brand);
 
     let model_scope = web::scope("model")
         .app_data(web::Data::new(bike_repo.clone()))
         .app_data(web::Data::new(model_repository.clone()))
         .app_data(web::Data::new(brand_repository.clone()))
+        .service(create_model_page)
         .service(create_model)
         .service(get_models)
         .service(get_model)
         .service(edit_model)
         .service(edit_model_page)
-        .service(create_model_page)
         .service(remove_model);
     
 
