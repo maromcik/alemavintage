@@ -1,87 +1,80 @@
 {% if logged_in %}
-<div class="pl-10 pt-10 pb-10 flex mt-3 items-center mb-3 flex-row justify-between">
-    <div class="mr-4">
-        <button hx-get="/bike/{{ bike.id }}/edit" hx-target-error="#content-area"
-                hx-push-url="/bike/{{ bike.id }}/edit" hx-target="#content-area"
-                class="bg-cyan-950 rounded-md p-3 text-xl hover:bg-blue-300 mr-2">
-            <i class="fa-solid fa-pencil text-white"></i>
+<div class="flex justify-between items-center py-6 px-10 bg-gray-100 border-b border-gray-300">
+    <div class="flex space-x-4">
+        <button hx-get="/bike/{{ bike.id }}/edit" hx-target-error="#content-area" hx-push-url="/bike/{{ bike.id }}/edit" hx-target="#content-area"
+                class="bg-blue-500 hover:bg-blue-600 rounded-md p-3 text-white text-lg shadow-md">
+            <i class="fa-solid fa-pencil"></i>
         </button>
         {% if bike.hidden %}
-        <button class="bg-cyan-950 rounded-md p-3 text-xl hover:bg-blue-300 mr-2"
-                hx-target-error="#content-area"
-                hx-put="/bike/{{ bike.id }}/restore" hx-target="#content-area">
-            <i class="fa-solid fa-rotate-right text-white"></i>
+        <button hx-put="/bike/{{ bike.id }}/restore" hx-target-error="#content-area" hx-target="#content-area"
+                class="bg-green-500 hover:bg-green-600 rounded-md p-3 text-white text-lg shadow-md">
+            <i class="fa-solid fa-rotate-right"></i>
         </button>
-        <button class="bg-cyan-950 rounded-md p-3 text-xl hover:bg-blue-300 mr-2"
-                hx-target-error="#content-area"
-                hx-delete="/bike/{{ bike.id }}/delete" hx-push-url="/bike" hx-target="#content-area">
-            <i class="fa-solid fa-trash text-white"></i>
+        <button hx-delete="/bike/{{ bike.id }}/delete" hx-target-error="#content-area" hx-push-url="/bike"
+                class="bg-red-600 hover:bg-red-600 rounded-md p-3 text-white text-lg shadow-md">
+            <i class="fa-solid fa-trash"></i>
         </button>
         {% else %}
-        <button class="bg-cyan-950 rounded-md p-3 text-xl hover:bg-blue-300 mr-2"
-                hx-target-error="#content-area"
-                hx-delete="/bike/{{ bike.id }}/hide" hx-target="#content-area">
-            <i class="fa-solid fa-eye-slash text-white"></i>
+        <button hx-delete="/bike/{{ bike.id }}/hide" hx-target-error="#content-area" hx-target="#content-area"
+                class="bg-yellow-600 hover:bg-yellow-600 rounded-md p-3 text-white text-lg shadow-md">
+            <i class="fa-solid fa-eye-slash"></i>
         </button>
         {% endif %}
     </div>
 </div>
 {% endif %}
-<div class="container pl-10 pt-10 pb-10">
-    <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        <div id="thumbnail-box" class="mb-4 sm:mb-0 xl:col-span-1">
-            <!--            <img class="bg-cyan-900 w-80 h-80 mr-10" src="{{ bike.thumbnail }}" alt="bike-thumbnail">-->
-            <div id="bike-thumbnail-box"
-                 class="relative inline-block group w-25 h-25 md:w-45 md:h-45 lg:w-80 lg:h-80 mb-4">
-                <img class="responsive-image bg-blue-600 w-full h-full sm:h-mr-10" src="{{ bike.thumbnail }}" alt="book-thumbnail">
-                {% if logged_in %}
-                {% include "bike/admin/thumbnail/detail/content.html" %}
-                {% endif %}
-            </div>
-            <div class="flex flex-row mt-5 justify-between">
-                <div id="view-count" class="flex items-center pl-5 text-3xl">
-                    <i class="fa-solid fa-eye text-3xl"></i>
-                    <p class="pl-5 text-gray-300 text-2xl">{{ bike.view_count }}</p>
-                </div>
 
+<div class="container mx-auto py-10 px-5">
+    <!-- Top Section: Thumbnail and Basic Details -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <!-- Thumbnail -->
+        <div class="flex flex-col items-center">
+            <div class="w-80 h-80 rounded-lg overflow-hidden border shadow-md">
+                <img class="object-cover w-full h-full" src="{{ bike.thumbnail }}" alt="Bike Thumbnail">
+            </div>
+            <div class="flex items-center justify-center mt-5 text-gray-600 space-x-3">
+                <i class="fa-solid fa-eye text-2xl"></i>
+                <span class="text-2xl">{{ bike.view_count }}</span>
             </div>
         </div>
-        <div class="mb-4 sm:ml-0 xl:ml-10 sm:mb-0 xl:col-span-1">
-            <div class="flex flex-row justify-between">
-                <div class="flex flex-col">
-                    <div class="book-name  text-6xl font-bold">{{bike.name}}</div>
-                </div>
+
+        <!-- Bike Details -->
+        <div class="flex flex-col space-y-6">
+            <h1 class="text-4xl font-bold text-gray-800">{{ bike.name }}</h1>
+            <div>
+                <h2 class="text-2xl font-semibold text-gray-700">Brand</h2>
+                <a class="text-lg text-blue-500 hover:underline" hx-get="/brand/{{ bike.brand_id }}" hx-target="#content-area" hx-push-url="/brand/{{ bike.brand_id }}">
+                    {{ bike.brand_name }}
+                </a>
             </div>
-            <div class="pt-5 items-center">
-                <div class="w-auto h-10 md:h-12 lg:h-24 pt-1 md:pt-2 lg:pt-8">
-                    <a class="cursor-pointer text-3xl pl-5" hx-get="/brand/{{ bike.brand_id }}"
-                       hx-target="#content-area"
-                       hx-push-url="/brand/{{ bike.brand_id }}">
-                        {{ bike.brand_name }}
-                    </a>
-                </div>
-            </div>
-            <div class="pt-5 items-center">
-                <div class="w-auto h-10 md:h-12 lg:h-24 pt-1 md:pt-2 lg:pt-8">
-                    <a class="cursor-pointer text-3xl pl-5" hx-get="/model/{{ bike.model_id }}"
-                       hx-target="#content-area"
-                       hx-push-url="/model/{{ bike.model_id }}">
-                        {{ bike.model_name }}
-                    </a>
-                </div>
+            <div>
+                <h2 class="text-2xl font-semibold text-gray-700">Model</h2>
+                <a class="text-lg text-blue-500 hover:underline" hx-get="/model/{{ bike.model_id }}" hx-target="#content-area" hx-push-url="/model/{{ bike.model_id }}">
+                    {{ bike.model_name }}
+                </a>
             </div>
         </div>
     </div>
 
-
-    <div class="flex flex-col justify-between pt-4 overflow-hidden">
+    <!-- Description Section -->
+    <div class="mt-10">
         <h2 class="text-2xl font-bold mb-4">Description</h2>
-        {{bike.description | safe }}
+        <div class="bg-gray-50 p-5 rounded-lg shadow-md text-gray-700">
+            {{ bike.description | safe }}
+        </div>
     </div>
-    <div class="flex flex-col justify-between pt-4 overflow-hidden">
+
+    <!-- Images Section -->
+    <div class="mt-10">
         <h2 class="text-2xl font-bold mb-4">Images</h2>
-        {% for path in bike_images %}
-        <img class="responsive-image bg-blue-600 w-full h-full sm:h-mr-10" src="{{ path }}" alt="book-cover">
-        {% endfor %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for path in bike_images %}
+            <a href="{{ path }}">
+            <div class="w-full h-48 rounded-lg overflow-hidden shadow-md">
+                <img class="responsive-image object-cover w-full h-full" src="{{ path }}" alt="Bike Image">
+            </div>
+            </a>
+            {% endfor %}
+        </div>
     </div>
 </div>

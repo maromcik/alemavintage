@@ -1,19 +1,24 @@
-<div class="container h-full w-full  p-4 bg-white">
-    <div class="max-w-full max-h-full h-full rounded overflow-hidden border border-gray-800 flex flex-col transition duration-500 items-center hover:shadow-sm hover:shadow-gray-500 hover:border-gray-500">
-        <div class="px-4 py-2 flex flex-col w-full h-full text-center">
-                <div class="w-48 h-48 mx-auto relative">
-                    <img class="responsive-image w-full h-full" src="{{ bike.thumbnail }}" alt="bike Image">
-                </div>
-                <div class="font-bold text-lg text-black mb-2">
-                    {{ bike.name }}
-                </div>
-                <div class="w-full flex flex-col justify-between mt-auto mb-2">
-                    <div class="flex flex-row justify-between">
-                        {% if bike.hidden %}
-                        <p class="text-red-400 text-sm">hidden</p>
-                        {% endif %}
-                    </div>
-                </div>
+<div class="container h-full w-full p-4 bg-white">
+    <div class="max-w-full max-h-full h-full rounded-lg overflow-hidden border border-gray-300 flex flex-col transition-all duration-300 items-center hover:shadow-md hover:border-gray-500">
+        <div class="px-4 py-2 flex flex-col w-full h-full text-center bg-gray-100 rounded-lg">
+            <!-- Bike Image -->
+            <div class="w-48 h-48 mx-auto relative">
+                <img class="rounded-lg object-cover w-full h-full" src="{{ bike.thumbnail }}" alt="Bike Image">
             </div>
+
+            <!-- Bike Name -->
+            <div class="font-semibold text-lg text-gray-800 mt-4">
+                {{ bike.name }}
+            </div>
+
+            <!-- Hidden Status -->
+            {% if bike.hidden %}
+            <div class="mt-2">
+                <span class="text-sm bg-orange-200 text-orange-600 py-1 px-3 rounded-full uppercase tracking-wide">
+                    Hidden
+                </span>
+            </div>
+            {% endif %}
+        </div>
     </div>
 </div>

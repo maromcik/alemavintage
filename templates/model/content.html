@@ -1,26 +1,32 @@
-
-<div class="flex justify-between">
-    <h1 class="text-6xl font-bold">Models</h1>
-    {% if logged_in %}
-    <button hx-get="/model/create" hx-target-error="#content-area" hx-push-url="/model/create" hx-target="#content-area"
-            class="bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            type="submit">
-        New Model
-    </button>
-    {% endif %}
-</div>
-
-<div class="pl-10 grid gap-4">
-    {% for (brand, models) in models | items %}
-    <h3 class="text-2xl font-bold text-gray-900">{{ brand }}</h3>
-    {% for model in models %}
-    <div class="container h-40 w-full mx-auto bg-white p-4">
-        <a class="cursor-pointer" href="/model/{{ model.id }}">
-            <div class="flex w-full h-full flex-row items-center justify-center overflow-hidden rounded border border-gray-800 hover:shadow-sm hover:shadow-gray-500 hover:border-gray-500 shadow-inner px-4 py-2">
-                <div class="text-center text-lg font-bold text-black">{{ model.name }}</div>
-            </div>
-        </a>
+<div class="max-w-7xl mx-auto px-4 sm:px-8">
+    <!-- Header Section -->
+    <div class="flex justify-between items-center py-6">
+        <h1 class="text-6xl tracking-tight">Models</h1>
+        {% if logged_in %}
+        <button hx-get="/model/create" hx-target-error="#content-area" hx-push-url="/model/create" hx-target="#content-area"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:ring focus:ring-blue-300 transform hover:scale-105 transition-all duration-200"
+                type="submit">
+            New Model
+        </button>
+        {% endif %}
     </div>
-    {% endfor %}
-    {% endfor %}
+
+    <!-- Models by Brand -->
+    <div class="space-y-8">
+        {% for (brand, models) in models | items %}
+        <div class="bg-gray-50 rounded-lg p-6 shadow-md">
+            <!-- Brand Section -->
+            <h3 class="text-3xl font-bold text-gray-800 mb-4">{{ brand }}</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for model in models %}
+                <div class="bg-white border border-gray-300 rounded-lg shadow hover:shadow-md hover:border-gray-500 transition-all duration-200">
+                    <a href="/model/{{ model.id }}" class="block p-4 text-center">
+                        <h4 class="text-lg font-semibold text-gray-700 hover:text-blue-500">{{ model.name }}</h4>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
