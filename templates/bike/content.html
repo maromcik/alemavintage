@@ -1,7 +1,7 @@
 <div class="flex justify-between">
   <h1 class="text-6xl font-bold">Bikes</h1>
   {% if logged_in %}
-  <button hx-get="/bike/create" hx-target-error="#content-area" hx-push-url="/bike/create" hx-target="#content-area"
+  <button hx-get="/bike/create" hx-boost="true" hx-target-error="#content-area" hx-push-url="/bike/create" hx-target="#content-area"
           class="bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           type="submit">
     New Bike

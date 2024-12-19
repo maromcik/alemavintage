@@ -7,7 +7,7 @@
             <i class="fa-solid fa-pencil text-white"></i>
         </button>
         <button class="bg-cyan-950 rounded-md p-3 text-xl hover:bg-blue-300 mr-2"
-                hx-target-error="#content-area"
+                hx-target-error="#content-area" hx-push-url="/model"
                 hx-delete="/model/{{ model.id }}/delete" hx-target="#content-area">
             <i class="fa-solid fa-trash text-white"></i>
         </button>
