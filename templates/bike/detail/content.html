@@ -1,7 +1,8 @@
 {% if logged_in %}
 <div class="flex justify-between items-center py-6 px-10 bg-gray-100 border-b border-gray-300">
     <div class="flex space-x-4">
-        <button hx-get="/bike/{{ bike.id }}/edit" hx-target-error="#content-area" hx-push-url="/bike/{{ bike.id }}/edit" hx-target="#content-area"
+        <button hx-get="/bike/{{ bike.id }}/edit" hx-target-error="#content-area" hx-push-url="/bike/{{ bike.id }}/edit"
+                hx-target="#content-area"
                 class="bg-blue-500 hover:bg-blue-600 rounded-md p-3 text-white text-lg shadow-md">
             <i class="fa-solid fa-pencil"></i>
         </button>
@@ -29,8 +30,14 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
         <!-- Thumbnail -->
         <div class="flex flex-col items-center">
-            <div class="w-80 h-80 rounded-lg overflow-hidden border shadow-md">
-                <img class="object-cover w-full h-full" src="{{ bike.thumbnail }}" alt="Bike Thumbnail">
+            <div id="bike-thumbnail-box" class="relative inline-block group">
+                <div class="w-80 h-80 rounded-lg overflow-hidden border shadow-md">
+                    <img class="responsive-image object-cover w-full h-full" src="{{ bike.thumbnail }}"
+                         alt="Bike Thumbnail">
+                    {% if logged_in %}
+                    {% include "bike/admin/thumbnail/detail/content.html" %}
+                    {% endif %}
+                </div>
             </div>
             <div class="flex items-center justify-center mt-5 text-gray-600 space-x-3">
                 <i class="fa-solid fa-eye text-2xl"></i>
@@ -43,13 +50,15 @@
             <h1 class="text-4xl font-bold text-gray-800">{{ bike.name }}</h1>
             <div>
                 <h2 class="text-2xl font-semibold text-gray-700">Brand</h2>
-                <a class="text-lg text-blue-500 hover:underline" hx-get="/brand/{{ bike.brand_id }}" hx-target="#content-area" hx-push-url="/brand/{{ bike.brand_id }}">
+                <a class="text-lg text-blue-500 hover:underline" hx-get="/brand/{{ bike.brand_id }}"
+                   hx-target="#content-area" hx-push-url="/brand/{{ bike.brand_id }}">
                     {{ bike.brand_name }}
                 </a>
             </div>
             <div>
                 <h2 class="text-2xl font-semibold text-gray-700">Model</h2>
-                <a class="text-lg text-blue-500 hover:underline" hx-get="/model/{{ bike.model_id }}" hx-target="#content-area" hx-push-url="/model/{{ bike.model_id }}">
+                <a class="text-lg text-blue-500 hover:underline" hx-get="/model/{{ bike.model_id }}"
+                   hx-target="#content-area" hx-push-url="/model/{{ bike.model_id }}">
                     {{ bike.model_name }}
                 </a>
             </div>
@@ -70,9 +79,9 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for path in bike_images %}
             <a href="{{ path }}">
-            <div class="w-full h-48 rounded-lg overflow-hidden shadow-md">
-                <img class="responsive-image object-cover w-full h-full" src="{{ path }}" alt="Bike Image">
-            </div>
+                <div class="w-full h-80 rounded-lg overflow-hidden shadow-md">
+                    <img class="responsive-image object-cover w-full h-full" src="{{ path }}" alt="Bike Image">
+                </div>
             </a>
             {% endfor %}
         </div>

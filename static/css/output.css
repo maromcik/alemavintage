@@ -891,6 +891,10 @@ code {
   height: 2.5rem;
 }
 
+.h-60 {
+  height: 15rem;
+}
+
 .max-h-full {
   max-height: 100%;
 }
