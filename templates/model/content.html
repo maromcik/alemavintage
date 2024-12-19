@@ -20,11 +20,7 @@
             <h3 class="text-3xl font-bold text-gray-800 mb-4">{{ brand }}</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {% for model in models %}
-                <div class="bg-white border border-gray-300 rounded-lg shadow hover:shadow-md hover:border-gray-500 transition-all duration-200">
-                    <a href="/model/{{ model.id }}" class="block p-4 text-center">
-                        <h4 class="text-lg font-semibold text-gray-700 hover:text-blue-500">{{ model.name }}</h4>
-                    </a>
-                </div>
+                {% include "model/card/content.html" %}
                 {% endfor %}
             </div>
         </div>
