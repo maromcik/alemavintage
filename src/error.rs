@@ -62,11 +62,21 @@ impl AppError {
 impl From<BackendError> for AppError {
     fn from(value: BackendError) -> Self {
         match value.error_kind {
-            BackendErrorKind::UserUpdateParametersEmpty | BackendErrorKind::UserDeleted => {
+            BackendErrorKind::UserUpdateParametersEmpty 
+            | BackendErrorKind::UserDeleted
+            | BackendErrorKind::BikeUpdateParametersEmpty
+            | BackendErrorKind::BrandUpdateParametersEmpty 
+            | BackendErrorKind::ModelUpdateParametersEmpty => {
                 Self::new(AppErrorKind::BadRequest, value.to_string().as_str())
             }
 
-            BackendErrorKind::UserDoesNotExist => {
+            BackendErrorKind::UserDoesNotExist
+            | BackendErrorKind::BikeDoesNotExist 
+            | BackendErrorKind::BikeDeleted
+            | BackendErrorKind::BrandDoesNotExist 
+            | BackendErrorKind::BrandDeleted
+            | BackendErrorKind::ModelDoesNotExist
+            | BackendErrorKind::ModelDeleted => {
                 Self::new(AppErrorKind::NotFound, value.to_string().as_str())
             }
 
