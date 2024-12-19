@@ -62,18 +62,18 @@ impl AppError {
 impl From<BackendError> for AppError {
     fn from(value: BackendError) -> Self {
         match value.error_kind {
-            BackendErrorKind::UserUpdateParametersEmpty 
+            BackendErrorKind::UserUpdateParametersEmpty
             | BackendErrorKind::UserDeleted
             | BackendErrorKind::BikeUpdateParametersEmpty
-            | BackendErrorKind::BrandUpdateParametersEmpty 
+            | BackendErrorKind::BrandUpdateParametersEmpty
             | BackendErrorKind::ModelUpdateParametersEmpty => {
                 Self::new(AppErrorKind::BadRequest, value.to_string().as_str())
             }
 
             BackendErrorKind::UserDoesNotExist
-            | BackendErrorKind::BikeDoesNotExist 
+            | BackendErrorKind::BikeDoesNotExist
             | BackendErrorKind::BikeDeleted
-            | BackendErrorKind::BrandDoesNotExist 
+            | BackendErrorKind::BrandDoesNotExist
             | BackendErrorKind::BrandDeleted
             | BackendErrorKind::ModelDoesNotExist
             | BackendErrorKind::ModelDeleted => {
@@ -85,11 +85,6 @@ impl From<BackendError> for AppError {
             | BackendErrorKind::UserPasswordVerificationFailed => {
                 Self::new(AppErrorKind::Unauthorized, value.to_string().as_str())
             }
-
-            _ => Self::new(
-                AppErrorKind::InternalServerError,
-                value.to_string().as_str(),
-            ),
         }
     }
 }
