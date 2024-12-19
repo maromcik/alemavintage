@@ -16,7 +16,7 @@
                 class="bg-green-500 hover:bg-green-600 rounded-md p-3 text-white text-lg shadow-md">
             <i class="fa-solid fa-rotate-right"></i>
         </button>
-        <button hx-delete="/bike/{{ bike.id }}/delete" hx-target-error="#content-area" hx-push-url="/bike"
+        <button hx-delete="/bike/{{ bike.id }}/delete" hx-target-error="#content-area" hx-target="#content-area" hx-push-url="/bike"
                 class="bg-red-600 hover:bg-red-600 rounded-md p-3 text-white text-lg shadow-md">
             <i class="fa-solid fa-trash"></i>
         </button>
