@@ -1,9 +1,10 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-8">
     <!-- Header Section -->
     <div class="flex justify-between items-center py-6">
-        <h1 class="text-6xl tracking-tight">Brand</h1>
+        <h1 class="text-6xl tracking-tight">Brands</h1>
         {% if logged_in %}
-        <button hx-get="/brand/create" hx-target-error="#content-area" hx-push-url="/brand/create" hx-target="#content-area"
+        <button hx-get="/brand/create" hx-target-error="#content-area" hx-push-url="/brand/create"
+                hx-target="#content-area"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:ring focus:ring-blue-300 transform hover:scale-105 transition-all duration-200"
                 type="submit">
             New Brand
@@ -11,29 +12,13 @@
         {% endif %}
     </div>
 
-    <!-- Table Layout for Brands -->
-    <div class="overflow-x-auto">
-        <table class="table-auto w-full border-collapse border border-gray-300 text-left text-gray-800">
-            <thead>
-            <tr class="bg-gray-100">
-                <th class="border border-gray-300 px-4 py-2">Brand Name</th>
-                <th class="border border-gray-300 px-4 py-2">Description</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for brand in brands %}
-            <tr class="hover:bg-gray-50">
-                <td class="border border-gray-300 px-4 py-2">
-                    <a href="/brand/{{ brand.id }}" class="text-blue-500 hover:underline font-semibold">
-                        {{ brand.name }}
-                    </a>
-                </td>
-                <td class="border border-gray-300 px-4 py-2">
-                    {{ brand.description }}
-                </td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+
+    <div class="pl-10 grid gap-4">
+        {% for brand in brands %}
+        <div class="bg-white border border-gray-300 rounded-lg shadow hover:shadow-md hover:border-gray-500 transition-all duration-200">
+            <a href="/brand/{{ brand.id }}" class="block p-4 text-center">
+                <h4 class="text-lg font-semibold text-gray-700 hover:text-blue-500">{{ brand.name }}</h4>
+            </a>
+        </div>
+        {% endfor %}
     </div>
-</div>

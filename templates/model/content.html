@@ -3,7 +3,8 @@
     <div class="flex justify-between items-center py-6">
         <h1 class="text-6xl tracking-tight">Models</h1>
         {% if logged_in %}
-        <button hx-get="/model/create" hx-target-error="#content-area" hx-push-url="/model/create" hx-target="#content-area"
+        <button hx-get="/model/create" hx-target-error="#content-area" hx-push-url="/model/create"
+                hx-target="#content-area"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:ring focus:ring-blue-300 transform hover:scale-105 transition-all duration-200"
                 type="submit">
             New Model

@@ -158,7 +158,7 @@ pub async fn get_model(
             model_id,
             DbQueryParams::order(
                 DbOrderColumn::new_column_only(DbColumn::ViewCount, DbOrder::Desc),
-                Some(DbTable::Bike),
+                identity.is_none().then_some(DbTable::Bike),
             ),
         ))
         .await?;
