@@ -37,10 +37,10 @@ spec:
         resources:
           requests:
             memory: "3Gi"
-            cpu: "3"
+            cpu: "2"
           limits:
             memory: "6Gi"
-            cpu: "4"
+            cpu: "3"
       volumes:
       - name: alemavintage-media
         persistentVolumeClaim:
