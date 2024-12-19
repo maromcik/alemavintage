@@ -9,7 +9,7 @@ use crate::database::repositories::brand::repository::BrandRepository;
 use crate::database::repositories::model::repository::ModelRepository;
 use crate::error::AppError;
 use crate::forms::brand::{BrandCreateForm, BrandEditForm};
-use crate::handlers::helpers::{bike_hard_delete, get_template_name};
+use crate::handlers::helpers::{hard_delete_bike, get_template_name};
 use crate::templates::brand::{
     BrandCreateTemplate, BrandDetailTemplate, BrandEditTemplate, BrandTemplate,
 };
@@ -163,7 +163,7 @@ pub async fn remove_brand(
         ))
         .await?;
 
-    bike_hard_delete(&bike_repo, bikes.iter().map(|b| b.id).collect()).await?;
+    hard_delete_bike(&bike_repo, bikes.iter().map(|b| b.id).collect()).await?;
 
     let _ = brand_repo
         .delete(&GetById::new_with_deleted(brand_id))

@@ -13,23 +13,16 @@ use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::model::repository::ModelRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::error::AppError;
-use crate::forms::bike::{BikeCreateForm, BikeEditForm, BikeThumbnailEditForm, BikeUploadForm};
-use crate::handlers::helpers::{
-    bike_hard_delete, get_metadata_from_session, get_template_name, get_user_from_identity,
-    upload_bike_helper,
-};
-use crate::handlers::utilities::{remove_file, save_file, validate_file, ImageDimensions};
-use crate::templates::bike::{
-    BikeCreateTemplate, BikeDisplayTemplate, BikeEditTemplate, BikeThumbnailUploadTemplate,
-    BikeUploadFormTemplate, BikesTemplate,
-};
-use crate::{authorized, AppState, THUMBNAIL_SIZE};
+use crate::forms::bike::{BikeCreateForm, BikeEditForm, BikeImagesEditForm, BikeThumbnailEditForm, BikeUploadForm};
+use crate::handlers::helpers::{get_metadata_from_session, get_template_name, get_user_from_identity, hard_delete_bike, hard_delete_bike_images, save_bike_images_helper, save_bike_thumbnail_helper, upload_bike_helper};
+use crate::handlers::utilities::remove_file;
+use crate::templates::bike::{BikeCreateTemplate, BikeDisplayTemplate, BikeEditTemplate, BikeReuploadFormTemplate, BikeThumbnailUploadTemplate, BikeUploadFormTemplate, BikesTemplate};
+use crate::{authorized, AppState};
 use actix_identity::Identity;
 use actix_multipart::form::MultipartForm;
 use actix_session::Session;
 use actix_web::http::header::LOCATION;
 use actix_web::{delete, get, post, put, web, HttpRequest, HttpResponse};
-use uuid::Uuid;
 
 #[get("")]
 pub async fn get_bikes(
@@ -125,7 +118,7 @@ pub async fn create_bike_page(
 }
 
 #[get("/upload")]
-pub async fn upload_bike_form(
+pub async fn upload_bike_page(
     request: HttpRequest,
     identity: Option<Identity>,
     state: web::Data<AppState>,
@@ -184,7 +177,7 @@ pub async fn upload_bike(
     let bike = match upload_bike_helper(metadata.bike_id, &bike_repo, form).await {
         Ok(bike) => bike,
         Err(err) => {
-            bike_hard_delete(&bike_repo, vec![metadata.bike_id]).await?;
+            hard_delete_bike(&bike_repo, vec![metadata.bike_id]).await?;
             let template_name = get_template_name(&request, "bike/admin/upload");
             let env = state.jinja.acquire_env()?;
             let template = env.get_template(&template_name)?;
@@ -232,7 +225,7 @@ pub async fn remove_bike(
     authorized!(identity, request.path());
     let bike_id = path.into_inner().0;
 
-    bike_hard_delete(&bike_repo, vec![bike_id]).await?;
+    hard_delete_bike(&bike_repo, vec![bike_id]).await?;
 
     Ok(HttpResponse::SeeOther()
         .insert_header((LOCATION, "/bike"))
@@ -318,7 +311,6 @@ pub async fn edit_bike(
 #[get("/thumbnail/{id}/upload")]
 pub async fn upload_bike_thumbnail_page(
     request: HttpRequest,
-    bike_repo: web::Data<BikeRepository>,
     identity: Option<Identity>,
     path: web::Path<(Id,)>,
     state: web::Data<AppState>,
@@ -326,17 +318,13 @@ pub async fn upload_bike_thumbnail_page(
     authorized!(identity, request.path());
 
     let bike_id = path.into_inner().0;
-    let bike: BikeDetail = <BikeRepository as DbReadOne<BikeGetById, BikeDetail>>::read_one(
-        bike_repo.as_ref(),
-        &BikeGetById::new_admin(bike_id),
-    )
-    .await?;
+    
     let template_name = get_template_name(&request, "bike/admin/thumbnail/upload");
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(BikeThumbnailUploadTemplate {
         message: String::new(),
-        bike: BikeDisplay::from(bike),
+        bike_id
     })?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
@@ -359,13 +347,7 @@ pub async fn upload_bike_thumbnail(
     )
     .await?;
 
-    let thumbnail_path = validate_file(&form.thumbnail, Uuid::new_v4(), "image", "thumbnail")?;
-
-    save_file(
-        form.thumbnail,
-        &thumbnail_path,
-        &ImageDimensions::new(THUMBNAIL_SIZE, THUMBNAIL_SIZE),
-    )?;
+    let thumbnail_path = save_bike_thumbnail_helper(form.thumbnail)?;
 
     remove_file(&bike.thumbnail)?;
 
@@ -378,3 +360,61 @@ pub async fn upload_bike_thumbnail(
         .insert_header((LOCATION, handler))
         .finish())
 }
+
+#[get("/{id}/reupload")]
+pub async fn reupload_bike_page(
+    request: HttpRequest,
+    identity: Option<Identity>,
+    path: web::Path<(Id,)>,
+    state: web::Data<AppState>,
+) -> Result<HttpResponse, AppError> {
+    authorized!(identity, request.path());
+
+    let template_name = get_template_name(&request, "bike/admin/reupload");
+    let env = state.jinja.acquire_env()?;
+    let template = env.get_template(&template_name)?;
+    let body = template.render(BikeReuploadFormTemplate {
+        message: String::new(),
+        bike_id: path.into_inner().0,
+    })?;
+
+    Ok(HttpResponse::Ok().content_type("text/html").body(body))
+}
+
+
+#[post("/reupload")]
+pub async fn reupload_bike(
+    request: HttpRequest,
+    identity: Option<Identity>,
+    bike_repo: web::Data<BikeRepository>,
+    MultipartForm(form): MultipartForm<BikeImagesEditForm>,
+    state: web::Data<AppState>,
+) -> Result<HttpResponse, AppError> {
+    authorized!(identity, request.path());
+    
+    let bike_id = form.bike_id.0;
+    
+    hard_delete_bike_images(&bike_repo, bike_id).await?;
+    
+    match save_bike_images_helper(form.photos, &bike_repo, bike_id).await {
+        Ok(bike) => bike,
+        Err(err) => {
+            hard_delete_bike_images(&bike_repo, bike_id).await?;
+            let template_name = get_template_name(&request, "bike/admin/reupload");
+            let env = state.jinja.acquire_env()?;
+            let template = env.get_template(&template_name)?;
+            let body = template.render(BikeReuploadFormTemplate {
+                message: err.to_string(),
+                bike_id
+            })?;
+            return Ok(HttpResponse::Ok().content_type("text/html").body(body));
+        }
+    };
+    
+
+    let url = format!("/bike/{}", bike_id);
+    Ok(HttpResponse::SeeOther()
+        .insert_header((LOCATION, url))
+        .finish())
+}
+

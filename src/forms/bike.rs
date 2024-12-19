@@ -25,6 +25,13 @@ pub struct BikeThumbnailEditForm {
     pub bike_id: Text<Id>,
 }
 
+#[derive(Debug, MultipartForm)]
+pub struct BikeImagesEditForm {
+    #[multipart(rename = "files")]
+    pub photos: Vec<TempFile>,
+    pub bike_id: Text<Id>,
+}
+
 #[derive(Debug, Clone, Deserialize)]
 pub struct BikeEditForm {
     pub bike_id: Id,

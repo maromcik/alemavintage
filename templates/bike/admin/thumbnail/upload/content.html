@@ -8,7 +8,9 @@
             <input type="file" id="bike-thumbnail-input" class="hidden" accept="image/*" multiple name="thumbnail" onchange="handleProfilePictureUpload(this)">
             <span id="bike-thumbnail-label-for-file" class="text-white font-bold">Click to Upload</span>
         </label>
-        <input class="hidden" name="bike_id" type="text" value="{{ bike.id }}">
+        <label>
+            <input class="hidden" name="bike_id" type="text" value="{{ bike_id }}">
+        </label>
     </div>
     <button type="submit" class="absolute bottom-[32px] right-[32px] md:bottom-[48px] md:right-[10px] lg:bottom-[40px] lg:right-[20px] hidden transform translate-x-1/2 translate-y-1/2 bg-blue-600 hover:bg-blue-300 text-white rounded-full p-2 focus:outline-none group-hover:block">
         <svg class="w-12 h-12 md:w-18 md:h-18 lg:w-27 lg:h-27" fill="none" stroke="currentColor" viewBox="0 0 24 24"

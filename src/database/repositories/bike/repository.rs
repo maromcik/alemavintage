@@ -366,6 +366,28 @@ impl DbCreate<BikeImageCreate, Vec<BikeImage>> for BikeRepository {
     }
 }
 
+impl<ById> DbDelete<ById, BikeImage> for BikeRepository
+where
+    ById: EntityById,
+{
+    async fn delete(&self, params: &ById) -> DbResultMultiple<BikeImage> {
+        let mut transaction = self.pool_handler.pool.begin().await?;
+        let images = sqlx::query_as!(
+            BikeImage,
+            r#"
+                DELETE FROM "BikeImage"
+                WHERE bike_id = $1
+                RETURNING *
+            "#,
+            params.id(),
+        )
+        .fetch_all(transaction.as_mut())
+        .await?;
+        transaction.commit().await?;
+        Ok(images)
+    }
+}
+
 impl<T> DbReadOne<T, BikeImage> for BikeRepository
 where
     T: EntityById,

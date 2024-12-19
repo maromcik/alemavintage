@@ -1,6 +1,6 @@
-use crate::database::common::{DbCreate, DbDelete, DbReadMany, DbReadOne, DbUpdate};
+use crate::database::common::{DbCreate, DbDelete, DbReadOne, DbUpdate};
 use crate::database::models::bike::{
-    Bike, BikeCreateSessionKeys, BikeImageCreate, BikeImageSearch,
+    Bike, BikeCreateSessionKeys, BikeImage, BikeImageCreate,
     BikeMetadataForm, BikeUpdate,
 };
 use crate::database::models::user::User;
@@ -10,13 +10,14 @@ use crate::database::repositories::user::repository::UserRepository;
 use crate::error::{AppError, AppErrorKind};
 use crate::forms::bike::BikeUploadForm;
 use crate::handlers::utilities::{is_htmx, remove_file, save_file, validate_file, ImageDimensions};
+use crate::{IMAGE_SIZE, THUMBNAIL_SIZE};
 use actix_identity::Identity;
+use actix_multipart::form::tempfile::TempFile;
 use actix_session::Session;
 use actix_web::{web, HttpRequest};
 use rayon::iter::IntoParallelIterator;
 use rayon::iter::ParallelIterator;
 use uuid::Uuid;
-use crate::{IMAGE_SIZE, THUMBNAIL_SIZE};
 
 pub fn get_template_name(request: &HttpRequest, path: &str) -> String {
     if is_htmx(request) {
@@ -26,25 +27,37 @@ pub fn get_template_name(request: &HttpRequest, path: &str) -> String {
     }
 }
 
-pub async fn bike_hard_delete(
+pub async fn hard_delete_bike(
     bike_repo: &web::Data<BikeRepository>,
     bike_ids: Vec<Id>,
 ) -> Result<(), AppError> {
     for bike_id in bike_ids {
-        let bike_images = bike_repo
-            .read_many(&BikeImageSearch::new(Some(bike_id)))
-            .await?;
+        hard_delete_bike_images(bike_repo, bike_id).await?;
 
-        for image in bike_images {
-            remove_file(&image.path)?;
-        }
-
-        let bikes = bike_repo
-            .delete(&GetById::new_with_deleted(bike_id))
-            .await?;
+        let bikes = <BikeRepository as DbDelete<GetById, Bike>>::delete(
+            &bike_repo,
+            &GetById::new_with_deleted(bike_id),
+        )
+        .await?;
         for bike in bikes {
             remove_file(&bike.thumbnail)?;
         }
+    }
+    Ok(())
+}
+
+pub async fn hard_delete_bike_images(
+    bike_repo: &web::Data<BikeRepository>,
+    bike_id: Id,
+) -> Result<(), AppError> {
+    let bike_images = <BikeRepository as DbDelete<GetById, BikeImage>>::delete(
+        bike_repo,
+        &GetById::new_with_deleted(bike_id),
+    )
+    .await?;
+
+    for image in bike_images {
+        remove_file(&image.path)?;
     }
     Ok(())
 }
@@ -81,7 +94,7 @@ pub async fn upload_bike_helper(
     bike_repo: &web::Data<BikeRepository>,
     form: BikeUploadForm,
 ) -> Result<Bike, AppError> {
-    let thumbnail_path = validate_file(&form.thumbnail, Uuid::new_v4(), "image", "thumbnail")?;
+    let thumbnail_path = save_bike_thumbnail_helper(form.thumbnail)?;
 
     let bike_update = BikeUpdate::update_thumbnail_and_mark_complete(bike_id, &thumbnail_path);
     let bikes = bike_repo.update(&bike_update).await?;
@@ -91,16 +104,18 @@ pub async fn upload_bike_helper(
         .next()
         .ok_or_else(|| AppError::new(AppErrorKind::NotFound, "Bike {bike_id} not found"))?;
 
-    save_file(
-        form.thumbnail,
-        &thumbnail_path,
-        &ImageDimensions::new(THUMBNAIL_SIZE, THUMBNAIL_SIZE),
-    )?;
+    save_bike_images_helper(form.photos, bike_repo, bike.id).await?;
 
+    Ok(bike)
+}
+
+pub async fn save_bike_images_helper(
+    photos: Vec<TempFile>,
+    bike_repo: &web::Data<BikeRepository>,
+    bike_id: Id,
+) -> Result<(), AppError> {
     let image_dimensions = ImageDimensions::new(IMAGE_SIZE, IMAGE_SIZE);
-
-    let paths = form
-        .photos
+    let paths = photos
         .into_par_iter()
         .map(|photo| {
             let path = validate_file(&photo, Uuid::new_v4(), "image", "bike")?;
@@ -112,7 +127,17 @@ pub async fn upload_bike_helper(
         })
         .collect::<Result<Vec<String>, AppError>>()?;
     bike_repo
-        .create(&BikeImageCreate::new(bike.id, paths))
+        .create(&BikeImageCreate::new(bike_id, paths))
         .await?;
-    Ok(bike)
+    Ok(())
+}
+
+pub fn save_bike_thumbnail_helper(thumbnail: TempFile) -> Result<String, AppError> {
+    let thumbnail_path = validate_file(&thumbnail, Uuid::new_v4(), "image", "thumbnail")?;
+    save_file(
+        thumbnail,
+        &thumbnail_path,
+        &ImageDimensions::new(THUMBNAIL_SIZE, THUMBNAIL_SIZE),
+    )?;
+    Ok(thumbnail_path)
 }

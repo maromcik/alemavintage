@@ -6,7 +6,7 @@ use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::brand::repository::BrandRepository;
 use crate::database::repositories::model::repository::ModelRepository;
 use crate::database::repositories::user::repository::UserRepository;
-use crate::handlers::bike::{create_bike, create_bike_page, edit_bike, edit_bike_page, get_bike_detail, get_bikes, remove_bike, hide_bike, restore_bike, upload_bike, upload_bike_form, upload_bike_thumbnail, upload_bike_thumbnail_page};
+use crate::handlers::bike::{create_bike, create_bike_page, edit_bike, edit_bike_page, get_bike_detail, get_bikes, remove_bike, hide_bike, restore_bike, upload_bike, upload_bike_page, upload_bike_thumbnail, upload_bike_thumbnail_page, reupload_bike, reupload_bike_page};
 use crate::handlers::brand::{
     create_brand, create_brand_page, edit_brand, edit_brand_page, get_brand, get_brands,
     remove_brand,
@@ -56,12 +56,14 @@ pub fn configure_webapp(
         .service(create_bike_page)
         .service(edit_bike)
         .service(edit_bike_page)
-        .service(upload_bike_form)
+        .service(upload_bike_page)
         .service(hide_bike)
         .service(get_bike_detail)
         .service(restore_bike)
         .service(upload_bike_thumbnail_page)
         .service(upload_bike_thumbnail)
+        .service(reupload_bike_page)
+        .service(reupload_bike)
         .service(remove_bike);
 
     let brand_scope = web::scope("brand")

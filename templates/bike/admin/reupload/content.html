@@ -1,31 +1,20 @@
 <div class="container mx-auto p-6 bg-white max-w-4xl min-h-96">
-    <form id="bike_upload_form" hx-post="/bike/upload" hx-target="#content-area" hx-target-error="#error-area"
-          enctype="multipart/form-data"
+    <form id="bike_reupload_form" hx-post="/bike/reupload" hx-target="#content-area" hx-target-error="#error-area" enctype="multipart/form-data"
           class="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4 h-full">
-        <h2 class="block text-gray-300 text-xl font-bold mb-2 text-center">Upload Bike</h2>
+        <label>
+            <input class="hidden" name="bike_id" type="text" value="{{ bike_id }}">
+        </label>
+        <h2 class="block text-gray-300 text-xl font-bold mb-2 text-center">Reupload Bike Images</h2>
         <div id="error-area" class="text-red-500 mb-3 text-center">
             {{ message }}
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
-            <!-- Thumbnail Item -->
-            <div id="thumbnail_item" class="mb-4 px-4 md:pr-6 md:pl-4">
-                <label class="block text-gray-300 text-sm font-bold mb-2 flex flex-col items-center" for="thumbnail">
-                    <i class="fa-regular text-7l fa-image"></i>
-                    Bike thumbnail
-                </label>
-                <input class="shadow appearance-none flex border rounded py-2 px-3 text-gray-300 leading-tight focus:outline-none focus:shadow-outline"
-                       id="thumbnail" accept="image/*" type="file" multiple name="thumbnail">
-            </div>
-
-            <!-- Bike Files Item -->
-            <div id="imagefile_item" class="mb-4 px-4 md:pl-6 md:pr-4">
+        <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mt-10">
                 <label class="block text-gray-300 text-sm font-bold mb-2 flex flex-col items-center" for="photos">
                     <i class="fa-regular text-7l fa-image"></i>
                     Bike images
                 </label>
                 <input class="shadow appearance-none flex border rounded py-2 px-3 text-gray-300 leading-tight focus:outline-none focus:shadow-outline"
                        accept="image/*" id="photos" type="file" multiple name="files">
-            </div>
         </div>
 
         <div class="flex justify-end mt-10 mb-5">
@@ -34,11 +23,9 @@
                 Create Bike
             </button>
         </div>
+
         <div class="w-full bg-gray-200 rounded-full dark:bg-gray-700">
-            <div id="progress"
-                 class="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
-                 style="width: 0%; display: none;">0%
-            </div>
+            <div id="progress" class="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full" style="width: 0%; display: none;">0%</div>
         </div>
 
     </form>
@@ -51,7 +38,7 @@
 </style>
 
 <script>
-    htmx.on('#bike_upload_form', 'htmx:xhr:progress', function (evt) {
+    htmx.on('#bike_reupload_form', 'htmx:xhr:progress', function(evt) {
         var progressElement = htmx.find('#progress');
         var progress = (evt.detail.loaded / evt.detail.total * 100).toFixed(2);
 

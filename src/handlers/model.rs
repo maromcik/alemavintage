@@ -11,7 +11,7 @@ use crate::database::repositories::brand::repository::BrandRepository;
 use crate::database::repositories::model::repository::ModelRepository;
 use crate::error::AppError;
 use crate::forms::model::{ModelCreateForm, ModelEditForm};
-use crate::handlers::helpers::{bike_hard_delete, get_template_name};
+use crate::handlers::helpers::{hard_delete_bike, get_template_name};
 use crate::templates::model::{
     ModelCreateTemplate, ModelDetailTemplate, ModelEditTemplate, ModelTemplate,
 };
@@ -193,7 +193,7 @@ pub async fn remove_model(
         ))
         .await?;
 
-    bike_hard_delete(&bike_repo, bikes.iter().map(|b| b.id).collect()).await?;
+    hard_delete_bike(&bike_repo, bikes.iter().map(|b| b.id).collect()).await?;
 
     let _ = model_repo
         .delete(&GetById::new_with_deleted(model_id))
