@@ -251,7 +251,7 @@ impl BikeImageSearch {
     pub fn new(bike_id: Option<Id>) -> Self {
         Self {
             bike_id,
-            query_params: DbQueryParams::default(),
+            query_params: DbQueryParams::order(DbOrderColumn::new_column_only(DbColumn::Id, DbOrder::Asc), None),
         }
     }
 
