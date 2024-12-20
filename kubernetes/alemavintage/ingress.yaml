@@ -18,6 +18,9 @@ metadata:
       location /media/ {
         root /usr/src/alemavintage/media;
       }
+      location /static/ {
+        root /usr/src/alemavintage/static;
+      }
 spec:
   tls:
     - hosts:
