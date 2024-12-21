@@ -34,6 +34,14 @@ spec:
         env:
         - name: USE_SECURE_COOKIE
           value: "true"
+        - name: HOSTNAME
+          value: "0.0.0.0"
+        - name: PORT
+          value: "8000"
+        - name: RUST_LOG
+          value: "debug"
+        - name: TMPDIR
+          value: "./media"
         resources:
           requests:
             memory: "3Gi"
