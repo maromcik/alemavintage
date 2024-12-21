@@ -878,6 +878,14 @@ code {
   height: 33.333333%;
 }
 
+.h-32 {
+  height: 8rem;
+}
+
+.h-16 {
+  height: 4rem;
+}
+
 .max-h-full {
   max-height: 100%;
 }
@@ -920,6 +928,10 @@ code {
 
 .w-10 {
   width: 2.5rem;
+}
+
+.w-32 {
+  width: 8rem;
 }
 
 .max-w-4xl {
@@ -1586,6 +1598,10 @@ code {
     height: 0.25rem;
   }
 
+  .sm\:h-20 {
+    height: 5rem;
+  }
+
   .sm\:w-48 {
     width: 12rem;
   }
@@ -1600,6 +1616,10 @@ code {
 
   .sm\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sm\:p-4 {
+    padding: 1rem;
   }
 
   .sm\:px-8 {
