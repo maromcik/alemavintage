@@ -104,6 +104,13 @@
         <a href="/user/manage" class="flex items-center text-white hover:text-blue-300">
             Profile
         </a>
+        <a href="/user/logout" class="flex items-center text-white hover:text-blue-300">
+            Logout
+        </a>
+        {% else %}
+        <a href="/user/login" class="flex items-center text-white hover:text-blue-300">
+            Admin
+        </a>
         {% endif %}
     </div>
 </div>
