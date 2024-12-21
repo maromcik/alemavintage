@@ -748,6 +748,10 @@ code {
   margin: 0.25rem;
 }
 
+.m-0 {
+  margin: 0px;
+}
+
 .mx-4 {
   margin-left: 1rem;
   margin-right: 1rem;
@@ -1626,6 +1630,21 @@ code {
     padding-left: 2rem;
     padding-right: 2rem;
   }
+
+  .sm\:py-24 {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+
+  .sm\:py-8 {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .sm\:py-10 {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+  }
 }
 
 @media (min-width: 768px) {
@@ -1719,6 +1738,36 @@ code {
     --tw-space-x-reverse: 0;
     margin-right: calc(2.5rem * var(--tw-space-x-reverse));
     margin-left: calc(2.5rem * calc(1 - var(--tw-space-x-reverse)));
+  }
+
+  .lg\:py-8 {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .lg\:py-24 {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+
+  .lg\:px-20 {
+    padding-left: 5rem;
+    padding-right: 5rem;
+  }
+
+  .lg\:px-24 {
+    padding-left: 6rem;
+    padding-right: 6rem;
+  }
+
+  .lg\:px-64 {
+    padding-left: 16rem;
+    padding-right: 16rem;
+  }
+
+  .lg\:px-48 {
+    padding-left: 12rem;
+    padding-right: 12rem;
   }
 }
 
