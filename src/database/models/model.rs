@@ -40,6 +40,29 @@ impl EntityById for ModelDetail {
     }
 }
 
+#[derive(Serialize)]
+pub struct ModelDisplay {
+    pub id: Id,
+    pub name: String,
+    pub description: String,
+    pub brand_id: Id,
+    pub brand_name: String,
+    pub brand_description: String,
+}
+
+impl From<ModelDetail> for ModelDisplay {
+    fn from(value: ModelDetail) -> Self {
+        Self {
+            id: value.id,
+            name: value.name,
+            description: markdown::to_html(&value.description),
+            brand_id: value.brand_id,
+            brand_name: value.brand_name,
+            brand_description: markdown::to_html(&value.brand_description),
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct ModelCreate {
     pub name: String,
