@@ -5,7 +5,7 @@
     </a>
 
     <!-- Navigation Links -->
-    <div class="flex space-x-6 items-center">
+    <div id="laptop-menu" class="hidden lg:flex lg:space-x-6 lg:items-center">
         <a href="/" class="flex items-center text-white hover:text-blue-300 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                  class="w-6 h-6 mr-2">
@@ -47,7 +47,7 @@
     </div>
 
     <!-- Login/Logout -->
-    <div class="flex items-center">
+    <div class="hidden lg:flex lg:items-center">
         {% if logged_in %}
         <a href="/user/logout" class="flex items-center text-white hover:text-blue-300">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -68,4 +68,55 @@
         </a>
         {% endif %}
     </div>
+
+    <!-- Hamburger Menu Button -->
+    <div class="flex lg:hidden items-center">
+        <button
+                id="hamburger"
+                onclick="toggleMenu()"
+                class="focus:outline-none text-white"
+                aria-label="Toggle menu"
+                aria-expanded="false"
+        >
+            <div class="w-12 h-1 m-2 bg-white"></div>
+            <div class="w-12 h-1 m-2 bg-white"></div>
+            <div class="w-12 h-1 m-2 bg-white"></div>
+        </button>
+    </div>
 </div>
+
+<!-- Navigation Links -->
+<div id="phone-menu" class="fixed top-16 left-0 w-full bg-gray-700 text-2xl text-white pt-10 pb-6 lg:hidden hidden">
+    <div class="flex flex-col space-y-6 items-center">
+        <a href="/" class="flex items-center text-white hover:text-blue-300">
+            Home
+        </a>
+        <a href="/bike" class="flex items-center text-white hover:text-blue-300">
+            Bikes
+        </a>
+        <a href="/brand" class="flex items-center text-white hover:text-blue-300 cursor-pointer">
+            Brands
+        </a>
+        <a href="/model" class="flex items-center text-white hover:text-blue-300">
+            Models
+        </a>
+        {% if logged_in %}
+        <a href="/user/manage" class="flex items-center text-white hover:text-blue-300">
+            Profile
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function toggleMenu() {
+        const menu = document.getElementById('phone-menu');
+        const isExpanded = !menu.classList.contains('hidden');
+
+        if (isExpanded) {
+            menu.classList.add('hidden');
+        } else {
+            menu.classList.remove('hidden');
+        }
+    }
+</script>
