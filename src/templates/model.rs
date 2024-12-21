@@ -1,6 +1,6 @@
 use crate::database::models::bike::BikeDetail;
 use crate::database::models::brand::Brand;
-use crate::database::models::model::ModelDetail;
+use crate::database::models::model::{ModelDetail, ModelDisplay};
 use serde::Serialize;
 use std::collections::HashMap;
 
@@ -31,7 +31,7 @@ pub struct ModelContentTemplate {
 
 #[derive(Serialize)]
 pub struct ModelDetailTemplate {
-    pub model: ModelDetail,
+    pub model: ModelDisplay,
     pub bikes: Vec<BikeDetail>,
     pub logged_in: bool,
 }

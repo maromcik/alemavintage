@@ -1,7 +1,7 @@
 use crate::database::common::query_parameters::DbQueryParams;
 use crate::database::common::{DbCreate, DbDelete, DbReadMany, DbReadOne, DbUpdate};
 use crate::database::models::bike::BikeSearch;
-use crate::database::models::brand::{BrandCreate, BrandSearch, BrandUpdate};
+use crate::database::models::brand::{BrandCreate, BrandDisplay, BrandSearch, BrandUpdate};
 use crate::database::models::model::ModelSearch;
 use crate::database::models::{GetById, Id};
 use crate::database::repositories::bike::repository::BikeRepository;
@@ -137,7 +137,7 @@ pub async fn get_brand(
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(BrandDetailTemplate {
-        brand,
+        brand: BrandDisplay::from(brand),
         models,
         logged_in: identity.is_some(),
     })?;

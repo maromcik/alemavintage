@@ -19,6 +19,23 @@ impl EntityById for Brand {
     }
 }
 
+#[derive(Serialize)]
+pub struct BrandDisplay {
+    pub id: Id,
+    pub name: String,
+    pub description: String,
+}
+
+impl From<Brand> for BrandDisplay {
+    fn from(value: Brand) -> Self {
+        Self {
+            id: value.id,
+            name: value.name,
+            description: markdown::to_html(&value.description),
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct BrandCreate {
     pub name: String,
