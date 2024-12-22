@@ -49,7 +49,7 @@ async fn main() -> anyhow::Result<()> {
     env::set_var("TMPDIR", "./media");
     let _dir = env::temp_dir();
 
-    let pool = setup_pool(10_u32).await?;
+    let pool = setup_pool(20_u32).await?;
 
     let reloader = AutoReloader::new(move |notifier| {
         let template_path = "templates";

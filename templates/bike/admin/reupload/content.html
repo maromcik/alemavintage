@@ -4,14 +4,14 @@
         <label>
             <input class="hidden" name="bike_id" type="text" value="{{ bike_id }}">
         </label>
-        <h2 class="block text-gray-300 text-xl font-bold mb-2 text-center">Reupload Bike Images</h2>
+        <h2 class="block text-gray-300 text-xl font-bold mb-2 text-center">Nahraj znovu</h2>
         <div id="error-area" class="text-red-500 mb-3 text-center">
             {{ message }}
         </div>
         <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mt-10">
                 <label class="block text-gray-300 text-sm font-bold mb-2 flex flex-col items-center" for="photos">
                     <i class="fa-regular text-7l fa-image"></i>
-                    Bike images
+                    Bicykle fotky
                 </label>
                 <input class="shadow appearance-none flex border rounded py-2 px-3 text-gray-300 leading-tight focus:outline-none focus:shadow-outline"
                        accept="image/*" id="photos" type="file" multiple name="files">
@@ -20,12 +20,12 @@
         <div class="flex justify-end mt-10 mb-5">
             <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="submit">
-                Upload Images
+                Nahraj
             </button>
         </div>
 
         <div class="w-full bg-gray-200 rounded-full dark:bg-gray-700">
-            <div id="progress" class="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full" style="width: 0%; display: none;">0%</div>
+            <div id="progress" class="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full" style="width: 0; display: none;">0%</div>
         </div>
 
     </form>
