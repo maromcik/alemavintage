@@ -15,10 +15,7 @@ use crate::handlers::model::{
     create_model, create_model_page, edit_model, edit_model_page, get_model, get_models,
     remove_model,
 };
-use crate::handlers::user::{
-    login, login_user, logout_user, user_manage, user_manage_form_page, user_manage_password,
-    user_manage_password_form,
-};
+use crate::handlers::user::{contact_admin, login, login_user, logout_user, user_manage, user_manage_form_page, user_manage_password, user_manage_password_form};
 use actix_files::Files as ActixFiles;
 use actix_web::web;
 use actix_web::web::ServiceConfig;
@@ -36,13 +33,15 @@ pub fn configure_webapp(
 
     let user_scope = web::scope("user")
         .app_data(web::Data::new(user_repo.clone()))
+        .app_data(web::Data::new(bike_repo.clone()))
         .service(login)
         .service(login_user)
         .service(logout_user)
         .service(user_manage_form_page)
         .service(user_manage_password_form)
         .service(user_manage)
-        .service(user_manage_password);
+        .service(user_manage_password)
+        .service(contact_admin);
 
     let bike_scope = web::scope("bike")
         .app_data(web::Data::new(bike_repo.clone()))

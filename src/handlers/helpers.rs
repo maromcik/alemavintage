@@ -1,25 +1,26 @@
-use crate::database::common::{DbCreate, DbDelete, DbReadOne, DbUpdate};
+use crate::database::common::{DbCreate, DbDelete, DbReadMany, DbReadOne, DbUpdate};
 use crate::database::models::bike::{
-    Bike, BikeCreateSessionKeys, BikeDetail, BikeImage, BikeImageCreate, BikeMetadataForm,
-    BikeUpdate,
+    Bike, BikeCreateSessionKeys, BikeDetail, BikeGetById, BikeImage, BikeImageCreate,
+    BikeMetadataForm, BikeUpdate,
 };
-use crate::database::models::user::User;
+use crate::database::models::user::{User, UserSearch};
 use crate::database::models::{GetById, Id};
 use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::error::{AppError, AppErrorKind};
 use crate::forms::bike::BikeUploadForm;
+use crate::forms::user::EmailForm;
 use crate::handlers::utilities::{is_htmx, remove_file, save_file, validate_file, ImageDimensions};
+use crate::utils::AppState;
 use crate::{IMAGE_SIZE, THUMBNAIL_SIZE};
 use actix_identity::Identity;
 use actix_multipart::form::tempfile::TempFile;
 use actix_session::Session;
 use actix_web::{web, HttpRequest};
 use lettre::message::Mailbox;
-use lettre::Message;
+use lettre::{AsyncTransport, Message};
 use rayon::iter::IntoParallelIterator;
 use rayon::iter::ParallelIterator;
-use std::fmt::format;
 use uuid::Uuid;
 
 pub fn get_template_name(request: &HttpRequest, path: &str) -> String {
@@ -153,35 +154,100 @@ pub struct Email {
 }
 
 impl Email {
-    pub fn new(from: &str, to: &str, message: &str, bike: &BikeDetail) -> Result<Self, AppError> {
-        let subject = format!("Nový záujem o bicykel {}", bike.name);
-        let body = format!(
-            "Používateľ {} má záujem o bicykel {} ({} {})\
-            \
-            {}\
-            ",
-            from, bike.name, bike.brand_name, bike.model_name, message
-        );
+    pub fn new<'a>(
+        form: &'a impl EmailForm<FormField<'a> = &'a str>,
+        to: &str,
+        bike: Option<&BikeDetail>,
+    ) -> Result<Self, AppError> {
+        let subject = match bike {
+            None => format!("Nová otázka od používateľa {}", form.name()),
+            Some(bike) => format!("Nová otázka od {} ohľadom {}", form.name(), bike.name),
+        };
+
+        let body = match bike {
+            None => {
+                format!(
+                    "Používateľ {} sa pýta:\n
+            \n
+            {}\n
+            \n
+            Kontaktné údaje\n
+            email: {}\n
+            tel.: {}",
+                    form.name(),
+                    form.message(),
+                    form.from(),
+                    form.tel()
+                )
+            }
+            Some(bike) => {
+                format!(
+                    "Používateľ {} má záujem o bicykel {} ({} {})\n
+            \n
+            {}\n
+            \n
+            Kontaktné údaje\n
+            email: {}\n
+            tel.: {}",
+                    form.name(),
+                    bike.name,
+                    bike.brand_name,
+                    bike.model_name,
+                    form.message(),
+                    form.from(),
+                    form.tel()
+                )
+            }
+        };
+
         Ok(Self {
-            from: from.parse::<Mailbox>()?,
+            from: form.from().parse::<Mailbox>()?,
             to: to.parse::<Mailbox>()?,
             subject,
             body,
         })
     }
-    
+
     pub fn convert_to_message(self) -> Result<Message, AppError> {
         Message::builder()
+            .reply_to(self.from.clone())
             .from(self.from)
             .to(self.to)
             .subject(self.subject)
-            .body(self.body).map_err(|err| AppError::from(err))
+            .body(self.body)
+            .map_err(AppError::from)
     }
 }
 
-pub fn send_emails(from: String, admin_emails: Vec<String>, message: String, bike: BikeDetail) -> Result<(), AppError> {
-    for to_email in admin_emails.iter() {
-        let email = Email::new(&from, &to_email, &message, &bike)?.convert_to_message()?;
+pub async fn send_emails<'a, T>(
+    identity: Option<&Identity>,
+    user_repo: &web::Data<UserRepository>,
+    bike_repo: &web::Data<BikeRepository>,
+    state: &web::Data<AppState>,
+    form: &'a T,
+) -> Result<(), AppError>
+where
+    T: EmailForm<FormField<'a> = &'a str>,
+{
+    let admins = user_repo.read_many(&UserSearch::new_admins_only()).await?;
+
+    let bike = match form.bike_id() {
+        None => None,
+        Some(bike_id) => {
+            let params = BikeGetById::new(bike_id, identity.is_some(), false);
+            let bike: BikeDetail =
+                <BikeRepository as DbReadOne<BikeGetById, BikeDetail>>::read_one(
+                    bike_repo.as_ref(),
+                    &params,
+                )
+                .await?;
+            Some(bike)
+        }
+    };
+
+    for user in admins {
+        let email = Email::new(form, &user.email, bike.as_ref())?.convert_to_message()?;
+        state.mailer.send(email).await?;
     }
     Ok(())
 }

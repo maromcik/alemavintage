@@ -34,6 +34,7 @@ pub struct UserSearch {
 
 
 impl UserSearch {
+    #[allow(dead_code)]
     pub fn new(email: Option<&str>,
                name: Option<&str>, 
                surname: Option<&str>, 
