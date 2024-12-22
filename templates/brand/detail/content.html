@@ -1,41 +1,38 @@
-{% if logged_in %}
-<div class="bg-gray-50 p-5 rounded-lg shadow-md text-gray-700">
-    <div class="flex space-x-4">
-        <button hx-get="/brand/{{ brand.id }}/edit" hx-target-error="#content-area"
-                hx-push-url="/brand/{{ brand.id }}/edit" hx-target="#content-area"
-                class="bg-blue-500 hover:bg-blue-600 rounded-md p-3 text-white text-lg shadow-md">
-            <i class="fa-solid fa-pencil"></i>
-        </button>
-        <button hx-delete="/brand/{{ brand.id }}/delete" hx-target-error="#content-area" hx-target="#content-area" hx-push-url="/brand"
-                class="bg-red-600 hover:bg-red-600 rounded-md p-3 text-white text-lg shadow-md">
-            <i class="fa-solid fa-trash"></i>
-        </button>
-    </div>
-</div>
-{% endif %}
+<div class="mx-auto py-10 px-5">
 
-<div class="container mx-auto py-10 px-5">
-    <!-- Top Section: Thumbnail and Basic Details -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-
-        <!-- Brand Details -->
+    <div class="text-center md:text-left grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <!-- Top Section: Thumbnail and Basic Details -->
         <div class="flex flex-col space-y-6">
-            <h1 class="text-4xl font-bold text-gray-800">{{ brand.name }}</h1>
+            <h1 class="text-3xl md:text-5xl font-bold text-gray-800 mb-0">{{ brand.name }}</h1>
+            {% if logged_in %}
+            <div class="flex space-x-4 justify-center md:justify-start ">
+                    <button hx-get="/brand/{{ brand.id }}/edit" hx-target-error="#content-area"
+                            hx-push-url="/brand/{{ brand.id }}/edit" hx-target="#content-area"
+                            class="bg-amber-500 hover:bg-amber-600 rounded-md p-3 text-white text-lg shadow-md w-12">
+                        <i class="fa-solid fa-pencil"></i>
+                    </button>
+                    <button hx-delete="/brand/{{ brand.id }}/delete" hx-target-error="#content-area" hx-target="#content-area" hx-push-url="/brand"
+                            class="bg-red-800 hover:bg-red-900 rounded-md p-3 text-white text-lg shadow-md w-12">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+            </div>
+            {% endif %}
         </div>
-    </div>
 
-    <!-- Description Section -->
-    <div class="mt-10">
-        <h2 class="text-2xl font-bold mb-4">Description</h2>
-        <div class="bg-gray-50 p-5 rounded-lg shadow-md text-gray-700">
-            {{ brand.description | safe }}
+        <!-- Description Section -->
+        <div class="mt-10 text-center md:text-left">
+            <h2 class="text-2xl text-gray-800 font-bold mb-4">Popis</h2>
+            <div class="bg-gray-50 p-5 rounded-lg shadow-md text-gray-700">
+                {{ brand.description | safe }}
+            </div>
         </div>
     </div>
 </div>
-<div class="pl-10 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-4">
-    <div class="bg-gray-50 rounded-lg p-6 shadow-md">
-        <h3 class="text-3xl font-bold text-gray-800 mb-4">Models</h3>
 
+
+<div class="mt-10 text-center md:text-left">
+    <h3 class="text-3xl font-bold text-gray-800 mb-4">Models</h3>
+    <div class="bg-gray-50 rounded-lg p-6 shadow-md">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6">
             {% for model in models %}
             {% include "model/card/content.html"%}
