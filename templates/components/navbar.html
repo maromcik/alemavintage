@@ -6,7 +6,7 @@
 
     <!-- Navigation Links Laptop View -->
     <div id="laptop-menu" class="hidden lg:flex lg:items-center lg:space-x-10 xl:space-x-16 xl:text-xl">
-        <a href="/" class="flex items-center text-white hover:text-blue-300 cursor-pointer">
+        <a href="/" class="flex items-center text-white hover:text-amber-400 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                  class="w-6 h-6 mr-2">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -14,11 +14,11 @@
             </svg>
             Domov
         </a>
-        <a href="/bike" class="flex items-center text-white hover:text-blue-300 cursor-pointer">
+        <a href="/bike" class="flex items-center text-white hover:text-amber-400 cursor-pointer">
             <i class="fa-solid fa-bicycle text-3l w-6 h-6 mr-2 lg:mt-2 xl:mt-1"></i>
             Bicykle
         </a>
-        <a href="/brand" class="flex items-center text-white hover:text-blue-300 cursor-pointer">
+        <a href="/brand" class="flex items-center text-white hover:text-amber-400 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                  class="w-6 h-6 mr-2 mt-0 xl:mt-0.5">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -26,7 +26,7 @@
             </svg>
             Značky
         </a>
-        <a href="/model" class="flex items-center text-white hover:text-blue-300 cursor-pointer">
+        <a href="/model" class="flex items-center text-white hover:text-amber-400 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                  class="w-6 h-6 mr-2 mt-0 xl:mt-0.5">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -35,7 +35,7 @@
             Modely
         </a>
         {% if logged_in %}
-        <a href="/user/manage" class="flex items-center text-white hover:text-blue-300 cursor-pointer">
+        <a href="/user/manage" class="flex items-center text-white hover:text-amber-400 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                  class="w-6 h-6 mr-2">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -49,7 +49,7 @@
     <!-- Login/Logout -->
     <div class="hidden lg:flex lg:items-center">
         {% if logged_in %}
-        <a href="/user/logout" class="flex items-center text-white hover:text-blue-300">
+        <a href="/user/logout" class="flex items-center text-white hover:text-amber-400">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                  class="mr-2 w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -58,7 +58,7 @@
             Odhlásiť sa
         </a>
         {% else %}
-        <a href="/user/login" class="flex items-center text-white hover:text-blue-300">
+        <a href="/user/login" class="flex items-center text-white hover:text-amber-400">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                  class="mr-2 w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -88,27 +88,27 @@
 <!-- Navigation Links Mobile View -->
 <div id="phone-menu" class="fixed top-16 left-0 w-full bg-gray-700 text-2xl text-white pt-10 pb-6 lg:hidden hidden">
     <div class="flex flex-col space-y-6 items-center">
-        <a href="/" class="flex items-center text-white hover:text-blue-300">
+        <a href="/" class="flex items-center text-white hover:text-amber-400">
             Domov
         </a>
-        <a href="/bike" class="flex items-center text-white hover:text-blue-300">
+        <a href="/bike" class="flex items-center text-white hover:text-amber-400">
             Bicykle
         </a>
-        <a href="/brand" class="flex items-center text-white hover:text-blue-300">
+        <a href="/brand" class="flex items-center text-white hover:text-amber-400">
             Značky
         </a>
-        <a href="/model" class="flex items-center text-white hover:text-blue-300">
+        <a href="/model" class="flex items-center text-white hover:text-amber-400">
             Modely
         </a>
         {% if logged_in %}
-        <a href="/user/manage" class="flex items-center text-white hover:text-blue-300">
+        <a href="/user/manage" class="flex items-center text-white hover:text-amber-400">
             Profil
         </a>
-        <a href="/user/logout" class="flex items-center text-white hover:text-blue-300">
+        <a href="/user/logout" class="flex items-center text-white hover:text-amber-400">
             Odhlásiť sa
         </a>
         {% else %}
-        <a href="/user/login" class="flex items-center text-white hover:text-blue-300">
+        <a href="/user/login" class="flex items-center text-white hover:text-amber-400">
             Admin
         </a>
         {% endif %}
