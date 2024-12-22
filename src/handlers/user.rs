@@ -197,7 +197,7 @@ pub async fn user_manage(
     let template = env.get_template(template_name)?;
     let body = template.render(UserManageProfileUserFormTemplate {
         user: user_valid,
-        message: "Profile update successful".to_string(),
+        message: "Profil bol úspešne aktualizovaný".to_string(),
         success: true,
         logged_in: true,
     })?;

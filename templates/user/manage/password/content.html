@@ -1,3 +1,4 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-8, py-6">
 <div id="user-mgmt-password">
     <div class="mx-auto text-center">
         <form hx-post="/user/manage/password" hx-target="#user-mgmt-password" hx-target-error="#content-area" hx-swap="outerHTML"
@@ -11,18 +12,18 @@
             </div>
             <div class="justify-between w-full">
                 <div class="flex flex-col space-y-2 w-full px-2">
-                    <input type="password" name="old_password" placeholder="Old Password"
+                    <input type="password" name="old_password" placeholder="Staré heslo"
                            class="p-3 rounded border border-gray-400 bg-gray-900 text-white placeholder-gray-600 focus:outline-none focus:border-green-500">
-                    <input type="password" name="new_password" placeholder="New Password"
+                    <input type="password" name="new_password" placeholder="Nové heslo"
                            class="p-3 rounded border border-gray-400 bg-gray-900 text-white placeholder-gray-600 focus:outline-none focus:border-green-500">
-                    <input type="password" name="confirm_password" placeholder="Confirm password"
+                    <input type="password" name="confirm_password" placeholder="Nové heslo (potvrdenie)"
                            class="p-3 rounded border border-gray-400 bg-gray-900 text-white placeholder-gray-600 focus:outline-none focus:border-green-500">
                 </div>
             </div>
             <span>
             <button type="submit"
                     class="bg-blue-600 hover:bg-blue-300 text-white font-bold py-3 px-6 rounded mt-4 focus:outline-none focus:shadow-outline-green">
-                <img class="htmx-indicator inline" src="/static/images/bars.svg"/>  Change password  <img
+                <img class="htmx-indicator inline" src="/static/images/bars.svg"/>  Zmeniť heslo  <img
                     class="htmx-indicator inline" src="/static/images/bars.svg"/>
             </button>
         </span>
@@ -35,4 +36,5 @@
             Profile
         </button>
     </a>
+</div>
 </div>
