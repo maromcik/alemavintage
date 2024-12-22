@@ -2,12 +2,13 @@ use crate::database::common::error::{BackendError, BackendErrorKind};
 use crate::database::common::{DbReadOne, DbUpdate};
 use crate::database::models::user::{UserLogin, UserUpdate, UserUpdatePassword};
 use crate::database::models::GetById;
+use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::user::repository::UserRepository;
-use crate::error::AppError;
+use crate::error::{AppError, AppErrorKind};
 use crate::forms::user::{
-    UserLoginForm, UserLoginReturnURL, UserUpdateForm, UserUpdatePasswordForm,
+    ContactAdminBikeForm, UserLoginForm, UserLoginReturnURL, UserUpdateForm, UserUpdatePasswordForm,
 };
-use crate::handlers::helpers::{get_template_name, parse_user_id};
+use crate::handlers::helpers::{get_template_name, parse_user_id, send_emails};
 use crate::handlers::utilities::validate_password;
 use crate::templates::user::{
     LoginTemplate, UserManagePasswordTemplate, UserManageProfileTemplate,
@@ -41,9 +42,9 @@ pub async fn login(
 
     let template_name = "user/login.html";
     let env = state.jinja.acquire_env()?;
-    let template = env.get_template(&template_name)?;
+    let template = env.get_template(template_name)?;
     let body = template.render(LoginTemplate {
-        message: "".to_string(),
+        message: String::new(),
         return_url,
     })?;
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
@@ -74,7 +75,7 @@ pub async fn login_user(
             if backend_error.is_login_error() {
                 let template_name = "user/login.html";
                 let env = state.jinja.acquire_env()?;
-                let template = env.get_template(&template_name)?;
+                let template = env.get_template(template_name)?;
                 let body = template.render(LoginTemplate {
                     message: backend_error.to_string(),
                     return_url: form.return_url.clone(),
@@ -113,7 +114,7 @@ pub async fn user_manage_form_page(
     let template = env.get_template(&template_name)?;
     let body = template.render(UserManageProfileTemplate {
         user,
-        message: "".to_string(),
+        message: String::new(),
         success: true,
         logged_in: true,
     })?;
@@ -133,7 +134,7 @@ pub async fn user_manage_password_form(
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(UserManagePasswordTemplate {
-        message: "".to_string(),
+        message: String::new(),
         success: true,
         logged_in: true,
     })?;
@@ -155,10 +156,10 @@ pub async fn user_manage_profile_form(
 
     let template_name = "user/profile_user_form.html";
     let env = state.jinja.acquire_env()?;
-    let template = env.get_template(&template_name)?;
+    let template = env.get_template(template_name)?;
     let body = template.render(UserManageProfileUserFormTemplate {
         user,
-        message: "".to_string(),
+        message: String::new(),
         success: true,
         logged_in: true,
     })?;
@@ -193,7 +194,7 @@ pub async fn user_manage(
 
     let template_name = "user/profile_user_form.html";
     let env = state.jinja.acquire_env()?;
-    let template = env.get_template(&template_name)?;
+    let template = env.get_template(template_name)?;
     let body = template.render(UserManageProfileUserFormTemplate {
         user: user_valid,
         message: "Profile update successful".to_string(),
@@ -216,7 +217,7 @@ pub async fn user_manage_password(
 
     let template_name = "user/manage/password/content.html";
     let env = state.jinja.acquire_env()?;
-    let template = env.get_template(&template_name)?;
+    let template = env.get_template(template_name)?;
 
     if form.new_password != form.confirm_password {
         let context = UserManagePasswordTemplate {
@@ -261,4 +262,26 @@ pub async fn user_manage_password(
     };
     let body = template.render(context)?;
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
+}
+
+#[post("/contact")]
+pub async fn contact_admin(
+    user_repo: web::Data<UserRepository>,
+    bike_repo: web::Data<BikeRepository>,
+    identity: Option<Identity>,
+    state: web::Data<AppState>,
+    form: web::Form<ContactAdminBikeForm>,
+) -> Result<HttpResponse, AppError> {
+    
+    match send_emails(identity.as_ref(), &user_repo, &bike_repo, &state, &form.0).await {
+        Ok(()) => Ok(HttpResponse::Ok()
+            .content_type("text/html")
+            .body("SUCCESSFULLY SENT")),
+        Err(err) => match err.app_error_kind {
+            AppErrorKind::EmailAddressError => Ok(HttpResponse::BadRequest()
+                .content_type("text/html")
+                .body("EMAIL ADDRESS COULD NOT BE PARSED")),
+            _ => Err(err),
+        },
+    }
 }

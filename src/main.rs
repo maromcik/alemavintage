@@ -11,10 +11,10 @@ use actix_web::web::{FormConfig, PayloadConfig};
 use actix_web::{cookie::Key, App, HttpServer};
 use env_logger::Env;
 use log::{info, warn};
-use minijinja::{path_loader, Environment};
-use minijinja_autoreload::AutoReloader;
 use std::env;
 use std::sync::Arc;
+use anyhow::anyhow;
+use crate::utils::{create_mailer, create_reloader, AppState};
 
 mod database;
 mod error;
@@ -22,6 +22,7 @@ mod forms;
 mod handlers;
 mod init;
 mod templates;
+mod utils;
 
 const DEFAULT_HOSTNAME: &str = "localhost";
 const DEFAULT_PORT: &str = "8000";
@@ -34,33 +35,17 @@ const MIN_PASS_LEN: usize = 6;
 const THUMBNAIL_SIZE: u32 = 600;
 const IMAGE_SIZE: u32 = 2000;
 
-pub struct AppState {
-    pub jinja: Arc<AutoReloader>,
-}
-
-impl AppState {
-    pub fn new(jinja: Arc<AutoReloader>) -> Self {
-        AppState { jinja }
-    }
-}
 
 #[actix_web::main]
 async fn main() -> anyhow::Result<()> {
     env::set_var("TMPDIR", "./media");
     let _dir = env::temp_dir();
 
-    let pool = setup_pool(20_u32).await?;
+    let pool = setup_pool(10_u32).await?;
+    let jinja = Arc::new(create_reloader("templates".to_owned()));
+    let mailer = Arc::new(create_mailer().map_err(|e| anyhow!(e.message))?);
 
-    let reloader = AutoReloader::new(move |notifier| {
-        let template_path = "templates";
-        let mut env = Environment::new();
-        env.set_loader(path_loader(&template_path));
-        notifier.set_fast_reload(true);
-        notifier.watch_path(template_path, true);
-        Ok(env)
-    });
-
-    let jinja = Arc::new(reloader);
+    let app_state = AppState::new(jinja.clone(), mailer.clone());
 
     let host = parse_host();
     let host2 = host.clone();
@@ -112,7 +97,7 @@ async fn main() -> anyhow::Result<()> {
                     .max_age(3600),
             )
             .wrap(Logger::default())
-            .configure(configure_webapp(&pool, jinja.clone()))
+            .configure(configure_webapp(&pool, app_state.clone()))
     })
     .bind(host2)?
     .run()

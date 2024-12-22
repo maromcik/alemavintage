@@ -34,6 +34,10 @@ pub enum AppErrorKind {
     FileError,
     #[error("unauthorized")]
     Unauthorized,
+    #[error("email error")]
+    EmailError,
+    #[error("email address error")]
+    EmailAddressError,
 }
 
 // impl From<askama::Error> for AppError {
@@ -122,6 +126,24 @@ impl From<actix_session::SessionInsertError> for AppError {
     }
 }
 
+impl From<lettre::error::Error> for AppError {
+    fn from(value: lettre::error::Error) -> Self {
+        Self::new(AppErrorKind::EmailError, value.to_string().as_str())
+    }
+}
+
+impl From<lettre::address::AddressError> for AppError {
+    fn from(value: lettre::address::AddressError) -> Self {
+        Self::new(AppErrorKind::EmailAddressError, value.to_string().as_str())
+    }
+}
+
+impl From<lettre::transport::smtp::Error> for AppError {
+    fn from(value: lettre::transport::smtp::Error) -> Self {
+        Self::new(AppErrorKind::EmailError, value.to_string().as_str())
+    }
+}
+
 impl From<minijinja::Error> for AppError {
     fn from(value: minijinja::Error) -> Self {
         Self::new(AppErrorKind::TemplatingError, value.to_string().as_str())
@@ -171,7 +193,7 @@ impl Display for AppError {
 impl ResponseError for AppError {
     fn status_code(&self) -> StatusCode {
         match self.app_error_kind {
-            AppErrorKind::BadRequest => StatusCode::BAD_REQUEST,
+            AppErrorKind::BadRequest | AppErrorKind::EmailAddressError => StatusCode::BAD_REQUEST,
             AppErrorKind::NotFound => StatusCode::NOT_FOUND,
             AppErrorKind::Conflict => StatusCode::CONFLICT,
             AppErrorKind::Unauthorized => StatusCode::UNAUTHORIZED,
@@ -179,6 +201,7 @@ impl ResponseError for AppError {
             | AppErrorKind::InternalServerError
             | AppErrorKind::IdentityError
             | AppErrorKind::SessionError
+            | AppErrorKind::EmailError
             | AppErrorKind::FileError => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
