@@ -9,22 +9,23 @@
             crossorigin="anonymous"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/response-targets.js"></script>
 </head>
-<body class="h-screen flex justify-center items-center bg-black">
-<div id="login_box" class="w-full h-full flex justify-center items-center bg-black">
-    <form action="/user/login" method="post" class="bg-black shadow-lg border border-gray-800
+<body class="h-screen flex justify-center items-center">
+<div id="login_box" class="w-full h-full flex justify-center items-center">
+    <form action="/user/login" method="post" class="bg-gray-800 shadow-lg border border-gray-800
     rounded-lg p-5 flex flex-col items-center
     max-w-full w-96 mx-4 md:w-96 sm:w-96 lg:w-96 xl:w-1/4">
-        <h2 class="text-white text-2xl mb-6">Admin</h2>
+        <h2 class="text-slate-100 text-2xl mb-6">Admin</h2>
         <div id="error-area" class="text-red-500 mb-3">
             {{ message }}
         </div>
         <div class="w-full mb-6 flex flex-col gap-2.5">
             <input type="text" name="email" placeholder="Email" class="p-2.5 rounded border border-gray-400">
-            <input type="password" name="password" placeholder="Password" class="p-2.5 rounded border border-gray-400">
+            <input type="password" name="password" placeholder="Heslo" class="p-2.5 rounded border border-gray-400">
             <input type="hidden" name="return_url" value="{{ return_url }}">
         </div>
-        <button type="submit" class="bg-blue-600 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded mb-2.5">Login</button>
-        <p class="text-white">Are you new here? <a href="/user/register" class="text-blue-600 hover:text-blue-400">Create an account</a>.</p>
+        <button type="submit"
+                class="bg-amber-500 hover:bg-amber-600 rounded-md p-3 px-6 text-white text-lg shadow-md">Prihlásiť sa</button>
+        <!-- <p class="text-white">Are you new here? <a href="/user/register" class="text-blue-600 hover:text-blue-400">Create an account</a>.</p> -->
     </form>
 </div>
 </body>
