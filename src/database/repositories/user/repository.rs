@@ -11,9 +11,9 @@ use crate::database::common::error::{BackendError, DbError, EntityError};
 use crate::database::common::error::{DbResultMultiple, DbResultSingle};
 use crate::database::common::utilities::entity_is_correct;
 use crate::database::common::{
-    DbPoolHandler, DbReadOne, DbRepository, DbUpdate, EntityById, PoolHandler,
+    DbPoolHandler, DbReadMany, DbReadOne, DbRepository, DbUpdate, EntityById, PoolHandler,
 };
-use crate::database::models::user::{User, UserLogin, UserUpdate, UserUpdatePassword};
+use crate::database::models::user::{User, UserLogin, UserSearch, UserUpdate, UserUpdatePassword};
 use crate::database::models::GetById;
 
 fn generate_salt() -> SaltString {
@@ -189,6 +189,29 @@ where
 
         let user = UserRepository::user_is_correct(maybe_user)?;
         Ok(user)
+    }
+}
+
+impl DbReadMany<UserSearch, User> for UserRepository {
+    async fn read_many(&self, params: &UserSearch) -> DbResultMultiple<User> {
+        let users = sqlx::query_as!(
+            User,
+            r#"
+            SELECT * FROM "User"
+            WHERE
+                (admin = $1 OR $1 IS NULL) 
+                AND (email = $2 OR $2 IS NULL) 
+                AND (name = $3 OR $3 IS NULL) 
+                AND (surname = $4 OR $4 IS NULL)
+            "#,
+            params.admin,
+            params.email,
+            params.name,
+            params.surname
+        )
+        .fetch_all(&self.pool_handler.pool)
+        .await?;
+        Ok(users)
     }
 }
 

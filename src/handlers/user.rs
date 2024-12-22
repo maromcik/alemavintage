@@ -1,7 +1,9 @@
 use crate::database::common::error::{BackendError, BackendErrorKind};
-use crate::database::common::{DbReadOne, DbUpdate};
-use crate::database::models::user::{UserLogin, UserUpdate, UserUpdatePassword};
-use crate::database::models::GetById;
+use crate::database::common::{DbReadMany, DbReadOne, DbUpdate};
+use crate::database::models::bike::{BikeDetail, BikeGetById};
+use crate::database::models::user::{UserLogin, UserSearch, UserUpdate, UserUpdatePassword};
+use crate::database::models::{GetById, Id};
+use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::error::AppError;
 use crate::forms::user::{
@@ -15,6 +17,7 @@ use crate::templates::user::{
 };
 use crate::{authorized, AppState};
 use actix_identity::Identity;
+use actix_session::Session;
 use actix_web::http::header::LOCATION;
 use actix_web::http::StatusCode;
 use actix_web::web::Redirect;
@@ -261,4 +264,31 @@ pub async fn user_manage_password(
     };
     let body = template.render(context)?;
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
+}
+
+#[post("/contact")]
+pub async fn contact_admin(
+    request: HttpRequest,
+    user_repo: web::Data<UserRepository>,
+    bike_repo: web::Data<BikeRepository>,
+    identity: Option<Identity>,
+    state: web::Data<AppState>,
+    session: Session,
+    path: web::Path<(Id,)>,
+) -> Result<HttpResponse, AppError> {
+    let admins = user_repo.read_many(&UserSearch::new_admins_only()).await?;
+    let bike_id = path.into_inner().0;
+    let params = BikeGetById::new(bike_id, identity.is_some(), false);
+    let bike: BikeDetail = <BikeRepository as DbReadOne<BikeGetById, BikeDetail>>::read_one(
+        bike_repo.as_ref(),
+        &params,
+    )
+    .await?;
+    
+    
+    
+    for admin in admins {}
+    Ok(HttpResponse::Ok()
+        .content_type("text/html")
+        .body("SUCCESSFULLY SENT"))
 }

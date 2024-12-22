@@ -24,6 +24,39 @@ impl EntityById for User {
     }
 }
 
+#[derive(Debug, Clone, Default)]
+pub struct UserSearch {
+    pub email: Option<String>,
+    pub name: Option<String>,
+    pub surname: Option<String>,
+    pub admin: Option<bool>,
+}
+
+
+impl UserSearch {
+    pub fn new(email: Option<&str>,
+               name: Option<&str>, 
+               surname: Option<&str>, 
+               admin: Option<bool>) -> Self {
+        let change_to_owned = |value: &str| Some(value.to_owned());
+        Self {
+            email: email.and_then(change_to_owned),
+            name: name.and_then(change_to_owned),
+            surname: surname.and_then(change_to_owned),
+            admin,
+        }
+    }
+    
+    pub fn new_admins_only() -> Self {
+        Self {
+            email: None,
+            name: None,
+            surname: None,
+            admin: Some(true),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Deserialize)]
 pub struct UserLogin {
     pub email: String,
@@ -58,7 +91,7 @@ impl UserUpdatePassword {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct UserUpdate {
     pub id: Id,
     pub email: Option<String>,

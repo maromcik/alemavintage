@@ -1,7 +1,7 @@
 use crate::database::common::{DbCreate, DbDelete, DbReadOne, DbUpdate};
 use crate::database::models::bike::{
-    Bike, BikeCreateSessionKeys, BikeImage, BikeImageCreate,
-    BikeMetadataForm, BikeUpdate,
+    Bike, BikeCreateSessionKeys, BikeDetail, BikeImage, BikeImageCreate, BikeMetadataForm,
+    BikeUpdate,
 };
 use crate::database::models::user::User;
 use crate::database::models::{GetById, Id};
@@ -15,8 +15,11 @@ use actix_identity::Identity;
 use actix_multipart::form::tempfile::TempFile;
 use actix_session::Session;
 use actix_web::{web, HttpRequest};
+use lettre::message::Mailbox;
+use lettre::Message;
 use rayon::iter::IntoParallelIterator;
 use rayon::iter::ParallelIterator;
+use std::fmt::format;
 use uuid::Uuid;
 
 pub fn get_template_name(request: &HttpRequest, path: &str) -> String {
@@ -140,4 +143,45 @@ pub fn save_bike_thumbnail_helper(thumbnail: TempFile) -> Result<String, AppErro
         &ImageDimensions::new(THUMBNAIL_SIZE, THUMBNAIL_SIZE),
     )?;
     Ok(thumbnail_path)
+}
+
+pub struct Email {
+    pub from: Mailbox,
+    pub to: Mailbox,
+    pub subject: String,
+    pub body: String,
+}
+
+impl Email {
+    pub fn new(from: &str, to: &str, message: &str, bike: &BikeDetail) -> Result<Self, AppError> {
+        let subject = format!("Nový záujem o bicykel {}", bike.name);
+        let body = format!(
+            "Používateľ {} má záujem o bicykel {} ({} {})\
+            \
+            {}\
+            ",
+            from, bike.name, bike.brand_name, bike.model_name, message
+        );
+        Ok(Self {
+            from: from.parse::<Mailbox>()?,
+            to: to.parse::<Mailbox>()?,
+            subject,
+            body,
+        })
+    }
+    
+    pub fn convert_to_message(self) -> Result<Message, AppError> {
+        Message::builder()
+            .from(self.from)
+            .to(self.to)
+            .subject(self.subject)
+            .body(self.body).map_err(|err| AppError::from(err))
+    }
+}
+
+pub fn send_emails(from: String, admin_emails: Vec<String>, message: String, bike: BikeDetail) -> Result<(), AppError> {
+    for to_email in admin_emails.iter() {
+        let email = Email::new(&from, &to_email, &message, &bike)?.convert_to_message()?;
+    }
+    Ok(())
 }

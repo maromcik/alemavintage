@@ -1,12 +1,11 @@
 use crate::database::common::PoolHandler;
 use crate::database::common::{DbPoolHandler, DbRepository};
-use std::sync::Arc;
 
 use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::brand::repository::BrandRepository;
 use crate::database::repositories::model::repository::ModelRepository;
 use crate::database::repositories::user::repository::UserRepository;
-use crate::handlers::bike::{create_bike, create_bike_page, edit_bike, edit_bike_page, get_bike_detail, get_bikes, remove_bike, hide_bike, restore_bike, upload_bike, upload_bike_page, upload_bike_thumbnail, upload_bike_thumbnail_page, reupload_bike, reupload_bike_page};
+use crate::handlers::bike::{create_bike, create_bike_page, edit_bike, edit_bike_page, get_bike_detail, get_bikes, hide_bike, remove_bike, restore_bike, reupload_bike, reupload_bike_page, upload_bike, upload_bike_page, upload_bike_thumbnail, upload_bike_thumbnail_page};
 use crate::handlers::brand::{
     create_brand, create_brand_page, edit_brand, edit_brand_page, get_brand, get_brands,
     remove_brand,
@@ -20,16 +19,15 @@ use crate::handlers::user::{
     login, login_user, logout_user, user_manage, user_manage_form_page, user_manage_password,
     user_manage_password_form,
 };
-use crate::AppState;
 use actix_files::Files as ActixFiles;
 use actix_web::web;
 use actix_web::web::ServiceConfig;
-use minijinja_autoreload::AutoReloader;
 use sqlx::PgPool;
+use crate::utils::AppState;
 
 pub fn configure_webapp(
     pool: &PgPool,
-    jinja: Arc<AutoReloader>,
+    app_state: AppState,
 ) -> Box<dyn FnOnce(&mut ServiceConfig)> {
     let user_repo = UserRepository::new(PoolHandler::new(pool.clone()));
     let bike_repo = BikeRepository::new(PoolHandler::new(pool.clone()));
@@ -92,7 +90,7 @@ pub fn configure_webapp(
 
     Box::new(move |cfg: &mut ServiceConfig| {
         cfg.app_data(web::Data::new(user_repo.clone()))
-            .app_data(web::Data::new(AppState::new(jinja.clone())))
+            .app_data(web::Data::new(app_state))
             .service(bike_scope)
             .service(user_scope)
             .service(brand_scope)
