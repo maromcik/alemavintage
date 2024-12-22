@@ -1,10 +1,10 @@
-<div class="container mx-auto max-w-5xl bg-white p-6">
+<div class="container mx-auto p-6 max-w-5xl">
     <form hx-post="/bike/edit" hx-push-url="/bike/{{ bike.id }}" hx-target="#content-area"
           hx-target-error="#content-area" class="mb-4 rounded bg-gray-800 px-8 pb-8 pt-6 shadow-md">
         <h2 class="mb-2 block text-center text-xl font-bold text-gray-300">Edit Bike</h2>
         <input class="hidden" name="bike_id" value="{{bike.id}}">
         <div class="mb-4">
-            <label class="mb-2 block text-sm font-bold text-gray-300" for="bike-name"> Name </label>
+            <label class="mb-2 block text-sm font-bold text-gray-300" for="bike-name"> Názov </label>
             <input name="name"
                    class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
                    id="bike-name" type="text" value="{{bike.name}}"/>
@@ -38,7 +38,7 @@
 
 
         <div class="mb-4">
-            <label class="mb-2 block text-sm font-bold text-gray-300" for="description"> Description </label>
+            <label class="mb-2 block text-sm font-bold text-gray-300" for="description"> Popis </label>
             <textarea name="description"
                       class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
                       id="description">{{ bike.description }}</textarea>
@@ -48,7 +48,7 @@
             <button hx-target="#content-area" hx-target-error="#content-area"
                     class="focus:shadow-outline rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none"
                     type="submit">
-                Save
+                Uložiť
             </button>
         </div>
     </form>
