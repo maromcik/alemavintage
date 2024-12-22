@@ -130,7 +130,7 @@ pub async fn get_brand(
     let brand_id = path.into_inner().0;
     let brand = brand_repo.read_one(&GetById::new(brand_id)).await?;
     let models = model_repo
-        .read_many(&ModelSearch::new(Some(&brand_id), None))
+        .read_many(&ModelSearch::new(Some(&brand_id), None, DbQueryParams::default()))
         .await?;
 
     let template_name = get_template_name(&request, "brand/detail");

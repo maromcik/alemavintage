@@ -1,6 +1,7 @@
 use crate::database::common::EntityById;
 use crate::database::models::Id;
 use serde::Serialize;
+use crate::database::common::query_parameters::DbQueryParams;
 
 #[derive(sqlx::FromRow, Debug, PartialEq, Eq, Clone, Serialize)]
 pub struct Model {
@@ -86,15 +87,17 @@ impl ModelCreate {
 pub struct ModelSearch {
     pub name: Option<String>,
     pub brand_id: Option<Id>,
+    pub query_params: DbQueryParams,
 }
 
 impl ModelSearch {
     #[must_use]
     #[inline]
-    pub fn new(brand_id: Option<&Id>, name: Option<&str>) -> Self {
+    pub fn new(brand_id: Option<&Id>, name: Option<&str>, query_params: DbQueryParams) -> Self {
         Self {
             name: name.map(|n| n.to_owned()),
             brand_id: brand_id.copied(),
+            query_params
         }
     }
 }

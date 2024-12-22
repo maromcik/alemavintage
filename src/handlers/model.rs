@@ -4,14 +4,16 @@ use crate::database::common::query_parameters::{
 use crate::database::common::{DbCreate, DbDelete, DbReadMany, DbReadOne, DbUpdate};
 use crate::database::models::bike::BikeSearch;
 use crate::database::models::brand::BrandSearch;
-use crate::database::models::model::{ModelCreate, ModelDetail, ModelDisplay, ModelSearch, ModelUpdate};
+use crate::database::models::model::{
+    ModelCreate, ModelDetail, ModelDisplay, ModelSearch, ModelUpdate,
+};
 use crate::database::models::{GetById, Id};
 use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::brand::repository::BrandRepository;
 use crate::database::repositories::model::repository::ModelRepository;
 use crate::error::AppError;
 use crate::forms::model::{ModelCreateForm, ModelEditForm};
-use crate::handlers::helpers::{hard_delete_bike, get_template_name};
+use crate::handlers::helpers::{get_template_name, hard_delete_bike};
 use crate::templates::model::{
     ModelCreateTemplate, ModelDetailTemplate, ModelEditTemplate, ModelTemplate,
 };
@@ -121,15 +123,24 @@ pub async fn get_models(
     identity: Option<Identity>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
-    let models = model_repo.read_many(&ModelSearch::default()).await?;
-
+    let models = model_repo
+        .read_many(&ModelSearch::new(
+            None,
+            None,
+            DbQueryParams::order(
+                DbOrderColumn::new_column_only(DbColumn::BrandName, DbOrder::Asc),
+                None,
+            ),
+        ))
+        .await?;
+    
     let models_grouped = models
         .into_iter()
         .chunk_by(|m| m.brand_name.clone())
         .into_iter()
         .map(|group| (group.0, group.1.collect::<Vec<ModelDetail>>()))
         .collect::<HashMap<String, Vec<ModelDetail>>>();
-
+    
     let template_name = get_template_name(&request, "model");
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;

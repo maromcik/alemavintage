@@ -146,6 +146,7 @@ pub enum DbColumn {
     EditedAt,
     Ordering,
     Path,
+    BrandName
 }
 
 impl DbColumn {
@@ -160,6 +161,7 @@ impl DbColumn {
             DbColumn::EditedAt => write!(f, "edited_at"),
             DbColumn::Ordering => write!(f, "ordering"),
             DbColumn::Path => write!(f, "path"),
+            DbColumn::BrandName => write!(f, "brand_name"),
         }
     }
 }

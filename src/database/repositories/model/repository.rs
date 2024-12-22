@@ -4,15 +4,14 @@ use crate::database::common::error::BackendErrorKind::{
 use crate::database::common::error::{
     BackendError, DbError, DbResultMultiple, DbResultSingle, EntityError,
 };
-use crate::database::common::utilities::entity_is_correct;
+use crate::database::common::utilities::{entity_is_correct, generate_query_param_string};
 use crate::database::common::{
     DbCreate, DbDelete, DbPoolHandler, DbReadMany, DbReadOne, DbRepository, DbUpdate, EntityById,
     PoolHandler,
 };
-use sqlx::{Postgres, Transaction};
-
 use crate::database::models::model::{Model, ModelCreate, ModelDetail, ModelSearch, ModelUpdate};
 use crate::database::models::GetById;
+use sqlx::{Postgres, Transaction};
 
 #[derive(Clone)]
 pub struct ModelRepository {
@@ -93,8 +92,7 @@ where
 
 impl DbReadMany<ModelSearch, ModelDetail> for ModelRepository {
     async fn read_many(&self, params: &ModelSearch) -> DbResultMultiple<ModelDetail> {
-        let models = sqlx::query_as!(
-            ModelDetail,
+        let mut query = 
             r#"
             SELECT
                 model.id,
@@ -111,12 +109,17 @@ impl DbReadMany<ModelSearch, ModelDetail> for ModelRepository {
             WHERE
                 (model.name = $1 OR $1 IS NULL)
                 AND (brand.id = $2 OR $2 IS NULL)
-            "#,
-            params.name,
-            params.brand_id
-        )
-        .fetch_all(&self.pool_handler.pool)
-        .await?;
+            "#.to_owned();
+        
+        let query_params = generate_query_param_string(&params.query_params);
+        query.push_str(query_params.as_str());
+        
+        let models = sqlx::query_as::<_, ModelDetail>(query.as_str())
+            .bind(&params.name)
+            .bind(&params.brand_id)
+            .fetch_all(&self.pool_handler.pool)
+            .await?;
+
         Ok(models)
     }
 }
