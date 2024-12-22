@@ -1,12 +1,12 @@
 <div>
   <!-- Header Section -->
-  <div class="flex justify-between items-center">
+  <div class="flex justify-between items-center mb-3">
     {% if logged_in %}
     <button hx-get="/bike/create" hx-target-error="#content-area" hx-push-url="/bike/create"
             hx-target="#content-area"
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:ring focus:ring-blue-300 hover:scale-105 transition-all duration-200"
+            class="bg-amber-500 hover:bg-amber-600 text-slate-100 font-bold py-2 px-6 rounded-lg focus:outline-none focus:ring focus:ring-blue-300 hover:scale-105 transition-all duration-200"
             type="submit">
-      New Bike
+      Nový bicykel
     </button>
     {% endif %}
   </div>
