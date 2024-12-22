@@ -1,7 +1,7 @@
 <div id="navbar" class="bg-gray-700 p-2 sm:p-4 flex shadow-md fixed w-full z-10 top-0 h-16 sm:h-20 justify-between items-center">
     <!-- Logo -->
     <a href="/" class="flex items-center text-xl text-white font-bold">
-        <img src="../../static/images/colnago-seeklogo.svg" alt="Logo" class="w-32 h-32 sm:w-48 sm:h-48">
+        <img src="/static/images/colnago-seeklogo.svg" alt="Logo" class="w-32 h-32 sm:w-48 sm:h-48">
     </a>
 
     <!-- Navigation Links Laptop View -->
@@ -55,7 +55,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round"
                       d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"/>
             </svg>
-            Log out
+            Odhlásiť sa
         </a>
         {% else %}
         <a href="/user/login" class="flex items-center text-white hover:text-blue-300">
@@ -89,23 +89,23 @@
 <div id="phone-menu" class="fixed top-16 left-0 w-full bg-gray-700 text-2xl text-white pt-10 pb-6 lg:hidden hidden">
     <div class="flex flex-col space-y-6 items-center">
         <a href="/" class="flex items-center text-white hover:text-blue-300">
-            Home
+            Domov
         </a>
         <a href="/bike" class="flex items-center text-white hover:text-blue-300">
-            Bikes
+            Bicykle
         </a>
         <a href="/brand" class="flex items-center text-white hover:text-blue-300">
-            Brands
+            Značky
         </a>
         <a href="/model" class="flex items-center text-white hover:text-blue-300">
-            Models
+            Modely
         </a>
         {% if logged_in %}
         <a href="/user/manage" class="flex items-center text-white hover:text-blue-300">
-            Profile
+            Profil
         </a>
         <a href="/user/logout" class="flex items-center text-white hover:text-blue-300">
-            Logout
+            Odhlásiť sa
         </a>
         {% else %}
         <a href="/user/login" class="flex items-center text-white hover:text-blue-300">
