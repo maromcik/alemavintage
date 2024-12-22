@@ -1,36 +1,4 @@
-{% if logged_in %}
-<div class="bg-gray-50 rounded-lg shadow-md text-gray-700">
-    <div class="flex space-x-4">
-        <button hx-get="/bike/{{ bike.id }}/edit" hx-target-error="#content-area" hx-push-url="/bike/{{ bike.id }}/edit"
-                hx-target="#content-area"
-                class="bg-blue-500 hover:bg-blue-600 rounded-md p-3 text-white text-lg shadow-md">
-            <i class="fa-solid fa-pencil"></i>
-        </button>
-        <button hx-get="/bike/{{ bike.id }}/reupload" hx-target-error="#content-area"
-                hx-target="#content-area"
-                class="bg-blue-500 hover:bg-blue-600 rounded-md p-3 text-white text-lg shadow-md">
-            <i class="fa-solid fa-upload"></i>
-        </button>
-        {% if bike.hidden %}
-        <button hx-put="/bike/{{ bike.id }}/restore" hx-target-error="#content-area" hx-target="#content-area"
-                class="bg-green-500 hover:bg-green-600 rounded-md p-3 text-white text-lg shadow-md">
-            <i class="fa-solid fa-rotate-right"></i>
-        </button>
-        <button hx-delete="/bike/{{ bike.id }}/delete" hx-target-error="#content-area" hx-target="#content-area" hx-push-url="/bike"
-                class="bg-red-600 hover:bg-red-600 rounded-md p-3 text-white text-lg shadow-md">
-            <i class="fa-solid fa-trash"></i>
-        </button>
-        {% else %}
-        <button hx-delete="/bike/{{ bike.id }}/hide" hx-target-error="#content-area" hx-target="#content-area"
-                class="bg-yellow-600 hover:bg-yellow-600 rounded-md p-3 text-white text-lg shadow-md">
-            <i class="fa-solid fa-eye-slash"></i>
-        </button>
-        {% endif %}
-    </div>
-</div>
-{% endif %}
-
-<div>
+<div class="mt-6">
     <!-- Top Section: Thumbnail and Basic Details -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
         <!-- Thumbnail -->
@@ -54,25 +22,60 @@
         <div class="flex flex-col space-y-6">
             <h1 class="text-4xl font-bold text-gray-800">{{ bike.name }}</h1>
             <div>
-                <h2 class="text-2xl font-semibold text-gray-700">Brand</h2>
-                <a class="text-lg text-blue-500 hover:underline" hx-get="/brand/{{ bike.brand_id }}"
-                   hx-target="#content-area" hx-push-url="/brand/{{ bike.brand_id }}">
+                <h2 class="text-2xl font-semibold text-gray-700">Značka</h2>
+                <a class="hover:bg-slate-200 text-gray-800 hover:text-amber-700 font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer"
+                   hx-get="/brand/{{ bike.brand_id }}"
+                   hx-target="#content-area"
+                   hx-push-url="/brand/{{ bike.brand_id }}">
                     {{ bike.brand_name }}
                 </a>
             </div>
             <div>
                 <h2 class="text-2xl font-semibold text-gray-700">Model</h2>
-                <a class="text-lg text-blue-500 hover:underline" hx-get="/model/{{ bike.model_id }}"
+                <a class="hover:bg-slate-200 text-gray-800 hover:text-amber-700 font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer"
+                   hx-get="/model/{{ bike.model_id }}"
                    hx-target="#content-area" hx-push-url="/model/{{ bike.model_id }}">
                     {{ bike.model_name }}
                 </a>
             </div>
+            <div class="h-2"></div> <!-- Spacer element for vertical spacing -->
+            {% if logged_in %}
+            <div class="flex justify-center items-center">
+                <div class="flex space-x-4">
+                    <button hx-get="/bike/{{ bike.id }}/edit" hx-target-error="#content-area" hx-push-url="/bike/{{ bike.id }}/edit"
+                            hx-target="#content-area"
+                            class="bg-amber-500 hover:bg-amber-600 rounded-md p-3 text-white text-lg shadow-md w-12">
+                        <i class="fa-solid fa-pencil"></i>
+                    </button>
+                    <button hx-get="/bike/{{ bike.id }}/reupload" hx-target-error="#content-area"
+                            hx-target="#content-area"
+                            class="bg-amber-500 hover:bg-amber-600 rounded-md p-3 text-white text-lg shadow-md w-12">
+                        <i class="fa-solid fa-upload"></i>
+                    </button>
+                    {% if bike.hidden %}
+                    <button hx-put="/bike/{{ bike.id }}/restore" hx-target-error="#content-area" hx-target="#content-area"
+                            class="bg-lime-700 hover:bg-lime-800 rounded-md p-3 text-white text-lg shadow-md w-12">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                    <button hx-delete="/bike/{{ bike.id }}/delete" hx-target-error="#content-area" hx-target="#content-area" hx-push-url="/bike"
+                            class="bg-red-800 hover:bg-red-900 rounded-md p-3 text-white text-lg shadow-md w-12">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                    {% else %}
+                    <button hx-delete="/bike/{{ bike.id }}/hide" hx-target-error="#content-area" hx-target="#content-area"
+                            class="bg-amber-500 hover:bg-amber-600 rounded-md p-3 text-white text-lg shadow-md w-12">
+                        <i class="fa-solid fa-eye-slash"></i>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
 
     <!-- Description Section -->
     <div class="mt-10">
-        <h2 class="text-2xl font-bold mb-4">Description</h2>
+        <h2 class="text-2xl font-bold mb-4">Popis</h2>
         <div class="bg-gray-50 p-5 rounded-lg shadow-md text-gray-700">
             {{ bike.description | safe }}
         </div>
@@ -80,7 +83,7 @@
 
     <!-- Images Section -->
     <div class="mt-10">
-        <h2 class="text-2xl font-bold mb-4">Images</h2>
+        <h2 class="text-2xl font-bold mb-4">Obrázky</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for path in bike_images %}
             <a href="{{ path }}">
