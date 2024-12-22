@@ -276,11 +276,11 @@ pub async fn contact_admin(
     match send_emails(identity.as_ref(), &user_repo, &bike_repo, &state, &form.0).await {
         Ok(()) => Ok(HttpResponse::Ok()
             .content_type("text/html")
-            .body("SUCCESSFULLY SENT")),
+            .body("ODOSLANÉ")),
         Err(err) => match err.app_error_kind {
             AppErrorKind::EmailAddressError => Ok(HttpResponse::BadRequest()
                 .content_type("text/html")
-                .body("EMAIL ADDRESS COULD NOT BE PARSED")),
+                .body("NESPRÁVNY EMAIL")),
             _ => Err(err),
         },
     }

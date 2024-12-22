@@ -96,4 +96,20 @@
     </div>
 </div>
 
-{% include "user/contact/content.html" %}
+<div class="mt-10">
+    <button id="contact-us-btn"
+            class="bg-amber-500 hover:bg-amber-600 rounded-md p-3 text-white text-lg shadow-md">
+        Kontaktujte nás
+    </button>
+
+    <div id="contact-form-container" class="hidden mt-6">
+        {% include "user/contact/content.html" %}
+    </div>
+</div>
+
+<script>
+    document.getElementById('contact-us-btn').addEventListener('click', () => {
+        const contactForm = document.getElementById('contact-form-container');
+        contactForm.classList.toggle('hidden'); // Toggles the 'hidden' class
+    });
+</script>
