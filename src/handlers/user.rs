@@ -6,7 +6,8 @@ use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::error::{AppError, AppErrorKind};
 use crate::forms::user::{
-    ContactAdminBikeForm, UserLoginForm, UserLoginReturnURL, UserUpdateForm, UserUpdatePasswordForm,
+    ContactAdminBikeForm, ContactAdminGeneralForm, UserLoginForm, UserLoginReturnURL,
+    UserUpdateForm, UserUpdatePasswordForm,
 };
 use crate::handlers::helpers::{get_template_name, parse_user_id, send_emails};
 use crate::handlers::utilities::validate_password;
@@ -264,19 +265,37 @@ pub async fn user_manage_password(
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
 
-#[post("/contact")]
-pub async fn contact_admin(
+#[post("/contact/bike")]
+pub async fn contact_admin_bike(
     user_repo: web::Data<UserRepository>,
     bike_repo: web::Data<BikeRepository>,
     identity: Option<Identity>,
     state: web::Data<AppState>,
     form: web::Form<ContactAdminBikeForm>,
 ) -> Result<HttpResponse, AppError> {
-    
     match send_emails(identity.as_ref(), &user_repo, &bike_repo, &state, &form.0).await {
         Ok(()) => Ok(HttpResponse::Ok()
             .content_type("text/html")
             .body("ODOSLANÉ")),
+        Err(err) => match err.app_error_kind {
+            AppErrorKind::EmailAddressError => Ok(HttpResponse::BadRequest()
+                .content_type("text/html")
+                .body("NESPRÁVNY EMAIL")),
+            _ => Err(err),
+        },
+    }
+}
+
+#[post("/contact/about")]
+pub async fn contact_admin_general(
+    user_repo: web::Data<UserRepository>,
+    bike_repo: web::Data<BikeRepository>,
+    identity: Option<Identity>,
+    state: web::Data<AppState>,
+    form: web::Form<ContactAdminGeneralForm>,
+) -> Result<HttpResponse, AppError> {
+    match send_emails(identity.as_ref(), &user_repo, &bike_repo, &state, &form.0).await {
+        Ok(()) => Ok(HttpResponse::Ok().content_type("text/html").body("ODOSLANÉ")),
         Err(err) => match err.app_error_kind {
             AppErrorKind::EmailAddressError => Ok(HttpResponse::BadRequest()
                 .content_type("text/html")

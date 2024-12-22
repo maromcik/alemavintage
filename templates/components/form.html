@@ -1,0 +1,46 @@
+<div class="mb-4">
+    <label class="block text-gray-300 text-sm font-bold mb-2" for="bike-contact-name">
+        Meno a priezvisko
+    </label>
+    <input name="name"
+           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+           id="bike-contact-name" type="text" placeholder="Meno a priezvisko">
+</div>
+
+<div class="mb-4">
+    <label class="block text-gray-300 text-sm font-bold mb-2" for="bike-contact-email">
+        Email
+    </label>
+    <input name="from"
+           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+           id="bike-contact-email" type="email" placeholder="Email">
+</div>
+
+<div class="mb-4">
+    <label class="block text-gray-300 text-sm font-bold mb-2" for="bike-contact-tel">
+        Telefónne číslo
+    </label>
+    <input name="tel"
+           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+           id="bike-contact-tel" type="text" placeholder="Telefónne číslo">
+</div>
+
+<div class="mb-4">
+    <label class="block text-gray-300 text-sm font-bold mb-2" for="bike-contact-message">
+        Správa
+    </label>
+    <textarea name="message"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="bike-contact-message" type="text" placeholder="Správa"></textarea>
+</div>
+<div class="flex justify-center">
+    <button hx-target="#content-area"
+            class="bg-amber-500 hover:bg-amber-600 rounded-md p-3 px-6 text-white text-lg shadow-md"
+            type="submit">
+        Poslať
+    </button>
+</div>
+<div id="success-area" class="text-green-500 mt-4 text-center">
+</div>
+<div id="error-area" class="text-red-500 mb-3 text-center">
+</div>

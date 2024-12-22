@@ -5,27 +5,31 @@ use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::brand::repository::BrandRepository;
 use crate::database::repositories::model::repository::ModelRepository;
 use crate::database::repositories::user::repository::UserRepository;
-use crate::handlers::bike::{create_bike, create_bike_page, edit_bike, edit_bike_page, get_bike_detail, get_bikes, hide_bike, remove_bike, restore_bike, reupload_bike, reupload_bike_page, upload_bike, upload_bike_page, upload_bike_thumbnail, upload_bike_thumbnail_page};
+use crate::handlers::bike::{
+    create_bike, create_bike_page, edit_bike, edit_bike_page, get_bike_detail, get_bikes,
+    hide_bike, remove_bike, restore_bike, reupload_bike, reupload_bike_page, upload_bike,
+    upload_bike_page, upload_bike_thumbnail, upload_bike_thumbnail_page,
+};
 use crate::handlers::brand::{
     create_brand, create_brand_page, edit_brand, edit_brand_page, get_brand, get_brands,
     remove_brand,
 };
-use crate::handlers::index::index;
+use crate::handlers::index::{about, index};
 use crate::handlers::model::{
     create_model, create_model_page, edit_model, edit_model_page, get_model, get_models,
     remove_model,
 };
-use crate::handlers::user::{contact_admin, login, login_user, logout_user, user_manage, user_manage_form_page, user_manage_password, user_manage_password_form};
+use crate::handlers::user::{
+    contact_admin_bike, contact_admin_general, login, login_user, logout_user, user_manage,
+    user_manage_form_page, user_manage_password, user_manage_password_form,
+};
+use crate::utils::AppState;
 use actix_files::Files as ActixFiles;
 use actix_web::web;
 use actix_web::web::ServiceConfig;
 use sqlx::PgPool;
-use crate::utils::AppState;
 
-pub fn configure_webapp(
-    pool: &PgPool,
-    app_state: AppState,
-) -> Box<dyn FnOnce(&mut ServiceConfig)> {
+pub fn configure_webapp(pool: &PgPool, app_state: AppState) -> Box<dyn FnOnce(&mut ServiceConfig)> {
     let user_repo = UserRepository::new(PoolHandler::new(pool.clone()));
     let bike_repo = BikeRepository::new(PoolHandler::new(pool.clone()));
     let model_repository = ModelRepository::new(PoolHandler::new(pool.clone()));
@@ -41,7 +45,8 @@ pub fn configure_webapp(
         .service(user_manage_password_form)
         .service(user_manage)
         .service(user_manage_password)
-        .service(contact_admin);
+        .service(contact_admin_bike)
+        .service(contact_admin_general);
 
     let bike_scope = web::scope("bike")
         .app_data(web::Data::new(bike_repo.clone()))
@@ -95,6 +100,7 @@ pub fn configure_webapp(
             .service(brand_scope)
             .service(model_scope)
             .service(index)
+            .service(about)
             .service(ActixFiles::new("/media", "./media").prefer_utf8(true))
             .service(ActixFiles::new("/static", "./static").prefer_utf8(true));
     })
