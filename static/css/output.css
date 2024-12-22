@@ -732,6 +732,54 @@ code {
   top: 4rem;
 }
 
+.right-2 {
+  right: 0.5rem;
+}
+
+.top-2 {
+  top: 0.5rem;
+}
+
+.right-4 {
+  right: 1rem;
+}
+
+.right-10 {
+  right: 2.5rem;
+}
+
+.right-12 {
+  right: 3rem;
+}
+
+.right-14 {
+  right: 3.5rem;
+}
+
+.right-16 {
+  right: 4rem;
+}
+
+.top-4 {
+  top: 1rem;
+}
+
+.top-6 {
+  top: 1.5rem;
+}
+
+.right-6 {
+  right: 1.5rem;
+}
+
+.right-24 {
+  right: 6rem;
+}
+
+.right-48 {
+  right: 12rem;
+}
+
 .z-10 {
   z-index: 10;
 }
@@ -1746,6 +1794,18 @@ code {
     right: 10px;
   }
 
+  .md\:bottom-\[70px\] {
+    bottom: 70px;
+  }
+
+  .md\:bottom-\[20px\] {
+    bottom: 20px;
+  }
+
+  .md\:bottom-\[10px\] {
+    bottom: 10px;
+  }
+
   .md\:w-96 {
     width: 24rem;
   }
@@ -1782,6 +1842,30 @@ code {
 
   .lg\:right-\[20px\] {
     right: 20px;
+  }
+
+  .lg\:bottom-\[32px\] {
+    bottom: 32px;
+  }
+
+  .lg\:bottom-\[50px\] {
+    bottom: 50px;
+  }
+
+  .lg\:bottom-\[70px\] {
+    bottom: 70px;
+  }
+
+  .lg\:bottom-\[30px\] {
+    bottom: 30px;
+  }
+
+  .lg\:bottom-\[60px\] {
+    bottom: 60px;
+  }
+
+  .lg\:bottom-\[80px\] {
+    bottom: 80px;
   }
 
   .lg\:mt-2 {
