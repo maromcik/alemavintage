@@ -41,3 +41,8 @@ pub struct UserManageProfileUserFormTemplate {
     pub success: bool,
     pub logged_in: bool,
 }
+
+#[derive(Serialize)]
+pub struct ContactAdminTemplate {
+    pub message: String,
+}

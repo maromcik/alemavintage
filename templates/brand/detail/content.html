@@ -1,5 +1,5 @@
 {% if logged_in %}
-<div class="flex justify-between items-center py-6 px-10 bg-gray-100 border-b border-gray-300">
+<div class="bg-gray-50 p-5 rounded-lg shadow-md text-gray-700">
     <div class="flex space-x-4">
         <button hx-get="/brand/{{ brand.id }}/edit" hx-target-error="#content-area"
                 hx-push-url="/brand/{{ brand.id }}/edit" hx-target="#content-area"

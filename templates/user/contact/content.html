@@ -1,0 +1,54 @@
+<div id="bike-contact" class="container mx-auto p-6 bg-white max-w-5xl">
+  <form hx-post="/user/contact" hx-target="#success-area" hx-target-error="#error-area" class="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <h2 class="block text-gray-300 text-xl font-bold mb-2 text-center">Contact Us</h2>
+    <label>
+      <input class="hidden" name="bike_id" type="text" value="{{ bike.id }}">
+    </label>
+    <div class="mb-4">
+      <label class="block text-gray-300 text-sm font-bold mb-2" for="bike-contact-name">
+        Your Full Name
+      </label>
+      <input name="name"
+             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+             id="bike-contact-name" type="text" placeholder="Your Full Name">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-300 text-sm font-bold mb-2" for="bike-contact-email">
+        Your Email Address
+      </label>
+      <input name="from"
+             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+             id="bike-contact-email" type="email" placeholder="Your Email Address">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-300 text-sm font-bold mb-2" for="bike-contact-tel">
+        Your Telephone Number
+      </label>
+      <input name="tel"
+             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+             id="bike-contact-tel" type="text" placeholder="Your Telephone Number">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-300 text-sm font-bold mb-2" for="bike-contact-message">
+        Your Message
+      </label>
+      <input name="message"
+             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+             id="bike-contact-message" type="text" placeholder="Your Message">
+    </div>
+
+    <div class="flex justify-end">
+      <button hx-target="#content-area" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              type="submit">
+        Send Email
+      </button>
+    </div>
+    <div id="success-area" class="text-green-500 mb-3 text-center">
+    </div>
+    <div id="error-area" class="text-red-500 mb-3 text-center">
+    </div>
+  </form>
+</div>

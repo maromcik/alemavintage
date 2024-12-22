@@ -1,12 +1,12 @@
 {% if logged_in %}
-<div class="flex justify-between items-center py-6 px-10 bg-gray-100 border-b border-gray-300">
+<div class="bg-gray-50 rounded-lg shadow-md text-gray-700">
     <div class="flex space-x-4">
         <button hx-get="/bike/{{ bike.id }}/edit" hx-target-error="#content-area" hx-push-url="/bike/{{ bike.id }}/edit"
                 hx-target="#content-area"
                 class="bg-blue-500 hover:bg-blue-600 rounded-md p-3 text-white text-lg shadow-md">
             <i class="fa-solid fa-pencil"></i>
         </button>
-        <button hx-get="/bike/{{ bike.id }}/reupload" hx-target-error="#content-area" hx-push-url="/bike/{{ bike.id }}/reupload"
+        <button hx-get="/bike/{{ bike.id }}/reupload" hx-target-error="#content-area"
                 hx-target="#content-area"
                 class="bg-blue-500 hover:bg-blue-600 rounded-md p-3 text-white text-lg shadow-md">
             <i class="fa-solid fa-upload"></i>
@@ -30,12 +30,12 @@
 </div>
 {% endif %}
 
-<div class="container mx-auto py-10 px-5">
+<div>
     <!-- Top Section: Thumbnail and Basic Details -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
         <!-- Thumbnail -->
         <div class="flex flex-col items-center">
-            <div id="bike-thumbnail-box" class="relative inline-block group">
+            <div id="bike-thumbnail-box" class="inline-block group">
                 <div class="w-80 h-80 rounded-lg overflow-hidden border shadow-md">
                     <img class="responsive-image object-cover w-full h-full" src="{{ bike.thumbnail }}"
                          alt="Bike Thumbnail">
@@ -92,3 +92,5 @@
         </div>
     </div>
 </div>
+
+{% include "user/contact/content.html" %}

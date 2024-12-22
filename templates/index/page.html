@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-<!--    uncomment this-->
-<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+    <!--    uncomment this-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
           content="Explore the rich history and advanced technology of Colnago bicycles. Learn why Colnago is a top choice for professional and amateur cyclists alike.">
     <meta name="keywords"
@@ -26,19 +26,19 @@
 {% block navbar %}
 {% include "components/navbar.html" %}
 {% endblock %}
+
 <div class="flex pt-16 flex-col h-screen">
-    <!-- Sidebar -->
-    {% include "components/sidebar.html" %}
-    <!-- Main Content -->
-    <main id="content-area" hx-ext="response-targets" class="flex-1 pl-64 p-10">
-        {% block content %}
-        {% include "index/content.html" %}
-        {% endblock %}
-    </main>
+    <div class="max-w-7xl mx-auto px-4 lg:px-48 sm:px-8 py-6 sm:py-10">
+        <!-- Main Content -->
+            <main id="content-area" hx-ext="response-targets">
 
+                {% block content %}
+                {% include "index/content.html" %}
+                {% endblock %}
 
+            </main>
+
+    </div>
 </div>
-
-
 </body>
 </html>
