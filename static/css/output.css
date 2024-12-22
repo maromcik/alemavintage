@@ -780,6 +780,10 @@ code {
   right: 12rem;
 }
 
+.right-0 {
+  right: 0px;
+}
+
 .z-10 {
   z-index: 10;
 }
