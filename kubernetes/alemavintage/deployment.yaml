@@ -32,6 +32,8 @@ spec:
         - mountPath: /usr/src/alemavintage/media
           name: alemavintage-media
         env:
+        - name: PUBLIC_DOMAIN
+          value: "https://alemavintage.dyn.cloud.e-infra.cz/"
         - name: USE_SECURE_COOKIE
           value: "true"
         - name: HOSTNAME

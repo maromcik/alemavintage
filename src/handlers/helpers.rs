@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use crate::database::common::{DbCreate, DbDelete, DbReadMany, DbReadOne, DbUpdate};
 use crate::database::models::bike::{
     Bike, BikeCreateSessionKeys, BikeDetail, BikeGetById, BikeImage, BikeImageCreate,
@@ -157,6 +158,7 @@ impl Email {
     pub fn new<'a>(
         form: &'a impl EmailForm<FormField<'a> = &'a str>,
         to: &str,
+        domain: &Arc<String>,
         bike: Option<&BikeDetail>,
     ) -> Result<Self, AppError> {
         let subject = match bike {
@@ -182,7 +184,7 @@ impl Email {
             }
             Some(bike) => {
                 format!(
-                    "Používateľ {} má záujem o bicykel {} ({} {})\n
+                    "Používateľ {} má záujem o bicykel {} ({}/bike/{})\n
             \n
             {}\n
             \n
@@ -191,8 +193,8 @@ impl Email {
             tel.: {}",
                     form.name(),
                     bike.name,
-                    bike.brand_name,
-                    bike.model_name,
+                    domain,
+                    bike.id,
                     form.message(),
                     form.from(),
                     form.tel()
@@ -246,7 +248,7 @@ where
     };
 
     for user in admins {
-        let email = Email::new(form, &user.email, bike.as_ref())?.convert_to_message()?;
+        let email = Email::new(form, &user.email, &state.domain, bike.as_ref())?.convert_to_message()?;
         state.mailer.send(email).await?;
     }
     Ok(())

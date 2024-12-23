@@ -40,14 +40,17 @@ async fn main() -> anyhow::Result<()> {
     env::set_var("TMPDIR", "./media");
     let _dir = env::temp_dir();
 
+    let host = parse_host();
+    let host2 = host.clone();
+    
     let pool = setup_pool(10_u32).await?;
     let jinja = Arc::new(create_reloader("templates".to_owned()));
     let mailer = Arc::new(create_mailer().map_err(|e| anyhow!(e.message))?);
+    let domain  = env::var("PUBLIC_DOMAIN").unwrap_or(format!("http://{host}"));
+    
+    let app_state = AppState::new(jinja.clone(), mailer.clone(), Arc::new(domain));
 
-    let app_state = AppState::new(jinja.clone(), mailer.clone());
-
-    let host = parse_host();
-    let host2 = host.clone();
+    
 
     let key = Key::from(
         &env::var("COOKIE_SESSION_KEY")
