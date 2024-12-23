@@ -15,11 +15,13 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {% for brand in brands %}
-        <div class="flex items-center justify-center h-16 px-4 pt-2 bg-white border border-gray-300 rounded-lg shadow hover:shadow-md hover:border-gray-500 transition-all duration-200">
-            <a href="/brand/{{ brand.id }}" class="text-center">
-                <h4 class="text-lg font-semibold text-gray-700 hover:text-amber-600">{{ brand.name }}</h4>
-            </a>
-        </div>
+        <a href="/brand/{{ brand.id }}">
+            <div class="flex items-center justify-center h-16 px-4 pt-2 bg-white border border-gray-300 rounded-lg shadow hover:shadow-md hover:border-gray-500 transition-all duration-200">
+                <div class="text-center">
+                    <h4 class="text-lg font-semibold text-gray-700 hover:text-amber-600">{{ brand.name }}</h4>
+                </div>
+            </div>
+        </a>
         {% endfor %}
     </div>
 </div>
