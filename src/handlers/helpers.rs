@@ -9,14 +9,14 @@ use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::error::{AppError, AppErrorKind};
 use crate::forms::bike::BikeUploadForm;
-use crate::forms::user::EmailForm;
+use crate::forms::user::{ContactAdminGeneralForm, EmailForm};
 use crate::handlers::utilities::{is_htmx, remove_file, save_file, validate_file, ImageDimensions};
 use crate::utils::AppState;
 use crate::{IMAGE_SIZE, THUMBNAIL_SIZE};
 use actix_identity::Identity;
 use actix_multipart::form::tempfile::TempFile;
 use actix_session::Session;
-use actix_web::{web, HttpRequest};
+use actix_web::{web, HttpRequest, HttpResponse};
 use lettre::message::Mailbox;
 use lettre::{AsyncTransport, Message};
 use rayon::iter::IntoParallelIterator;
@@ -250,4 +250,24 @@ where
         state.mailer.send(email).await?;
     }
     Ok(())
+}
+
+pub async fn contact_admin_helper<'a, T>(
+    user_repo: web::Data<UserRepository>,
+    bike_repo: web::Data<BikeRepository>,
+    identity: Option<Identity>,
+    state: web::Data<AppState>,
+    form: &'a T,
+) -> Result<HttpResponse, AppError>
+where
+    T: EmailForm<FormField<'a> = &'a str> {
+    match send_emails(identity.as_ref(), &user_repo, &bike_repo, &state, form).await {
+        Ok(()) => Ok(HttpResponse::Ok().content_type("text/html").body("ODOSLANÉ")),
+        Err(err) => match err.app_error_kind {
+            AppErrorKind::EmailAddressError => Ok(HttpResponse::BadRequest()
+                .content_type("text/html")
+                .body("NESPRÁVNY EMAIL")),
+            _ => Err(err),
+        },
+    }
 }

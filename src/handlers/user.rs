@@ -4,12 +4,12 @@ use crate::database::models::user::{UserLogin, UserUpdate, UserUpdatePassword};
 use crate::database::models::GetById;
 use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::user::repository::UserRepository;
-use crate::error::{AppError, AppErrorKind};
+use crate::error::AppError;
 use crate::forms::user::{
     ContactAdminBikeForm, ContactAdminGeneralForm, UserLoginForm, UserLoginReturnURL,
     UserUpdateForm, UserUpdatePasswordForm,
 };
-use crate::handlers::helpers::{get_template_name, parse_user_id, send_emails};
+use crate::handlers::helpers::{contact_admin_helper, get_template_name, parse_user_id};
 use crate::handlers::utilities::validate_password;
 use crate::templates::user::{
     LoginTemplate, UserManagePasswordTemplate, UserManageProfileTemplate,
@@ -155,9 +155,9 @@ pub async fn user_manage_profile_form(
         .read_one(&GetById::new(parse_user_id(&u)?))
         .await?;
 
-    let template_name = "user/profile_user_form.html";
+    let template_name = get_template_name(&request, "user/manage/profile");
     let env = state.jinja.acquire_env()?;
-    let template = env.get_template(template_name)?;
+    let template = env.get_template(&template_name)?;
     let body = template.render(UserManageProfileUserFormTemplate {
         user,
         message: String::new(),
@@ -193,9 +193,9 @@ pub async fn user_manage(
         )));
     };
 
-    let template_name = "user/profile_user_form.html";
+    let template_name = get_template_name(&request, "user/manage/profile");
     let env = state.jinja.acquire_env()?;
-    let template = env.get_template(template_name)?;
+    let template = env.get_template(&template_name)?;
     let body = template.render(UserManageProfileUserFormTemplate {
         user: user_valid,
         message: "Profil bol úspešne aktualizovaný".to_string(),
@@ -273,17 +273,7 @@ pub async fn contact_admin_bike(
     state: web::Data<AppState>,
     form: web::Form<ContactAdminBikeForm>,
 ) -> Result<HttpResponse, AppError> {
-    match send_emails(identity.as_ref(), &user_repo, &bike_repo, &state, &form.0).await {
-        Ok(()) => Ok(HttpResponse::Ok()
-            .content_type("text/html")
-            .body("ODOSLANÉ")),
-        Err(err) => match err.app_error_kind {
-            AppErrorKind::EmailAddressError => Ok(HttpResponse::BadRequest()
-                .content_type("text/html")
-                .body("NESPRÁVNY EMAIL")),
-            _ => Err(err),
-        },
-    }
+    contact_admin_helper(user_repo, bike_repo, identity, state, &form.0).await
 }
 
 #[post("/contact/about")]
@@ -294,13 +284,5 @@ pub async fn contact_admin_general(
     state: web::Data<AppState>,
     form: web::Form<ContactAdminGeneralForm>,
 ) -> Result<HttpResponse, AppError> {
-    match send_emails(identity.as_ref(), &user_repo, &bike_repo, &state, &form.0).await {
-        Ok(()) => Ok(HttpResponse::Ok().content_type("text/html").body("ODOSLANÉ")),
-        Err(err) => match err.app_error_kind {
-            AppErrorKind::EmailAddressError => Ok(HttpResponse::BadRequest()
-                .content_type("text/html")
-                .body("NESPRÁVNY EMAIL")),
-            _ => Err(err),
-        },
-    }
+    contact_admin_helper(user_repo, bike_repo, identity, state, &form.0).await
 }
