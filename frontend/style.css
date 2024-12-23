@@ -58,3 +58,8 @@
     height: 100%; /* Make the image fill the container */
     object-fit: cover; /* Maintain aspect ratio and cover the container */
 }
+
+.custom-form {
+    max-width: 100%;
+    width: 100%;
+}
