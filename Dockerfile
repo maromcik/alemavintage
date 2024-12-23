@@ -8,17 +8,17 @@ RUN apt-get install -y postgresql-client zip build-essential autoconf libtool pk
 ENV SQLX_OFFLINE=true
 COPY ./.env ./.env
 COPY ./.sqlx ./.sqlx
-COPY ./media ./media
 COPY ./migrations ./migrations
 COPY ./src ./src
-COPY ./static ./static
-COPY ./templates ./templates
 COPY ./Cargo.lock ./Cargo.lock
 COPY ./Cargo.toml ./Cargo.toml
 
+RUN cargo install --path .
+
+COPY ./static ./static
+COPY ./templates ./templates
+COPY ./media ./media
 
 EXPOSE 8000
-
-RUN cargo install --path .
 
 CMD ["alemavintage"]
