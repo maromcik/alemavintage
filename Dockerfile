@@ -1,6 +1,7 @@
 FROM rust:1.83
 
 WORKDIR /usr/src/alemavintage
+RUN mkdir ./media
 
 RUN apt-get update
 RUN apt-get install -y postgresql-client zip build-essential autoconf libtool pkg-config libgexiv2-dev
