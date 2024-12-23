@@ -1,7 +1,7 @@
+use crate::database::common::query_parameters::DbQueryParams;
 use crate::database::common::EntityById;
 use crate::database::models::Id;
 use serde::Serialize;
-use crate::database::common::query_parameters::DbQueryParams;
 
 #[derive(sqlx::FromRow, Debug, PartialEq, Eq, Clone, Serialize)]
 pub struct Model {
@@ -97,7 +97,7 @@ impl ModelSearch {
         Self {
             name: name.map(|n| n.to_owned()),
             brand_id: brand_id.copied(),
-            query_params
+            query_params,
         }
     }
 }

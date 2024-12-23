@@ -8,7 +8,7 @@ use std::sync::Arc;
 #[derive(Clone)]
 pub struct AppState {
     pub jinja: Arc<AutoReloader>,
-    pub mailer: Arc<AsyncSmtpTransport<Tokio1Executor>>
+    pub mailer: Arc<AsyncSmtpTransport<Tokio1Executor>>,
 }
 
 impl AppState {
@@ -31,10 +31,12 @@ pub fn create_mailer() -> Result<AsyncSmtpTransport<Tokio1Executor>, AppError> {
     let username = std::env::var("EMAIL_USERNAME").expect("EMAIL_USERNAME not set");
     let password = std::env::var("EMAIL_PASSWORD").expect("EMAIL_PASSWORD not set");
     let server = std::env::var("EMAIL_SERVER").expect("EMAIL_SERVER not set");
-    
+
     let creds = Credentials::new(username, password);
-    
-    Ok(AsyncSmtpTransport::<Tokio1Executor>::relay(server.as_str())?
-        .credentials(creds)
-        .build())
+
+    Ok(
+        AsyncSmtpTransport::<Tokio1Executor>::relay(server.as_str())?
+            .credentials(creds)
+            .build(),
+    )
 }

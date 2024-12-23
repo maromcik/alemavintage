@@ -1,5 +1,5 @@
-use serde::Deserialize;
 use crate::database::models::Id;
+use serde::Deserialize;
 
 #[derive(Deserialize, Debug, Clone)]
 #[allow(dead_code)]
@@ -37,7 +37,9 @@ pub struct UserLoginForm {
 }
 
 pub trait EmailForm {
-    type FormField<'a> where Self: 'a;
+    type FormField<'a>
+    where
+        Self: 'a;
     fn name(&self) -> Self::FormField<'_>;
     fn from(&self) -> Self::FormField<'_>;
     fn tel(&self) -> Self::FormField<'_>;

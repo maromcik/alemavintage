@@ -92,8 +92,7 @@ where
 
 impl DbReadMany<ModelSearch, ModelDetail> for ModelRepository {
     async fn read_many(&self, params: &ModelSearch) -> DbResultMultiple<ModelDetail> {
-        let mut query = 
-            r#"
+        let mut query = r#"
             SELECT
                 model.id,
                 model.brand_id,
@@ -109,11 +108,12 @@ impl DbReadMany<ModelSearch, ModelDetail> for ModelRepository {
             WHERE
                 (model.name = $1 OR $1 IS NULL)
                 AND (brand.id = $2 OR $2 IS NULL)
-            "#.to_owned();
-        
+            "#
+        .to_owned();
+
         let query_params = generate_query_param_string(&params.query_params);
         query.push_str(query_params.as_str());
-        
+
         let models = sqlx::query_as::<_, ModelDetail>(query.as_str())
             .bind(&params.name)
             .bind(&params.brand_id)

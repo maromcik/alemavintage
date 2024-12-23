@@ -133,14 +133,14 @@ pub async fn get_models(
             ),
         ))
         .await?;
-    
+
     let models_grouped = models
         .into_iter()
         .chunk_by(|m| m.brand_name.clone())
         .into_iter()
         .map(|group| (group.0, group.1.collect::<Vec<ModelDetail>>()))
         .collect::<HashMap<String, Vec<ModelDetail>>>();
-    
+
     let template_name = get_template_name(&request, "model");
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;

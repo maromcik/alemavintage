@@ -9,7 +9,7 @@ use crate::database::repositories::brand::repository::BrandRepository;
 use crate::database::repositories::model::repository::ModelRepository;
 use crate::error::AppError;
 use crate::forms::brand::{BrandCreateForm, BrandEditForm};
-use crate::handlers::helpers::{hard_delete_bike, get_template_name};
+use crate::handlers::helpers::{get_template_name, hard_delete_bike};
 use crate::templates::brand::{
     BrandCreateTemplate, BrandDetailTemplate, BrandEditTemplate, BrandTemplate,
 };
@@ -130,7 +130,11 @@ pub async fn get_brand(
     let brand_id = path.into_inner().0;
     let brand = brand_repo.read_one(&GetById::new(brand_id)).await?;
     let models = model_repo
-        .read_many(&ModelSearch::new(Some(&brand_id), None, DbQueryParams::default()))
+        .read_many(&ModelSearch::new(
+            Some(&brand_id),
+            None,
+            DbQueryParams::default(),
+        ))
         .await?;
 
     let template_name = get_template_name(&request, "brand/detail");

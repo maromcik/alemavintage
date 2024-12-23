@@ -146,7 +146,7 @@ pub enum DbColumn {
     EditedAt,
     Ordering,
     Path,
-    BrandName
+    BrandName,
 }
 
 impl DbColumn {

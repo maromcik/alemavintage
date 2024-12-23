@@ -9,7 +9,7 @@ use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::error::{AppError, AppErrorKind};
 use crate::forms::bike::BikeUploadForm;
-use crate::forms::user::{ContactAdminGeneralForm, EmailForm};
+use crate::forms::user::EmailForm;
 use crate::handlers::utilities::{is_htmx, remove_file, save_file, validate_file, ImageDimensions};
 use crate::utils::AppState;
 use crate::{IMAGE_SIZE, THUMBNAIL_SIZE};
@@ -260,9 +260,12 @@ pub async fn contact_admin_helper<'a, T>(
     form: &'a T,
 ) -> Result<HttpResponse, AppError>
 where
-    T: EmailForm<FormField<'a> = &'a str> {
+    T: EmailForm<FormField<'a> = &'a str>,
+{
     match send_emails(identity.as_ref(), &user_repo, &bike_repo, &state, form).await {
-        Ok(()) => Ok(HttpResponse::Ok().content_type("text/html").body("ODOSLANÉ")),
+        Ok(()) => Ok(HttpResponse::Ok()
+            .content_type("text/html")
+            .body("ODOSLANÉ")),
         Err(err) => match err.app_error_kind {
             AppErrorKind::EmailAddressError => Ok(HttpResponse::BadRequest()
                 .content_type("text/html")

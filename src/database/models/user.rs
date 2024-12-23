@@ -32,13 +32,14 @@ pub struct UserSearch {
     pub admin: Option<bool>,
 }
 
-
 impl UserSearch {
     #[allow(dead_code)]
-    pub fn new(email: Option<&str>,
-               name: Option<&str>, 
-               surname: Option<&str>, 
-               admin: Option<bool>) -> Self {
+    pub fn new(
+        email: Option<&str>,
+        name: Option<&str>,
+        surname: Option<&str>,
+        admin: Option<bool>,
+    ) -> Self {
         let change_to_owned = |value: &str| Some(value.to_owned());
         Self {
             email: email.and_then(change_to_owned),
@@ -47,7 +48,7 @@ impl UserSearch {
             admin,
         }
     }
-    
+
     pub fn new_admins_only() -> Self {
         Self {
             email: None,

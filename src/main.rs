@@ -1,5 +1,6 @@
 use crate::database::common::setup_pool;
 use crate::init::configure_webapp;
+use crate::utils::{create_mailer, create_reloader, AppState};
 use actix_cors::Cors;
 use actix_identity::IdentityMiddleware;
 use actix_multipart::form::MultipartFormConfig;
@@ -9,12 +10,11 @@ use actix_web::http::header;
 use actix_web::middleware::Logger;
 use actix_web::web::{FormConfig, PayloadConfig};
 use actix_web::{cookie::Key, App, HttpServer};
+use anyhow::anyhow;
 use env_logger::Env;
 use log::{info, warn};
 use std::env;
 use std::sync::Arc;
-use anyhow::anyhow;
-use crate::utils::{create_mailer, create_reloader, AppState};
 
 mod database;
 mod error;
@@ -34,7 +34,6 @@ const MIN_PASS_LEN: usize = 6;
 
 const THUMBNAIL_SIZE: u32 = 600;
 const IMAGE_SIZE: u32 = 2000;
-
 
 #[actix_web::main]
 async fn main() -> anyhow::Result<()> {

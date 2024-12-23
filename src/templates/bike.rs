@@ -1,7 +1,7 @@
 use crate::database::models::bike::{BikeDetail, BikeDisplay};
 use crate::database::models::model::ModelDetail;
-use serde::Serialize;
 use crate::database::models::Id;
+use serde::Serialize;
 
 #[derive(Serialize)]
 pub struct BikesTemplate {
@@ -43,5 +43,5 @@ pub struct BikeReuploadFormTemplate {
 #[derive(Serialize)]
 pub struct BikeThumbnailUploadTemplate {
     pub message: String,
-    pub bike_id: Id
+    pub bike_id: Id,
 }

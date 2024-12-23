@@ -33,6 +33,6 @@ pub async fn about(
     let body = template.render(IndexTemplate {
         logged_in: identity.is_some(),
     })?;
-    
+
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }

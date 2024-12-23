@@ -251,7 +251,10 @@ impl BikeImageSearch {
     pub fn new(bike_id: Option<Id>) -> Self {
         Self {
             bike_id,
-            query_params: DbQueryParams::order(DbOrderColumn::new_column_only(DbColumn::Id, DbOrder::Asc), None),
+            query_params: DbQueryParams::order(
+                DbOrderColumn::new_column_only(DbColumn::Id, DbOrder::Asc),
+                None,
+            ),
         }
     }
 
@@ -319,7 +322,7 @@ impl BikeUpdate {
             description: description.and_then(change_to_owned),
             view_count: view_count.copied(),
             like_count: like_count.copied(),
-            hidden: hidden.copied()
+            hidden: hidden.copied(),
         }
     }
 
@@ -370,7 +373,7 @@ impl BikeUpdate {
             description: None,
             view_count: None,
             like_count: None,
-            hidden: Some(false)
+            hidden: Some(false),
         }
     }
 }
