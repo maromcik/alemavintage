@@ -30,6 +30,7 @@ pub struct BikeImagesEditForm {
     #[multipart(rename = "files")]
     pub photos: Vec<TempFile>,
     pub bike_id: Text<Id>,
+    pub delete_existing: Option<Text<bool>>,
 }
 
 #[derive(Debug, Clone, Deserialize)]

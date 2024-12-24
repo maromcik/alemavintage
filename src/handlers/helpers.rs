@@ -1,4 +1,3 @@
-use std::sync::Arc;
 use crate::database::common::{DbCreate, DbDelete, DbReadMany, DbReadOne, DbUpdate};
 use crate::database::models::bike::{
     Bike, BikeCreateSessionKeys, BikeDetail, BikeGetById, BikeImage, BikeImageCreate,
@@ -22,6 +21,7 @@ use lettre::message::Mailbox;
 use lettre::{AsyncTransport, Message};
 use rayon::iter::IntoParallelIterator;
 use rayon::iter::ParallelIterator;
+use std::sync::Arc;
 use uuid::Uuid;
 
 pub fn get_template_name(request: &HttpRequest, path: &str) -> String {
@@ -129,12 +129,31 @@ pub async fn save_bike_images_helper(
                 return Err(err);
             }
             Ok(path)
-        })
-        .collect::<Result<Vec<String>, AppError>>()?;
+        }).collect::<Vec<Result<String, AppError>>>();
+    
+    let mut correct_paths = Vec::new();
+    let mut errors = String::new();
+    
+    for path in paths {
+        match path {
+            Ok(p) => {
+                correct_paths.push(p);
+            }
+            Err(err) => {
+                errors.push_str(err.message.as_str());
+                errors.push('\n');
+            }
+        }
+    }
+    
     bike_repo
-        .create(&BikeImageCreate::new(bike_id, paths))
+        .create(&BikeImageCreate::new(bike_id, correct_paths))
         .await?;
-    Ok(())
+    
+    match errors.is_empty() {
+        true => Ok(()),
+        false => Err(AppError::new(AppErrorKind::FileError, errors.as_str()))
+    }
 }
 
 pub fn save_bike_thumbnail_helper(thumbnail: TempFile) -> Result<String, AppError> {

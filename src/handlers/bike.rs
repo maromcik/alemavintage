@@ -29,6 +29,7 @@ use crate::templates::bike::{
 use crate::{authorized, AppState};
 use actix_identity::Identity;
 use actix_multipart::form::MultipartForm;
+use actix_multipart::form::text::Text;
 use actix_session::Session;
 use actix_web::http::header::LOCATION;
 use actix_web::{delete, get, post, put, web, HttpRequest, HttpResponse};
@@ -186,12 +187,11 @@ pub async fn upload_bike(
     let bike = match upload_bike_helper(metadata.bike_id, &bike_repo, form).await {
         Ok(bike) => bike,
         Err(err) => {
-            hard_delete_bike(&bike_repo, vec![metadata.bike_id]).await?;
             let template_name = get_template_name(&request, "bike/admin/upload");
             let env = state.jinja.acquire_env()?;
             let template = env.get_template(&template_name)?;
             let body = template.render(BikeUploadFormTemplate {
-                message: err.to_string(),
+                message: err.message,
             })?;
             return Ok(HttpResponse::Ok().content_type("text/html").body(body));
         }
@@ -399,18 +399,19 @@ pub async fn reupload_bike(
     authorized!(identity, request.path());
 
     let bike_id = form.bike_id.0;
-
-    hard_delete_bike_images(&bike_repo, bike_id).await?;
-
+    
+    if form.delete_existing.unwrap_or(Text(false)).0 {
+        hard_delete_bike_images(&bike_repo, bike_id).await?;    
+    }
+    
     match save_bike_images_helper(form.photos, &bike_repo, bike_id).await {
         Ok(bike) => bike,
         Err(err) => {
-            hard_delete_bike_images(&bike_repo, bike_id).await?;
             let template_name = get_template_name(&request, "bike/admin/reupload");
             let env = state.jinja.acquire_env()?;
             let template = env.get_template(&template_name)?;
             let body = template.render(BikeReuploadFormTemplate {
-                message: err.to_string(),
+                message: err.message,
                 bike_id,
             })?;
             return Ok(HttpResponse::Ok().content_type("text/html").body(body));

@@ -60,14 +60,58 @@ pub fn validate_file(
 }
 
 pub fn save_file(file: TempFile, path: &str, dimensions: &ImageDimensions) -> Result<(), AppError> {
+    let original_path = file.file_name.unwrap_or("NO FILE PROVIDED".to_string());
     log::info!("saving file to .{path}");
     let mut buffer = Vec::default();
-    file.file.into_file().read_to_end(&mut buffer)?;
-    let metadata = Metadata::new_from_buffer(&buffer)?;
+    file
+        .file
+        .into_file()
+        .read_to_end(&mut buffer)
+        .map_err(|err| {
+            AppError::new(
+                AppErrorKind::FileError,
+                format!(
+                    "File '{original_path}' could not be read: {}",
+                    err.to_string()
+                )
+                .as_str(),
+            )
+        })?;
+    let metadata = Metadata::new_from_buffer(&buffer)
+        .map_err(|err| {
+        AppError::new(
+            AppErrorKind::FileError,
+            format!(
+                "Could not extract metadata from file '{original_path}': {}",
+                err.to_string()
+            )
+            .as_str(),
+        )
+    })?;
     let orientation = metadata.get_orientation();
 
-    let img = image::load_from_memory(&buffer)?;
-    let format = image::guess_format(&buffer)?;
+    let img = image::load_from_memory(&buffer)
+        .map_err(|err| {
+            AppError::new(
+                AppErrorKind::FileError,
+                format!(
+                    "File '{original_path}' could not be loaded: {}",
+                    err.to_string()
+                )
+                    .as_str(),
+            )
+        })?;
+    let format = image::guess_format(&buffer)
+        .map_err(|err| {
+            AppError::new(
+                AppErrorKind::FileError,
+                format!(
+                    "File format of '{original_path}' could not be determined: {}",
+                    err.to_string()
+                )
+                    .as_str(),
+            )
+        })?;
     let mut resized_img = img.resize(
         dimensions.width,
         dimensions.height,
