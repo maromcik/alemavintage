@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            DELETE FROM \"Bike\"\n            WHERE id = $1\n            RETURNING *\n            ",
+  "query": "\n            SELECT\n                bike.id,\n                bike.model_id,\n                bike.name,\n                bike.thumbnail,\n                bike.description,\n                bike.view_count,\n                bike.like_count,\n                bike.created_at,\n                bike.edited_at,\n                bike.hidden,\n                bike.year,           \n                bike.price,          \n                bike.frame,          \n                bike.seat_tube_sizes,\n                bike.top_tube_size,  \n                bike.height,         \n                bike.headset,        \n                bike.crankset,       \n                bike.bottom_bracket, \n                bike.front_derail,   \n                bike.rear_derail,    \n                bike.brakes,         \n                bike.shifters,       \n                bike.brake_levers,   \n                bike.saddle,         \n                bike.seat_post,      \n                bike.hubs,           \n                bike.rims,           \n                bike.handlebar,      \n                bike.stem,           \n                \n                brand.id as brand_id,\n                brand.name as brand_name,\n                model.name as model_name                \n            FROM\n                \"Bike\" AS bike\n                    INNER JOIN\n                \"Model\" AS model ON model.id = bike.model_id\n                    INNER JOIN\n                \"Brand\" AS brand ON brand.id = model.brand_id\n            WHERE\n                bike.id = $1\n            ",
   "describe": {
     "columns": [
       {
@@ -152,6 +152,21 @@
         "ordinal": 29,
         "name": "stem",
         "type_info": "Text"
+      },
+      {
+        "ordinal": 30,
+        "name": "brand_id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 31,
+        "name": "brand_name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 32,
+        "name": "model_name",
+        "type_info": "Text"
       }
     ],
     "parameters": {
@@ -189,8 +204,11 @@
       false,
       false,
       false,
+      false,
+      false,
+      false,
       false
     ]
   },
-  "hash": "089a389775ad22047fd07e81881503b482a53feccffdf1b4767890e6362ecd71"
+  "hash": "886d67ebbc6bc5c1228020187943bace36bf627098ec5226a46b361b86287800"
 }

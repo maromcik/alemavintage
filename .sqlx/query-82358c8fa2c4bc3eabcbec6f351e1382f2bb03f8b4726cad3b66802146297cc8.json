@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            DELETE FROM \"Bike\"\n            WHERE id = $1\n            RETURNING *\n            ",
+  "query": "\n            UPDATE \"Bike\"\n            SET\n                name = COALESCE($1, name),\n                model_id = COALESCE($2, model_id),\n                thumbnail = COALESCE($3, thumbnail),\n                description = COALESCE($4, description),\n                view_count = COALESCE($5, view_count),\n                like_count = COALESCE($6, like_count),\n                hidden = COALESCE($7, hidden),\n                year = COALESCE($8, year),                      \n                price = COALESCE($9, price),                    \n                frame = COALESCE($10, frame),                    \n                seat_tube_sizes = COALESCE($11, seat_tube_sizes),\n                top_tube_size = COALESCE($12, top_tube_size),    \n                height = COALESCE($13, height),                  \n                headset = COALESCE($14, headset),                \n                crankset = COALESCE($15, crankset),              \n                bottom_bracket = COALESCE($16, bottom_bracket),  \n                front_derail = COALESCE($17, front_derail),      \n                rear_derail = COALESCE($18, rear_derail),        \n                brakes = COALESCE($19, brakes),                  \n                shifters = COALESCE($20, shifters),              \n                brake_levers = COALESCE($21 , brake_levers),      \n                saddle = COALESCE($22, saddle),                  \n                seat_post = COALESCE($23, seat_post),            \n                hubs = COALESCE($24, hubs),                      \n                rims = COALESCE($25, rims),                      \n                handlebar = COALESCE($26, handlebar),            \n                stem = COALESCE($27, stem),                      \n                edited_at = current_timestamp\n            WHERE id = $28\n            RETURNING *\n            ",
   "describe": {
     "columns": [
       {
@@ -156,6 +156,33 @@
     ],
     "parameters": {
       "Left": [
+        "Text",
+        "Int8",
+        "Text",
+        "Text",
+        "Int8",
+        "Int8",
+        "Bool",
+        "Int4",
+        "Int4",
+        "Text",
+        "Text",
+        "Int4",
+        "Int4",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
         "Int8"
       ]
     },
@@ -192,5 +219,5 @@
       false
     ]
   },
-  "hash": "089a389775ad22047fd07e81881503b482a53feccffdf1b4767890e6362ecd71"
+  "hash": "82358c8fa2c4bc3eabcbec6f351e1382f2bb03f8b4726cad3b66802146297cc8"
 }
