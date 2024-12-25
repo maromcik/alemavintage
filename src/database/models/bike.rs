@@ -267,6 +267,7 @@ pub struct BikeSearch {
     pub model_name: Option<String>,
     pub brand_id: Option<Id>,
     pub model_id: Option<Id>,
+    pub tag_id: Option<Id>,
     pub query_params: DbQueryParams,
 }
 
@@ -279,6 +280,7 @@ impl BikeSearch {
         brand_name: Option<&str>,
         model_id: Option<Id>,
         model_name: Option<&str>,
+        tag_id: Option<Id>,
         query_params: DbQueryParams,
     ) -> Self {
         Self {
@@ -287,6 +289,7 @@ impl BikeSearch {
             brand_name: brand_name.map(|n| n.to_owned()),
             brand_id: brand_id.map(|n| n.to_owned()),
             model_id: model_id.map(|n| n.to_owned()),
+            tag_id: tag_id.map(|n| n.to_owned()),
             query_params,
         }
     }
@@ -298,6 +301,7 @@ impl BikeSearch {
             model_name: None,
             brand_id: None,
             model_id: None,
+            tag_id: None,
             query_params: Default::default(),
         }
     }
@@ -308,6 +312,7 @@ impl BikeSearch {
             brand_name: None,
             brand_id: None,
             model_id: None,
+            tag_id: None,
             query_params,
         }
     }
@@ -319,6 +324,7 @@ impl BikeSearch {
             brand_name: None,
             brand_id: None,
             model_id: Some(model_id),
+            tag_id: None,
             query_params,
         }
     }
@@ -330,6 +336,7 @@ impl BikeSearch {
             brand_name: None,
             brand_id: Some(brand_id),
             model_id: None,
+            tag_id: None,
             query_params,
         }
     }
@@ -342,6 +349,7 @@ impl BikeSearch {
             brand_name: None,
             brand_id: None,
             model_id: None,
+            tag_id: None,
             query_params: DbQueryParams::default(),
         }
     }
@@ -353,6 +361,7 @@ impl BikeSearch {
             brand_name: None,
             brand_id: None,
             model_id: None,
+            tag_id: None,
             query_params: DbQueryParams::default(),
         }
     }
@@ -364,6 +373,20 @@ impl BikeSearch {
             brand_name: Some(name.to_owned()),
             brand_id: None,
             model_id: None,
+            tag_id: None,
+            query_params: DbQueryParams::default(),
+        }
+    }
+
+    #[allow(dead_code)]
+    pub fn search_by_tag_id(tag_id: Id) -> Self {
+        Self {
+            name: None,
+            model_name: None,
+            brand_name: None,
+            brand_id: None,
+            model_id: None,
+            tag_id: Some(tag_id),
             query_params: DbQueryParams::default(),
         }
     }

@@ -1,1 +1,0 @@
-DELETE FROM alemavintage.public."Bike";

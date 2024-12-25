@@ -305,13 +305,16 @@ impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
                     INNER JOIN
                 "Model" AS model ON model.id = bike.model_id
                     INNER JOIN
-                "Brand" AS brand ON brand.id = model.brand_id  
+                "Brand" AS brand ON brand.id = model.brand_id
+                    LEFT JOIN
+                "BikeTag" AS tag ON tag.bike_id = bike.id  
             WHERE
                 (bike.name = $1 OR $1 IS NULL)
                 AND (brand_id = $2 OR $2 IS NULL)
                 AND (bike.model_id = $3 OR $3 IS NULL)
                 AND (brand.name = $4 OR $4 IS NULL)
                 AND (model.name = $5 OR $5 IS NULL)
+                AND (tag.tag_id = $6 OR $6 IS NULL)
             "#
         .to_owned();
 
@@ -324,6 +327,7 @@ impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
             .bind(params.model_id)
             .bind(&params.brand_name)
             .bind(&params.model_name)
+            .bind(&params.tag_id)
             .fetch_all(&self.pool_handler.pool)
             .await?;
         Ok(bikes)
@@ -539,7 +543,7 @@ impl DbCreate<BikeImageCreate, Vec<BikeImage>> for BikeRepository {
     async fn create(&self, data: &BikeImageCreate) -> DbResultSingle<Vec<BikeImage>> {
         let mut transaction = self.pool_handler.pool.begin().await?;
         let mut images = Vec::default();
-        for path in data.paths.iter() {
+        for path in &data.paths {
             let bike_image = sqlx::query_as!(
                 BikeImage,
                 r#"

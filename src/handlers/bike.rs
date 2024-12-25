@@ -8,9 +8,11 @@ use crate::database::models::bike::{
     BikeImageSearch, BikeSearch, BikeUpdate,
 };
 use crate::database::models::model::ModelSearch;
+use crate::database::models::tag::{TagJoin, TagSearch};
 use crate::database::models::{GetById, Id};
 use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::model::repository::ModelRepository;
+use crate::database::repositories::tag::repository::TagRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::error::AppError;
 use crate::forms::bike::{
@@ -64,6 +66,7 @@ pub async fn get_bike_detail(
     request: HttpRequest,
     identity: Option<Identity>,
     bike_repo: web::Data<BikeRepository>,
+    tag_repo: web::Data<TagRepository>,
     state: web::Data<AppState>,
     session: Session,
     path: web::Path<(Id,)>,
@@ -93,12 +96,17 @@ pub async fn get_bike_detail(
         .map(|image| image.path)
         .collect();
 
+    let tags: Vec<TagJoin> = tag_repo
+        .read_many(&TagSearch::new(None, None, Some(&bike.id)))
+        .await?;
+
     let template_name = get_template_name(&request, "bike/detail");
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(BikeDisplayTemplate {
         bike: BikeDisplay::from(bike),
         bike_images,
+        tags,
         logged_in: identity.is_some(),
     })?;
 

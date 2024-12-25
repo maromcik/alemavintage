@@ -2,6 +2,7 @@ use crate::database::models::bike::{BikeDetail, BikeDisplay};
 use crate::database::models::model::ModelDetail;
 use crate::database::models::Id;
 use serde::Serialize;
+use crate::database::models::tag::TagJoin;
 
 #[derive(Serialize)]
 pub struct BikesTemplate {
@@ -26,6 +27,7 @@ pub struct BikeEditTemplate {
 pub struct BikeDisplayTemplate {
     pub bike: BikeDisplay,
     pub bike_images: Vec<String>,
+    pub tags: Vec<TagJoin>,
     pub logged_in: bool,
 }
 

@@ -24,12 +24,15 @@ use actix_files::Files as ActixFiles;
 use actix_web::web;
 use actix_web::web::ServiceConfig;
 use sqlx::PgPool;
+use crate::database::repositories::tag::repository::TagRepository;
+use crate::handlers::tag::{create_tag, get_tag};
 
 pub fn configure_webapp(pool: &PgPool, app_state: AppState) -> Box<dyn FnOnce(&mut ServiceConfig)> {
     let user_repo = UserRepository::new(PoolHandler::new(pool.clone()));
     let bike_repo = BikeRepository::new(PoolHandler::new(pool.clone()));
     let model_repository = ModelRepository::new(PoolHandler::new(pool.clone()));
     let brand_repository = BrandRepository::new(PoolHandler::new(pool.clone()));
+    let tag_repository = TagRepository::new(PoolHandler::new(pool.clone()));
 
     let user_scope = web::scope("user")
         .app_data(web::Data::new(user_repo.clone()))
@@ -48,6 +51,7 @@ pub fn configure_webapp(pool: &PgPool, app_state: AppState) -> Box<dyn FnOnce(&m
         .app_data(web::Data::new(bike_repo.clone()))
         .app_data(web::Data::new(model_repository.clone()))
         .app_data(web::Data::new(brand_repository.clone()))
+        .app_data(web::Data::new(tag_repository.clone()))
         .service(get_bikes)
         .service(create_bike)
         .service(upload_bike)
@@ -89,6 +93,12 @@ pub fn configure_webapp(pool: &PgPool, app_state: AppState) -> Box<dyn FnOnce(&m
         .service(edit_model_page)
         .service(remove_model);
 
+    let tag_scope = web::scope("tag")
+        .app_data(web::Data::new(bike_repo.clone()))
+        .app_data(web::Data::new(tag_repository.clone()))
+        .service(get_tag)
+        .service(create_tag);
+
     Box::new(move |cfg: &mut ServiceConfig| {
         cfg.app_data(web::Data::new(user_repo.clone()))
             .app_data(web::Data::new(app_state))
@@ -96,6 +106,7 @@ pub fn configure_webapp(pool: &PgPool, app_state: AppState) -> Box<dyn FnOnce(&m
             .service(user_scope)
             .service(brand_scope)
             .service(model_scope)
+            .service(tag_scope)
             .service(index)
             .service(about)
             .service(ActixFiles::new("/media", "./media").prefer_utf8(true))

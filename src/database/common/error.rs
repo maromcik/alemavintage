@@ -25,6 +25,9 @@ pub enum BackendErrorKind {
     ModelDeleted,
     ModelUpdateParametersEmpty,
 
+    TagDoesNotExist,
+    TagDeleted,
+
     #[allow(dead_code)]
     UnauthorizedOperation,
 }
@@ -79,6 +82,8 @@ impl Display for BackendErrorKind {
                     )
                 )
             }
+            TagDoesNotExist => f.write_str(does_not_exist("tag").as_str()),
+            TagDeleted => f.write_str(deleted("tag").as_str()),
             UserUpdateParametersEmpty => {
                 write!(
                     f,

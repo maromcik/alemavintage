@@ -79,6 +79,8 @@ impl From<BackendError> for AppError {
             | BackendErrorKind::BikeDeleted
             | BackendErrorKind::BrandDoesNotExist
             | BackendErrorKind::BrandDeleted
+            | BackendErrorKind::TagDeleted
+            | BackendErrorKind::TagDoesNotExist
             | BackendErrorKind::ModelDoesNotExist
             | BackendErrorKind::ModelDeleted => {
                 Self::new(AppErrorKind::NotFound, value.to_string().as_str())

@@ -4,6 +4,7 @@ pub(crate) mod bike;
 pub mod brand;
 pub mod model;
 pub(crate) mod user;
+pub mod tag;
 
 pub type Id = i64;
 

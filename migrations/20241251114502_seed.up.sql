@@ -141,3 +141,169 @@ Charakteristickými znakmi modelu Master Più boli interné vedenie káblov, čo
 Master Più bol osadený komponentmi Campagnolo a stal sa obľúbeným bicyklom v pelotóne pre svoju spoľahlivosť a estetiku. Dnes je považovaný za zbierkový kúsok, ktorý predstavuje vrchol talianskeho cyklistického remesla 80. rokov.
 
 ');
+
+INSERT INTO public."Bike"
+VALUES (1,
+        12,
+        'Krasny Colnago Master Piu',
+        '',
+        '## Prerabka
+- vylesteny
+- nalakovany
+- a tak',
+        15,
+        0,
+        '2024-12-19 23:53:02.061463+00',
+        '2024-12-24 01:14:52.734601+00',
+        false,
+        1945,
+        345462,
+        'Columbus SL Steel Tubing',
+        'C-C: 57 cm, C-T: 58 cm',
+        56,
+        82,
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Profil',
+        'Selcof',
+        'Campagnolo Nuovo Record',
+        'Mavic',
+        '3ttt',
+        '3ttt'
+       );
+
+INSERT INTO public."Bike"
+VALUES (2,
+        6,
+        'Strieborny super',
+        '',
+        '## Prerabka
+- vylesteny
+- nalakovany
+- a tak',
+        15,
+        0,
+        '2024-12-19 23:53:02.061463+00',
+        '2024-12-24 01:14:52.734601+00',
+        false,
+        1945,
+        345462,
+        'Columbus SL Steel Tubing',
+        'C-C: 57 cm, C-T: 58 cm',
+        56,
+        82,
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Profil',
+        'Selcof',
+        'Campagnolo Nuovo Record',
+        'Mavic',
+        '3ttt',
+        '3ttt'
+       );
+
+
+INSERT INTO public."Bike"
+VALUES (3,
+        4,
+        'Gentleman',
+        '',
+        '## Prerabka
+- vylesteny
+- nalakovany
+- a tak',
+        15,
+        0,
+        '2024-12-19 23:53:02.061463+00',
+        '2024-12-24 01:14:52.734601+00',
+        false,
+        1945,
+        345462,
+        'Columbus SL Steel Tubing',
+        'C-C: 57 cm, C-T: 58 cm',
+        56,
+        82,
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Profil',
+        'Selcof',
+        'Campagnolo Nuovo Record',
+        'Mavic',
+        '3ttt',
+        '3ttt'
+       );
+
+
+INSERT INTO public."Bike"
+VALUES (4,
+        6,
+        'Yellow Colnago',
+        '',
+        '## Prerabka
+- vylesteny
+- nalakovany
+- a tak',
+        15,
+        0,
+        '2024-12-19 23:53:02.061463+00',
+        '2024-12-24 01:14:52.734601+00',
+        false,
+        1945,
+        345462,
+        'Columbus SL Steel Tubing',
+        'C-C: 57 cm, C-T: 58 cm',
+        56,
+        82,
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record',
+        'Profil',
+        'Selcof',
+        'Campagnolo Nuovo Record',
+        'Mavic',
+        '3ttt',
+        '3ttt'
+       );
+
+BEGIN;
+LOCK TABLE "Brand" IN EXCLUSIVE MODE;
+SELECT setval('"Brand_id_seq"', COALESCE((SELECT MAX(id)+1 FROM "Brand"), 1), false);
+COMMIT;
+
+BEGIN;
+LOCK TABLE "User" IN EXCLUSIVE MODE;
+SELECT setval('"User_id_seq"', COALESCE((SELECT MAX(id)+1 FROM "User"), 1), false);
+COMMIT;
+
+BEGIN;
+LOCK TABLE "Model" IN EXCLUSIVE MODE;
+SELECT setval('"Model_id_seq"', COALESCE((SELECT MAX(id)+1 FROM "Model"), 1), false);
+COMMIT;
+
+BEGIN;
+LOCK TABLE "Bike" IN EXCLUSIVE MODE;
+SELECT setval('"Bike_id_seq"', COALESCE((SELECT MAX(id)+1 FROM "Bike"), 1), false);
+COMMIT;
