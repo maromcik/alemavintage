@@ -4,8 +4,8 @@
         <!-- Thumbnail -->
         <div class="flex flex-col items-center relative">
             <div id="bike-thumbnail-box" class="inline-block group">
-                <div class="w-60 h-60 sm:w-80 sm:h-80 rounded-lg border shadow-md sm:mt-4 relative">
-                    <img class="responsive-image object-cover w-full h-full" src="{{ bike.thumbnail }}"
+                <div class="w-80 h-80 sm:w-80 sm:h-80 rounded-lg border shadow-md sm:mt-4 relative">
+                    <img class="responsive-image rounded-lg" src="{{ bike.thumbnail }}"
                          alt="Bike Thumbnail">
                     {% if logged_in %}
                     {% include "bike/admin/thumbnail/detail/content.html" %}
