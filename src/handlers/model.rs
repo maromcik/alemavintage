@@ -2,7 +2,7 @@ use crate::database::common::query_parameters::{
     DbColumn, DbOrder, DbOrderColumn, DbQueryParams, DbTable,
 };
 use crate::database::common::{DbCreate, DbDelete, DbReadMany, DbReadOne, DbUpdate};
-use crate::database::models::bike::BikeSearch;
+use crate::database::models::bike::{BikeDisplay, BikeSearch};
 use crate::database::models::brand::BrandSearch;
 use crate::database::models::model::{
     ModelCreate, ModelDetail, ModelDisplay, ModelSearch, ModelUpdate,
@@ -189,7 +189,7 @@ pub async fn get_model(
     let template = env.get_template(&template_name)?;
     let body = template.render(ModelDetailTemplate {
         model: ModelDisplay::from(model),
-        bikes,
+        bikes: bikes.into_iter().map(BikeDisplay::from).collect(),
         logged_in: identity.is_some(),
     })?;
 
