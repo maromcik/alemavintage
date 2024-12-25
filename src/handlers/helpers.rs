@@ -129,30 +129,28 @@ pub async fn save_bike_images_helper(
                 return Err(err);
             }
             Ok(path)
-        }).collect::<Vec<Result<String, AppError>>>();
+        })
+        .collect::<Vec<Result<String, AppError>>>();
     
-    let mut correct_paths = Vec::new();
-    let mut errors = String::new();
+    let (correct_paths, errors): (Vec<String>, Vec<String>) = paths.into_iter()
+        .fold((vec![], vec![]), |
+            (mut correct, mut errored), path| {
+            match path {
+                Ok(p) => { correct.push(p)}
+                Err(e) => { errored.push(e.message)}
+            }
+            (correct, errored)
+        });
     
-    for path in paths {
-        match path {
-            Ok(p) => {
-                correct_paths.push(p);
-            }
-            Err(err) => {
-                errors.push_str(err.message.as_str());
-                errors.push('\n');
-            }
-        }
-    }
+    
     
     bike_repo
         .create(&BikeImageCreate::new(bike_id, correct_paths))
         .await?;
-    
+
     match errors.is_empty() {
         true => Ok(()),
-        false => Err(AppError::new(AppErrorKind::FileError, errors.as_str()))
+        false => Err(AppError::new(AppErrorKind::FileError, &*errors.join("\n"))),
     }
 }
 
@@ -185,41 +183,41 @@ impl Email {
             Some(bike) => format!("Nová otázka od {} ohľadom {}", form.name(), bike.name),
         };
 
-        let body = match bike {
+        let mut body = match bike {
             None => {
-                format!(
-                    "Používateľ {} sa pýta:\n
-            \n
-            {}\n
-            \n
-            Kontaktné údaje\n
-            email: {}\n
-            tel.: {}",
-                    form.name(),
-                    form.message(),
-                    form.from(),
-                    form.tel()
-                )
+                format!("Používateľ {} sa pýta:\n", form.name(),)
             }
             Some(bike) => {
                 format!(
-                    "Používateľ {} má záujem o bicykel {} ({}/bike/{})\n
-            \n
-            {}\n
-            \n
-            Kontaktné údaje\n
-            email: {}\n
-            tel.: {}",
+                    "Používateľ {} má záujem o bicykel {} ({}/bike/{})\n",
                     form.name(),
                     bike.name,
                     domain,
                     bike.id,
-                    form.message(),
-                    form.from(),
-                    form.tel()
                 )
             }
         };
+
+        body.push_str(&format!(
+            "
+Správa:
+
+{}
+    
+Kontaktné údaje
+Email: {}
+Tel.: {}
+Krajina: {}
+Mesto: {}
+Adresa: {}
+            ",
+            form.message(),
+            form.from(),
+            form.tel(),
+            form.country(),
+            form.city(),
+            form.address()
+        ));
 
         Ok(Self {
             from: form.from().parse::<Mailbox>()?,
@@ -267,7 +265,8 @@ where
     };
 
     for user in admins {
-        let email = Email::new(form, &user.email, &state.domain, bike.as_ref())?.convert_to_message()?;
+        let email =
+            Email::new(form, &user.email, &state.domain, bike.as_ref())?.convert_to_message()?;
         state.mailer.send(email).await?;
     }
     Ok(())
@@ -284,13 +283,11 @@ where
     T: EmailForm<FormField<'a> = &'a str>,
 {
     match send_emails(identity.as_ref(), &user_repo, &bike_repo, &state, form).await {
-        Ok(()) => Ok(HttpResponse::Ok()
-            .content_type("text/html")
-            .body("ODOSLANÉ")),
+        Ok(()) => Ok(HttpResponse::Ok().content_type("text/html").body("Sent")),
         Err(err) => match err.app_error_kind {
             AppErrorKind::EmailAddressError => Ok(HttpResponse::BadRequest()
                 .content_type("text/html")
-                .body("NESPRÁVNY EMAIL")),
+                .body("Invalid Email Address")),
             _ => Err(err),
         },
     }

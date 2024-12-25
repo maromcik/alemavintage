@@ -43,6 +43,9 @@ pub trait EmailForm {
     fn name(&self) -> Self::FormField<'_>;
     fn from(&self) -> Self::FormField<'_>;
     fn tel(&self) -> Self::FormField<'_>;
+    fn country(&self) -> Self::FormField<'_>;
+    fn city(&self) -> Self::FormField<'_>;
+    fn address(&self) -> Self::FormField<'_>;
     fn message(&self) -> Self::FormField<'_>;
 
     fn bike_id(&self) -> Option<Id>;
@@ -54,6 +57,9 @@ pub struct ContactAdminBikeForm {
     pub name: String,
     pub from: String,
     pub tel: String,
+    pub country: String,
+    pub city: String,
+    pub address: String,
     pub message: String,
 }
 
@@ -71,6 +77,18 @@ impl EmailForm for ContactAdminBikeForm {
     fn tel(&self) -> Self::FormField<'_> {
         self.tel.as_str()
     }
+    fn country(&self) -> Self::FormField<'_> {
+        self.country.as_str()
+    }
+
+    fn city(&self) -> Self::FormField<'_> {
+        self.city.as_str()
+    }
+
+    fn address(&self) -> Self::FormField<'_> {
+        self.address.as_str()
+    }
+
 
     fn message(&self) -> Self::FormField<'_> {
         self.message.as_str()
@@ -86,6 +104,9 @@ pub struct ContactAdminGeneralForm {
     pub name: String,
     pub from: String,
     pub tel: String,
+    pub country: String,
+    pub city: String,
+    pub address: String,
     pub message: String,
 }
 
@@ -103,7 +124,17 @@ impl EmailForm for ContactAdminGeneralForm {
     fn tel(&self) -> Self::FormField<'_> {
         self.tel.as_str()
     }
+    fn country(&self) -> Self::FormField<'_> {
+        self.country.as_str()
+    }
 
+    fn city(&self) -> Self::FormField<'_> {
+        self.city.as_str()
+    }
+
+    fn address(&self) -> Self::FormField<'_> {
+        self.address.as_str()
+    }
     fn message(&self) -> Self::FormField<'_> {
         self.message.as_str()
     }
