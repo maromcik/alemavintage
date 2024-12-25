@@ -143,15 +143,11 @@ pub async fn save_bike_images_helper(
         });
     
     
-    
     bike_repo
         .create(&BikeImageCreate::new(bike_id, correct_paths))
         .await?;
 
-    match errors.is_empty() {
-        true => Ok(()),
-        false => Err(AppError::new(AppErrorKind::FileError, &*errors.join("\n"))),
-    }
+    if errors.is_empty() { Ok(()) } else { Err(AppError::new(AppErrorKind::FileError, &errors.join(", "))) }
 }
 
 pub fn save_bike_thumbnail_helper(thumbnail: TempFile) -> Result<String, AppError> {
