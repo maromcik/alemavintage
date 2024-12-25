@@ -33,17 +33,37 @@ CREATE TABLE IF NOT EXISTS "Model"
 
 CREATE TABLE IF NOT EXISTS "Bike"
 (
-    id          bigserial PRIMARY KEY,
+    id              bigserial PRIMARY KEY,
     ---------------------------------------------
-    model_id    bigserial   NOT NULL,
-    name        text        NOT NULL,
-    thumbnail   text        NOT NULL,
-    description text        NOT NULL,
-    view_count  bigint      NOT NULL DEFAULT 0,
-    like_count  bigint      NOT NULL DEFAULT 0,
-    created_at  timestamptz NOT NULL DEFAULT now(),
-    edited_at   timestamptz NOT NULL DEFAULT now(),
-    deleted_at  timestamptz,
+    model_id        bigserial   NOT NULL,
+    name            text        NOT NULL,
+    thumbnail       text        NOT NULL,
+    description     text        NOT NULL,
+    view_count      bigint      NOT NULL DEFAULT 0,
+    like_count      bigint      NOT NULL DEFAULT 0,
+    created_at      timestamptz NOT NULL DEFAULT now(),
+    edited_at       timestamptz NOT NULL DEFAULT now(),
+    hidden          bool        NOT NULL DEFAULT true,
+    year            int         NOT NULL,
+    price           int         NOT NULL,
+    frame           text        NOT NULL,
+    seat_tube_sizes text        NOT NULL,
+    top_tube_size   int         NOT NULL,
+    height          int         NOT NULL,
+    headset         text        NOT NULL,
+    crankset        text        NOT NULL,
+    bottom_bracket  text        NOT NULL,
+    front_derail    text        NOT NULL,
+    rear_derail     text        NOT NULL,
+    brakes          text        NOT NULL,
+    shifters        text        NOT NULL,
+    brake_levers    text        NOT NULL,
+    saddle          text        NOT NULL,
+    seat_post       text        NOT NULL,
+    hubs            text        NOT NULL,
+    rims            text        NOT NULL,
+    handlebar       text        NOT NULL,
+    stem            text        NOT NULL,
 
     FOREIGN KEY (model_id) REFERENCES "Model" (id) ON DELETE CASCADE
 );
@@ -58,13 +78,22 @@ CREATE TABLE IF NOT EXISTS "BikeImage"
     FOREIGN KEY (bike_id) REFERENCES "Bike" (id) ON DELETE CASCADE
 );
 
--- FKs on M-to-N
--- CREATE INDEX IF NOT EXISTS "Bookmark_user_id_idx" ON "audiobooks".public."Bookmark" (user_id);
--- CREATE INDEX IF NOT EXISTS "Bookmark_audiobook_id_idx" ON "audiobooks".public."Bookmark" (audiobook_id);
---
--- CREATE INDEX IF NOT EXISTS "Active_Audiobook_user_id_idx" ON "audiobooks".public."Active_Audiobook" (user_id);
--- CREATE INDEX IF NOT EXISTS "Active_Audiobook_audiobook_id_idx" ON "audiobooks".public."Active_Audiobook" (audiobook_id);
---
--- CREATE INDEX IF NOT EXISTS "Audiobook_Author_author_id_idx" ON "audiobooks".public."Audiobook_Author" (author_id);
--- CREATE INDEX IF NOT EXISTS "Audiobook_Author_audiobook_id_idx" ON "audiobooks".public."Audiobook_Author" (audiobook_id);
+CREATE TABLE IF NOT EXISTS "Tag"
+(
+    id  bigserial PRIMARY KEY,
+    tag text NOT NULL
+);
 
+CREATE TABLE IF NOT EXISTS "BikeTag"
+(
+    bike_id bigserial,
+    tag_id  bigserial,
+    PRIMARY KEY (bike_id, tag_id),
+    FOREIGN KEY (bike_id) REFERENCES "Bike" ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES "Tag" ON DELETE CASCADE
+
+);
+
+CREATE INDEX IF NOT EXISTS "Model_brand_id_idx" ON "Model" (brand_id);
+CREATE INDEX IF NOT EXISTS "Bike_model_id_idx" ON "Bike" (model_id);
+CREATE INDEX IF NOT EXISTS "BikeImage_bike_id_idx" ON "BikeImage" (bike_id);

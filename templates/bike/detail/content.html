@@ -38,6 +38,18 @@
                     {{ bike.model_name }}
                 </a>
             </div>
+            <div>
+                <h2 class="text-2xl font-semibold text-gray-700 text-center">Year</h2>
+                <a class="hover:bg-slate-200 text-gray-800 hover:text-amber-700 font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer">
+                    {{ bike.year }}
+                </a>
+            </div>
+            <div>
+                <h2 class="text-2xl font-semibold text-gray-700 text-center">Price</h2>
+                <a class="hover:bg-slate-200 text-gray-800 hover:text-amber-700 font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer">
+                    {{ bike.price }} €
+                </a>
+            </div>
             <div class="h-2"></div> <!-- Spacer element for vertical spacing -->
             {% if logged_in %}
             <div class="flex justify-center items-center">
@@ -81,6 +93,33 @@
         </div>
     </div>
 
+    <!-- Specification Section -->
+    <div class="mt-10">
+        <h2 class="text-2xl font-bold mb-4">Specification</h2>
+        <div class="bg-gray-50 p-5 rounded-lg shadow-md text-gray-700">
+            <div class="mb-4">
+                <p>Frame: {{ bike.frame }}</p>
+                <p>Seat tube sizes: {{ bike.seat_tube_sizes }}</p>
+                <p>Top tube size: {{ bike.top_tube_size }}</p>
+                <p>Height: {{ bike.height }}</p>
+                <p>Headset: {{ bike.headset }}</p>
+                <p>Crankset: {{ bike.crankset }}</p>
+                <p>Bottom bracket: {{ bike.bottom_bracket }}</p>
+                <p>Front derail: {{ bike.front_derail }}</p>
+                <p>Rear derail: {{ bike.rear_derail }}</p>
+                <p>Brakes: {{ bike.brakes }}</p>
+                <p>Shifters: {{ bike.shifters }}</p>
+                <p>Brake levers: {{ bike.brake_levers }}</p>
+                <p>Saddle: {{ bike.saddle }}</p>
+                <p>Seat_post: {{ bike.seat_post }}</p>
+                <p>Hubs: {{ bike.hubs }}</p>
+                <p>Rims: {{ bike.rims }}</p>
+                <p>Handlebar: {{ bike.handlebar }}</p>
+                <p>Stem: {{ bike.stem }}</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Images Section -->
     <div class="mt-10">
         <h2 class="text-2xl font-bold mb-4">Images</h2>
@@ -99,7 +138,7 @@
 <div class="mt-10 mx-auto container">
     <button id="contact-us-btn"
             class="bg-amber-500 hover:bg-amber-600 mx-auto rounded-md p-3 block text-white text-lg shadow-md">
-        Mám záujem o tento bicykel
+        Contact Us To Buy
     </button>
 
     <div id="contact-form-container" class="hidden mt-6">

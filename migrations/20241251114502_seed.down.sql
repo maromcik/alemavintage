@@ -1,0 +1,1 @@
+DELETE FROM alemavintage.public."Brand";

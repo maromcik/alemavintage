@@ -28,8 +28,8 @@ use crate::templates::bike::{
 };
 use crate::{authorized, AppState};
 use actix_identity::Identity;
-use actix_multipart::form::MultipartForm;
 use actix_multipart::form::text::Text;
+use actix_multipart::form::MultipartForm;
 use actix_session::Session;
 use actix_web::http::header::LOCATION;
 use actix_web::{delete, get, post, put, web, HttpRequest, HttpResponse};
@@ -109,10 +109,12 @@ pub async fn get_bike_detail(
 pub async fn create_bike_page(
     request: HttpRequest,
     identity: Option<Identity>,
+    user_repo: web::Data<UserRepository>,
     model_repo: web::Data<ModelRepository>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
-    authorized!(identity, request.path());
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;
 
     let models = model_repo.read_many(&ModelSearch::default()).await?;
 
@@ -130,10 +132,12 @@ pub async fn create_bike_page(
 #[get("/upload")]
 pub async fn upload_bike_page(
     request: HttpRequest,
+    user_repo: web::Data<UserRepository>,
     identity: Option<Identity>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
-    authorized!(identity, request.path());
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;
 
     let template_name = get_template_name(&request, "bike/admin/upload");
     let env = state.jinja.acquire_env()?;
@@ -158,7 +162,32 @@ pub async fn create_bike(
     let user = get_user_from_identity(u, &user_repo).await?;
     let session_keys = BikeCreateSessionKeys::new(user.id);
 
-    let bike_create = BikeCreate::new(&form.name, form.model_id, "", &form.description);
+    let bike_create = BikeCreate::new(
+        &form.name, 
+        form.model_id, 
+        "", 
+        &form.description,
+        &form.year,
+        &form.price,
+        &form.height,
+        &form.top_tube_size,
+        &form.frame,
+        &form.seat_tube_sizes,
+        &form.headset,
+        &form.crankset,
+        &form.bottom_bracket,
+        &form.front_derail,
+        &form.rear_derail,
+        &form.brakes,
+        &form.shifters,
+        &form.brake_levers,
+        &form.saddle,
+        &form.seat_post,
+        &form.hubs,
+        &form.rims,
+        &form.handlebar,
+        &form.stem,
+    );
 
     let bike = bike_repo.create(&bike_create).await?;
 
@@ -209,10 +238,13 @@ pub async fn upload_bike(
 pub async fn hide_bike(
     request: HttpRequest,
     identity: Option<Identity>,
+    user_repo: web::Data<UserRepository>,
     bike_repo: web::Data<BikeRepository>,
     path: web::Path<(Id,)>,
 ) -> Result<HttpResponse, AppError> {
-    authorized!(identity, request.path());
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;    
+    
     let bike_id = path.into_inner().0;
     bike_repo.hide(&GetById::new_with_deleted(bike_id)).await?;
 
@@ -226,10 +258,13 @@ pub async fn hide_bike(
 pub async fn remove_bike(
     request: HttpRequest,
     identity: Option<Identity>,
+    user_repo: web::Data<UserRepository>,
     bike_repo: web::Data<BikeRepository>,
     path: web::Path<(Id,)>,
 ) -> Result<HttpResponse, AppError> {
-    authorized!(identity, request.path());
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;
+    
     let bike_id = path.into_inner().0;
 
     hard_delete_bike(&bike_repo, vec![bike_id]).await?;
@@ -243,10 +278,13 @@ pub async fn remove_bike(
 pub async fn restore_bike(
     request: HttpRequest,
     identity: Option<Identity>,
+    user_repo: web::Data<UserRepository>,
     bike_repo: web::Data<BikeRepository>,
     path: web::Path<(Id,)>,
 ) -> Result<HttpResponse, AppError> {
-    authorized!(identity, request.path());
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;
+    
     let bike_id = path.into_inner().0;
     bike_repo
         .restore(&GetById::new_with_deleted(bike_id))
@@ -262,11 +300,14 @@ pub async fn edit_bike_page(
     request: HttpRequest,
     identity: Option<Identity>,
     bike_repo: web::Data<BikeRepository>,
+    user_repo: web::Data<UserRepository>,
     model_repo: web::Data<ModelRepository>,
     path: web::Path<(Id,)>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
-    authorized!(identity, request.path());
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;
+    
     let bike_id = path.into_inner().0;
     let bike: BikeDetail = <BikeRepository as DbReadOne<BikeGetById, BikeDetail>>::read_one(
         bike_repo.as_ref(),
@@ -293,9 +334,11 @@ pub async fn edit_bike(
     request: HttpRequest,
     identity: Option<Identity>,
     bike_repo: web::Data<BikeRepository>,
+    user_repo: web::Data<UserRepository>,
     form: web::Form<BikeEditForm>,
 ) -> Result<HttpResponse, AppError> {
-    authorized!(identity, request.path());
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;
 
     let book_update = BikeUpdate::new(
         &form.bike_id,
@@ -306,6 +349,26 @@ pub async fn edit_bike(
         None,
         None,
         None,
+        Some(&form.year),
+        Some(&form.price),
+        Some(&form.height),
+        Some(&form.top_tube_size),
+        Some(&form.frame),
+        Some(&form.seat_tube_sizes),
+        Some(&form.headset),
+        Some(&form.crankset),
+        Some(&form.bottom_bracket),
+        Some(&form.front_derail),
+        Some(&form.rear_derail),
+        Some(&form.brakes),
+        Some(&form.shifters),
+        Some(&form.brake_levers),
+        Some(&form.saddle),
+        Some(&form.seat_post),
+        Some(&form.hubs),
+        Some(&form.rims),
+        Some(&form.handlebar),
+        Some(&form.stem),
     );
     bike_repo.update(&book_update).await?;
 
@@ -318,11 +381,13 @@ pub async fn edit_bike(
 #[get("/thumbnail/{id}/upload")]
 pub async fn upload_bike_thumbnail_page(
     request: HttpRequest,
+    user_repo: web::Data<UserRepository>,
     identity: Option<Identity>,
     path: web::Path<(Id,)>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
-    authorized!(identity, request.path());
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;
 
     let bike_id = path.into_inner().0;
 
@@ -342,9 +407,11 @@ pub async fn upload_bike_thumbnail(
     request: HttpRequest,
     identity: Option<Identity>,
     bike_repo: web::Data<BikeRepository>,
+    user_repo: web::Data<UserRepository>,
     MultipartForm(form): MultipartForm<BikeThumbnailEditForm>,
 ) -> Result<HttpResponse, AppError> {
-    authorized!(identity, request.path());
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;
 
     let bike_id = form.bike_id.0;
 
@@ -372,10 +439,12 @@ pub async fn upload_bike_thumbnail(
 pub async fn reupload_bike_page(
     request: HttpRequest,
     identity: Option<Identity>,
+    user_repo: web::Data<UserRepository>,
     path: web::Path<(Id,)>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
-    authorized!(identity, request.path());
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;
 
     let template_name = get_template_name(&request, "bike/admin/reupload");
     let env = state.jinja.acquire_env()?;
@@ -393,17 +462,19 @@ pub async fn reupload_bike(
     request: HttpRequest,
     identity: Option<Identity>,
     bike_repo: web::Data<BikeRepository>,
+    user_repo: web::Data<UserRepository>,
     MultipartForm(form): MultipartForm<BikeImagesEditForm>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
-    authorized!(identity, request.path());
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;
 
     let bike_id = form.bike_id.0;
-    
+
     if form.delete_existing.unwrap_or(Text(false)).0 {
-        hard_delete_bike_images(&bike_repo, bike_id).await?;    
+        hard_delete_bike_images(&bike_repo, bike_id).await?;
     }
-    
+
     match save_bike_images_helper(form.photos, &bike_repo, bike_id).await {
         Ok(bike) => bike,
         Err(err) => {

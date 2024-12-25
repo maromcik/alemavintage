@@ -9,7 +9,7 @@ use crate::database::repositories::brand::repository::BrandRepository;
 use crate::database::repositories::model::repository::ModelRepository;
 use crate::error::AppError;
 use crate::forms::brand::{BrandCreateForm, BrandEditForm};
-use crate::handlers::helpers::{get_template_name, hard_delete_bike};
+use crate::handlers::helpers::{get_template_name, get_user_from_identity, hard_delete_bike};
 use crate::templates::brand::{
     BrandCreateTemplate, BrandDetailTemplate, BrandEditTemplate, BrandTemplate,
 };
@@ -17,14 +17,17 @@ use crate::{authorized, AppState};
 use actix_identity::Identity;
 use actix_web::http::header::LOCATION;
 use actix_web::{delete, get, post, web, HttpRequest, HttpResponse};
+use crate::database::repositories::user::repository::UserRepository;
 
 #[get("/create")]
 pub async fn create_brand_page(
     request: HttpRequest,
     identity: Option<Identity>,
+    user_repo: web::Data<UserRepository>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
-    authorized!(identity, request.path());
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;
 
     let template_name = get_template_name(&request, "brand/create");
     let env = state.jinja.acquire_env()?;
@@ -39,9 +42,11 @@ pub async fn create_brand(
     request: HttpRequest,
     identity: Option<Identity>,
     brand_repo: web::Data<BrandRepository>,
+    user_repo: web::Data<UserRepository>,
     form: web::Form<BrandCreateForm>,
 ) -> Result<HttpResponse, AppError> {
-    let _ = authorized!(identity, request.path());
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;
 
     let _ = brand_repo
         .create(&BrandCreate::new(&form.name, &form.description))
@@ -56,11 +61,13 @@ pub async fn create_brand(
 pub async fn edit_brand_page(
     request: HttpRequest,
     brand_repo: web::Data<BrandRepository>,
+    user_repo: web::Data<UserRepository>,
     identity: Option<Identity>,
     path: web::Path<(Id,)>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
-    authorized!(identity, request.path());
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;
     let brand = brand_repo
         .read_one(&GetById::new(path.into_inner().0))
         .await?;
@@ -80,9 +87,11 @@ pub async fn edit_brand(
     request: HttpRequest,
     identity: Option<Identity>,
     brand_repo: web::Data<BrandRepository>,
+    user_repo: web::Data<UserRepository>,
     form: web::Form<BrandEditForm>,
 ) -> Result<HttpResponse, AppError> {
-    let _ = authorized!(identity, request.path());
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;
 
     let _ = brand_repo
         .update(&BrandUpdate::new(
@@ -154,10 +163,13 @@ pub async fn remove_brand(
     request: HttpRequest,
     identity: Option<Identity>,
     brand_repo: web::Data<BrandRepository>,
+    user_repo: web::Data<UserRepository>,
     bike_repo: web::Data<BikeRepository>,
     path: web::Path<(Id,)>,
 ) -> Result<HttpResponse, AppError> {
-    let _ = authorized!(identity, request.path());
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;
+    
     let brand_id = path.into_inner().0;
 
     let bikes = bike_repo

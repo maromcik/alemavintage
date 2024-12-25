@@ -4,31 +4,30 @@
         <label>
             <input class="hidden" name="bike_id" type="text" value="{{ bike_id }}">
         </label>
-        <h2 class="block text-gray-300 text-xl font-bold mb-2 text-center">Nahraj znovu</h2>
+        <h2 class="block text-gray-300 text-xl font-bold mb-2 text-center">Upload Images</h2>
         <div id="error-area" class="text-red-500 mb-3 text-center">
             {{ message }}
         </div>
         <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mt-10">
                 <label class="text-gray-300 text-sm font-bold mb-2 flex flex-col items-center" for="photos">
                     <i class="fa-regular text-7l fa-image"></i>
-                    Fotky bicykla
+                    Images
                 </label>
                 <input class="shadow appearance-none flex border rounded py-2 px-3 text-gray-300 leading-tight focus:outline-none focus:shadow-outline"
                        accept="image/*" id="photos" type="file" multiple name="files">
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mt-10">
-            <label class="text-gray-300 text-sm font-bold mb-2 flex flex-col items-center" for="delete_existing">
-                Vymazať existujúce fotky?
-                <input id="delete_existing" name="delete_existing" type="checkbox" value="true">
+            <label for="delete_existing" class="text-gray-300 text-sm font-bold flex items-center space-x-3">
+                <input id="delete_existing" name="delete_existing" type="checkbox" value="true" class="form-checkbox h-5 w-5 text-amber-500 bg-gray-700 border-gray-600 focus:ring focus:ring-amber-600 rounded">
+                <span>Delete Existing Images</span>
             </label>
-
         </div>
 
         <div class="flex justify-end mt-10 mb-5">
             <button class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="submit">
-                Nahraj
+                Upload
             </button>
         </div>
 

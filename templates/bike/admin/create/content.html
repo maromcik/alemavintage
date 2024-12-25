@@ -1,26 +1,15 @@
 <div class="container mx-auto p-6 max-w-7xl">
     <form hx-post="/bike/create" hx-push-url="/bike" hx-target="#content-area" hx-target-error="#content-area" class="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <h2 class="block text-gray-300 text-xl font-bold mb-2 text-center">Nový bicykel</h2>
+        <h2 class="block text-gray-300 text-xl font-bold mb-2 text-center">New Bike</h2>
 
         <div class="mb-4">
             <label class="block text-gray-300 text-sm font-bold mb-2" for="bike-name">
-                Názov
+                Name
             </label>
             <input name="name"
                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                    id="bike-name" type="text" placeholder="Bike Name">
         </div>
-
-<!--        <div class="mb-4">-->
-<!--            <label class="block text-gray-300 text-sm font-bold mb-2" for="brand">-->
-<!--                Brand-->
-<!--            </label>-->
-<!--            <select name="brand_id" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="brand">-->
-<!--                {% for brand in brands %}-->
-<!--                <option value="{{ brand.id }}">{{ brand.name }}</option>-->
-<!--                {% endfor %}-->
-<!--            </select>-->
-<!--        </div>-->
 
         <div class="mb-4">
             <label class="block text-gray-300 text-sm font-bold mb-2" for="model">
@@ -31,6 +20,106 @@
                 <option value="{{ model.id }}">{{ model.brand_name }} - {{ model.name }}</option>
                 {% endfor %}
             </select>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="year">Year</label>
+            <input name="year" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="year" type="number" placeholder="Year">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="price">Price (in Cents)</label>
+            <input name="price" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="price" type="number" placeholder="Price">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="height">Height</label>
+            <input name="height" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="height" type="number" placeholder="Height">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="top_tube_size">Top Tube Size</label>
+            <input name="top_tube_size" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="top_tube_size" type="number" placeholder="Top Tube Size">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="frame">Frame</label>
+            <input name="frame" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="frame" type="text" placeholder="Frame">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="seat_tube_sizes">Seat Tube Sizes</label>
+            <input name="seat_tube_sizes" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="seat_tube_sizes" type="text" placeholder="Seat Tube Sizes">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="headset">Headset</label>
+            <input name="headset" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="headset" type="text" placeholder="Headset">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="crankset">Crankset</label>
+            <input name="crankset" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="crankset" type="text" placeholder="Crankset">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="bottom_bracket">Bottom Bracket</label>
+            <input name="bottom_bracket" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="bottom_bracket" type="text" placeholder="Bottom Bracket">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="front_derail">Front Derailleur</label>
+            <input name="front_derail" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="front_derail" type="text" placeholder="Front Derailleur">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="rear_derail">Rear Derailleur</label>
+            <input name="rear_derail" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="rear_derail" type="text" placeholder="Rear Derailleur">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="brakes">Brakes</label>
+            <input name="brakes" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="brakes" type="text" placeholder="Brakes">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="shifters">Shifters</label>
+            <input name="shifters" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="shifters" type="text" placeholder="Shifters">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="brake_levers">Brake Levers</label>
+            <input name="brake_levers" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="brake_levers" type="text" placeholder="Brake Levers">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="saddle">Saddle</label>
+            <input name="saddle" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="saddle" type="text" placeholder="Saddle">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="seat_post">Seat Post</label>
+            <input name="seat_post" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="seat_post" type="text" placeholder="Seat Post">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="hubs">Hubs</label>
+            <input name="hubs" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="hubs" type="text" placeholder="Hubs">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="rims">Rims</label>
+            <input name="rims" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="rims" type="text" placeholder="Rims">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="handlebar">Handlebar</label>
+            <input name="handlebar" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="handlebar" type="text" placeholder="Handlebar">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="stem">Stem</label>
+            <input name="stem" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="stem" type="text" placeholder="Stem">
         </div>
 
         <div class="mb-4">
@@ -46,7 +135,7 @@
             <button hx-target="#content-area"
                     class="bg-amber-500 hover:bg-amber-600 text-slate-100 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="submit">
-                Ďalej
+                Next
             </button>
         </div>
     </form>

@@ -2,7 +2,7 @@
     <form id="bike_upload_form" hx-post="/bike/upload" hx-target="#content-area" hx-target-error="#error-area"
           enctype="multipart/form-data"
           class="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4 h-full">
-        <h2 class="block text-gray-300 text-xl font-bold mb-2 text-center">Nahraj fotky</h2>
+        <h2 class="block text-gray-300 text-xl font-bold mb-2 text-center">Upload Images</h2>
         <div id="error-area" class="text-red-500 mb-3 text-center">
             {{ message }}
         </div>
@@ -11,7 +11,7 @@
 
             <label class="text-gray-300 text-sm font-bold mb-2 flex flex-col items-center" for="thumbnail">
                 <i class="fa-regular text-7l fa-image"></i>
-                Hlavná fotka
+                Thumbnail
             </label>
             <input class="shadow appearance-none flex border rounded py-2 px-3 text-gray-300 leading-tight focus:outline-none focus:shadow-outline"
                    id="thumbnail" accept="image/*" type="file" multiple name="thumbnail">
@@ -20,7 +20,7 @@
             <!-- Bike Files Item -->
             <label class="text-gray-300 text-sm font-bold mb-2 flex flex-col items-center" for="photos">
                 <i class="fa-regular text-7l fa-image"></i>
-                Ďalšie fotky
+                Images
             </label>
             <input class="shadow appearance-none flex border rounded py-2 px-3 text-gray-300 leading-tight focus:outline-none focus:shadow-outline"
                    accept="image/*" id="photos" type="file" multiple name="files">
@@ -29,7 +29,7 @@
         <div class="flex justify-end mt-10 mb-5">
             <button class="bg-amber-500 hover:bg-amber-600 text-slate-100 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="submit">
-                Vytvor bicykel
+                Create Bike
             </button>
         </div>
         <div class="w-full bg-gray-200 rounded-full dark:bg-gray-700">

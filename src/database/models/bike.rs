@@ -19,6 +19,26 @@ pub struct Bike {
     pub created_at: DateTime<Utc>,
     pub edited_at: DateTime<Utc>,
     pub hidden: bool,
+    pub year: i32,
+    pub price: i32,
+    pub height: i32,
+    pub top_tube_size: i32,
+    pub frame: String,
+    pub seat_tube_sizes: String,
+    pub headset: String,
+    pub crankset: String,
+    pub bottom_bracket: String,
+    pub front_derail: String,
+    pub rear_derail: String,
+    pub brakes: String,
+    pub shifters: String,
+    pub brake_levers: String,
+    pub saddle: String,
+    pub seat_post: String,
+    pub hubs: String,
+    pub rims: String,
+    pub handlebar: String,
+    pub stem: String,
 }
 
 impl EntityById for Bike {
@@ -45,6 +65,27 @@ pub struct BikeDetail {
     pub edited_at: DateTime<Utc>,
     pub hidden: bool,
 
+    pub year: i32,
+    pub price: i32,
+    pub height: i32,
+    pub top_tube_size: i32,
+    pub frame: String,
+    pub seat_tube_sizes: String,
+    pub headset: String,
+    pub crankset: String,
+    pub bottom_bracket: String,
+    pub front_derail: String,
+    pub rear_derail: String,
+    pub brakes: String,
+    pub shifters: String,
+    pub brake_levers: String,
+    pub saddle: String,
+    pub seat_post: String,
+    pub hubs: String,
+    pub rims: String,
+    pub handlebar: String,
+    pub stem: String,
+    
     pub brand_name: String,
     pub model_name: String,
 }
@@ -71,6 +112,27 @@ pub struct BikeDisplay {
     pub description: String,
     pub hidden: bool,
 
+    pub year: i32,
+    pub price: f64,
+    pub height: i32,
+    pub top_tube_size: i32,
+    pub frame: String,
+    pub seat_tube_sizes: String,
+    pub headset: String,
+    pub crankset: String,
+    pub bottom_bracket: String,
+    pub front_derail: String,
+    pub rear_derail: String,
+    pub brakes: String,
+    pub shifters: String,
+    pub brake_levers: String,
+    pub saddle: String,
+    pub seat_post: String,
+    pub hubs: String,
+    pub rims: String,
+    pub handlebar: String,
+    pub stem: String,
+
     pub brand_name: String,
     pub model_name: String,
 }
@@ -87,6 +149,26 @@ impl From<BikeDetail> for BikeDisplay {
             thumbnail: value.thumbnail,
             description: markdown::to_html(&value.description),
             hidden: value.hidden,
+            year: value.year,
+            price: value.price as f64 / 100_f64,
+            height: value.height,
+            top_tube_size: value.top_tube_size,
+            frame: value.frame,
+            seat_tube_sizes: value.seat_tube_sizes,
+            headset: value.headset,
+            crankset: value.crankset,
+            bottom_bracket: value.bottom_bracket,
+            front_derail: value.front_derail,
+            rear_derail: value.rear_derail,
+            brakes: value.brakes,
+            shifters: value.shifters,
+            brake_levers: value.brake_levers,
+            saddle: value.saddle,
+            seat_post: value.seat_post,
+            hubs: value.hubs,
+            rims: value.rims,
+            handlebar: value.handlebar,
+            stem: value.stem,
             brand_name: value.brand_name,
             model_name: value.model_name,
         }
@@ -98,18 +180,85 @@ pub struct BikeCreate {
     pub model_id: Id,
     pub thumbnail: String,
     pub description: String,
+
+    pub year: i32,
+    pub price: i32,
+    pub height: i32,
+    pub top_tube_size: i32,
+    pub frame: String,
+    pub seat_tube_sizes: String,
+    pub headset: String,
+    pub crankset: String,
+    pub bottom_bracket: String,
+    pub front_derail: String,
+    pub rear_derail: String,
+    pub brakes: String,
+    pub shifters: String,
+    pub brake_levers: String,
+    pub saddle: String,
+    pub seat_post: String,
+    pub hubs: String,
+    pub rims: String,
+    pub handlebar: String,
+    pub stem: String,
 }
 
 impl BikeCreate {
-    pub fn new(name: &str, model_id: Id, thumbnail: &str, description: &str) -> Self {
+    pub fn new(
+        name: &str,
+        model_id: Id,
+        thumbnail: &str,
+        description: &str,
+        year: &i32,
+        price: &i32,
+        height: &i32,
+        top_tube_size: &i32,
+        frame: &str,
+        seat_tube_sizes: &str,
+        headset: &str,
+        crankset: &str,
+        bottom_bracket: &str,
+        front_derail: &str,
+        rear_derail: &str,
+        brakes: &str,
+        shifters: &str,
+        brake_levers: &str,
+        saddle: &str,
+        seat_post: &str,
+        hubs: &str,
+        rims: &str,
+        handlebar: &str,
+        stem: &str,
+    ) -> Self {
         Self {
             name: name.to_owned(),
             model_id,
             thumbnail: thumbnail.to_owned(),
             description: description.to_owned(),
+            year: *year,
+            price: *price,
+            height: *height,
+            top_tube_size: *top_tube_size,
+            frame: frame.to_owned(),
+            seat_tube_sizes: seat_tube_sizes.to_owned(),
+            headset: headset.to_owned(),
+            crankset: crankset.to_owned(),
+            bottom_bracket: bottom_bracket.to_owned(),
+            front_derail: front_derail.to_owned(),
+            rear_derail: rear_derail.to_owned(),
+            brakes: brakes.to_owned(),
+            shifters: shifters.to_owned(),
+            brake_levers: brake_levers.to_owned(),
+            saddle: saddle.to_owned(),
+            seat_post: seat_post.to_owned(),
+            hubs: hubs.to_owned(),
+            rims: rims.to_owned(),
+            handlebar: handlebar.to_owned(),
+            stem: stem.to_owned(),
         }
     }
 }
+
 
 #[derive(Debug, Clone)]
 pub struct BikeSearch {
@@ -298,6 +447,27 @@ pub struct BikeUpdate {
     pub view_count: Option<i64>,
     pub like_count: Option<i64>,
     pub hidden: Option<bool>,
+
+    pub year: Option<i32>,
+    pub price: Option<i32>,
+    pub height: Option<i32>,
+    pub top_tube_size: Option<i32>,
+    pub frame: Option<String>,
+    pub seat_tube_sizes: Option<String>,
+    pub headset: Option<String>,
+    pub crankset: Option<String>,
+    pub bottom_bracket: Option<String>,
+    pub front_derail: Option<String>,
+    pub rear_derail: Option<String>,
+    pub brakes: Option<String>,
+    pub shifters: Option<String>,
+    pub brake_levers: Option<String>,
+    pub saddle: Option<String>,
+    pub seat_post: Option<String>,
+    pub hubs: Option<String>,
+    pub rims: Option<String>,
+    pub handlebar: Option<String>,
+    pub stem: Option<String>,
 }
 
 impl BikeUpdate {
@@ -312,6 +482,26 @@ impl BikeUpdate {
         view_count: Option<&i64>,
         like_count: Option<&i64>,
         hidden: Option<&bool>,
+        year: Option<&i32>,
+        price: Option<&i32>,
+        height: Option<&i32>,
+        top_tube_size: Option<&i32>,
+        frame: Option<&str>,
+        seat_tube_sizes: Option<&str>,
+        headset: Option<&str>,
+        crankset: Option<&str>,
+        bottom_bracket: Option<&str>,
+        front_derail: Option<&str>,
+        rear_derail: Option<&str>,
+        brakes: Option<&str>,
+        shifters: Option<&str>,
+        brake_levers: Option<&str>,
+        saddle: Option<&str>,
+        seat_post: Option<&str>,
+        hubs: Option<&str>,
+        rims: Option<&str>,
+        handlebar: Option<&str>,
+        stem: Option<&str>,
     ) -> Self {
         let change_to_owned = |value: &str| Some(value.to_owned());
         Self {
@@ -323,6 +513,26 @@ impl BikeUpdate {
             view_count: view_count.copied(),
             like_count: like_count.copied(),
             hidden: hidden.copied(),
+            year: year.copied(),
+            price: price.copied(),
+            height: height.copied(),
+            top_tube_size: top_tube_size.copied(),
+            frame: frame.and_then(change_to_owned),
+            seat_tube_sizes: seat_tube_sizes.and_then(change_to_owned),
+            headset: headset.and_then(change_to_owned),
+            crankset: crankset.and_then(change_to_owned),
+            bottom_bracket: bottom_bracket.and_then(change_to_owned),
+            front_derail: front_derail.and_then(change_to_owned),
+            rear_derail: rear_derail.and_then(change_to_owned),
+            brakes: brakes.and_then(change_to_owned),
+            shifters: shifters.and_then(change_to_owned),
+            brake_levers: brake_levers.and_then(change_to_owned),
+            saddle: saddle.and_then(change_to_owned),
+            seat_post: seat_post.and_then(change_to_owned),
+            hubs: hubs.and_then(change_to_owned),
+            rims: rims.and_then(change_to_owned),
+            handlebar: handlebar.and_then(change_to_owned),
+            stem: stem.and_then(change_to_owned),
         }
     }
 
@@ -335,6 +545,26 @@ impl BikeUpdate {
             && self.description.is_none()
             && self.thumbnail.is_none()
             && self.hidden.is_none()
+            && self.year.is_none()
+            && self.price.is_none()
+            && self.height.is_none()
+            && self.top_tube_size.is_none()
+            && self.frame.is_none()
+            && self.seat_tube_sizes.is_none()
+            && self.headset.is_none()
+            && self.crankset.is_none()
+            && self.bottom_bracket.is_none()
+            && self.front_derail.is_none()
+            && self.rear_derail.is_none()
+            && self.brakes.is_none()
+            && self.shifters.is_none()
+            && self.brake_levers.is_none()
+            && self.saddle.is_none()
+            && self.seat_post.is_none()
+            && self.hubs.is_none()
+            && self.rims.is_none()
+            && self.handlebar.is_none()
+            && self.stem.is_none()
     }
 
     #[allow(dead_code)]
@@ -348,6 +578,26 @@ impl BikeUpdate {
             view_count: Some(view_count),
             like_count: None,
             hidden: None,
+            year: None,
+            price: None,
+            height: None,
+            top_tube_size: None,
+            frame: None,
+            seat_tube_sizes: None,
+            headset: None,
+            crankset: None,
+            bottom_bracket: None,
+            front_derail: None,
+            rear_derail: None,
+            brakes: None,
+            shifters: None,
+            brake_levers: None,
+            saddle: None,
+            seat_post: None,
+            hubs: None,
+            rims: None,
+            handlebar: None,
+            stem: None,
         }
     }
 
@@ -361,6 +611,26 @@ impl BikeUpdate {
             view_count: None,
             like_count: None,
             hidden: None,
+            year: None,
+            price: None,
+            height: None,
+            top_tube_size: None,
+            frame: None,
+            seat_tube_sizes: None,
+            headset: None,
+            crankset: None,
+            bottom_bracket: None,
+            front_derail: None,
+            rear_derail: None,
+            brakes: None,
+            shifters: None,
+            brake_levers: None,
+            saddle: None,
+            seat_post: None,
+            hubs: None,
+            rims: None,
+            handlebar: None,
+            stem: None,
         }
     }
 
@@ -374,9 +644,30 @@ impl BikeUpdate {
             view_count: None,
             like_count: None,
             hidden: Some(false),
+            year: None,
+            price: None,
+            height: None,
+            top_tube_size: None,
+            frame: None,
+            seat_tube_sizes: None,
+            headset: None,
+            crankset: None,
+            bottom_bracket: None,
+            front_derail: None,
+            rear_derail: None,
+            brakes: None,
+            shifters: None,
+            brake_levers: None,
+            saddle: None,
+            seat_post: None,
+            hubs: None,
+            rims: None,
+            handlebar: None,
+            stem: None,
         }
     }
 }
+
 
 pub struct BikeGetById {
     pub id: Id,

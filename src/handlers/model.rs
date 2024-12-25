@@ -13,7 +13,7 @@ use crate::database::repositories::brand::repository::BrandRepository;
 use crate::database::repositories::model::repository::ModelRepository;
 use crate::error::AppError;
 use crate::forms::model::{ModelCreateForm, ModelEditForm};
-use crate::handlers::helpers::{get_template_name, hard_delete_bike};
+use crate::handlers::helpers::{get_template_name, get_user_from_identity, hard_delete_bike};
 use crate::templates::model::{
     ModelCreateTemplate, ModelDetailTemplate, ModelEditTemplate, ModelTemplate,
 };
@@ -23,15 +23,18 @@ use actix_web::http::header::LOCATION;
 use actix_web::{delete, get, post, web, HttpRequest, HttpResponse};
 use itertools::Itertools;
 use std::collections::HashMap;
+use crate::database::repositories::user::repository::UserRepository;
 
 #[get("/create")]
 pub async fn create_model_page(
     request: HttpRequest,
     identity: Option<Identity>,
     brand_repo: web::Data<BrandRepository>,
+    user_repo: web::Data<UserRepository>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
-    authorized!(identity, request.path());
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;
 
     let brands = brand_repo.read_many(&BrandSearch::new(None)).await?;
 
@@ -50,10 +53,12 @@ pub async fn create_model_page(
 pub async fn create_model(
     request: HttpRequest,
     identity: Option<Identity>,
+    user_repo: web::Data<UserRepository>,
     model_repo: web::Data<ModelRepository>,
     form: web::Form<ModelCreateForm>,
 ) -> Result<HttpResponse, AppError> {
-    let _ = authorized!(identity, request.path());
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;
 
     let _ = model_repo
         .create(&ModelCreate::new(
@@ -73,10 +78,13 @@ pub async fn edit_model_page(
     identity: Option<Identity>,
     model_repo: web::Data<ModelRepository>,
     brand_repo: web::Data<BrandRepository>,
+    user_repo: web::Data<UserRepository>,
     state: web::Data<AppState>,
     path: web::Path<(Id,)>,
 ) -> Result<HttpResponse, AppError> {
-    authorized!(identity, request.path());
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;
+    
     let model_id = path.into_inner().0;
     let model = model_repo.read_one(&GetById::new(model_id)).await?;
     let brands = brand_repo.read_many(&BrandSearch::new(None)).await?;
@@ -98,9 +106,11 @@ pub async fn edit_model(
     request: HttpRequest,
     identity: Option<Identity>,
     model_repo: web::Data<ModelRepository>,
+    user_repo: web::Data<UserRepository>,
     form: web::Form<ModelEditForm>,
 ) -> Result<HttpResponse, AppError> {
-    let _ = authorized!(identity, request.path());
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;
 
     let _ = model_repo
         .update(&ModelUpdate::new(
@@ -191,10 +201,13 @@ pub async fn remove_model(
     request: HttpRequest,
     identity: Option<Identity>,
     model_repo: web::Data<ModelRepository>,
+    user_repo: web::Data<UserRepository>,
     bike_repo: web::Data<BikeRepository>,
     path: web::Path<(Id,)>,
 ) -> Result<HttpResponse, AppError> {
-    let _ = authorized!(identity, request.path());
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;
+    
     let model_id = path.into_inner().0;
 
     let bikes = bike_repo
