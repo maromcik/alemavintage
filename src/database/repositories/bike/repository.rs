@@ -134,7 +134,7 @@ impl BikeRepository {
             SELECT
                 name,
                 model_id,
-                thumbnail = '',
+                '',
                 description,
                 year,
                 price,
