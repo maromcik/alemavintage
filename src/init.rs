@@ -36,7 +36,6 @@ pub fn configure_webapp(pool: &PgPool, app_state: AppState) -> Box<dyn FnOnce(&m
 
     let user_scope = web::scope("user")
         .app_data(web::Data::new(user_repo.clone()))
-        .app_data(web::Data::new(bike_repo.clone()))
         .service(login)
         .service(login_user)
         .service(logout_user)
@@ -48,7 +47,6 @@ pub fn configure_webapp(pool: &PgPool, app_state: AppState) -> Box<dyn FnOnce(&m
         .service(contact_admin_general);
 
     let bike_scope = web::scope("bike")
-        .app_data(web::Data::new(bike_repo.clone()))
         .app_data(web::Data::new(model_repository.clone()))
         .app_data(web::Data::new(brand_repository.clone()))
         .app_data(web::Data::new(tag_repository.clone()))
@@ -70,7 +68,6 @@ pub fn configure_webapp(pool: &PgPool, app_state: AppState) -> Box<dyn FnOnce(&m
         .service(clone_bike);
 
     let brand_scope = web::scope("brand")
-        .app_data(web::Data::new(bike_repo.clone()))
         .app_data(web::Data::new(brand_repository.clone()))
         .app_data(web::Data::new(model_repository.clone()))
         .service(create_brand_page)
@@ -82,7 +79,6 @@ pub fn configure_webapp(pool: &PgPool, app_state: AppState) -> Box<dyn FnOnce(&m
         .service(remove_brand);
 
     let model_scope = web::scope("model")
-        .app_data(web::Data::new(bike_repo.clone()))
         .app_data(web::Data::new(model_repository.clone()))
         .app_data(web::Data::new(brand_repository.clone()))
         .service(create_model_page)
@@ -94,13 +90,14 @@ pub fn configure_webapp(pool: &PgPool, app_state: AppState) -> Box<dyn FnOnce(&m
         .service(remove_model);
 
     let tag_scope = web::scope("tag")
-        .app_data(web::Data::new(bike_repo.clone()))
         .app_data(web::Data::new(tag_repository.clone()))
         .service(get_tag)
         .service(create_tag);
 
     Box::new(move |cfg: &mut ServiceConfig| {
-        cfg.app_data(web::Data::new(user_repo.clone()))
+        cfg
+            .app_data(web::Data::new(user_repo.clone()))
+            .app_data(web::Data::new(bike_repo.clone()))
             .app_data(web::Data::new(app_state))
             .service(bike_scope)
             .service(user_scope)

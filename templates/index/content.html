@@ -3,47 +3,18 @@
 
     <p>Restoring vintage bicycles is more than just a hobby – it’s an art and a tribute to the history of cycling. This process combines craftsmanship, technical expertise, and a love for detail. Bikes from brands like Colnago, among the most iconic in the cycling world, require a particularly sensitive approach to preserve their historical value and aesthetic elegance.</p>
 
-    <h2>1. Project Start: Assessing the Bike’s Condition</h2>
-    <p>The first step in restoration is a thorough inspection of the bicycle. Every detail – from the frame and components to the original paintwork – is analyzed to determine the level of damage and restoration possibilities. For older Colnago models, it’s crucial to identify whether the bike features original components, such as Campagnolo shifters, brakes, or cranks.</p>
+    <!-- Bikes Section -->
 
-    <p><em>This is where a photo of the bike’s original condition, showing worn paint, rust, or damaged components, would be fitting.</em></p>
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">Popular Bicycles</h2>
+        <div class="bg-gray-50 rounded-lg p-6 shadow-md">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {% for bike in bikes %}
+                {% include "bike/card/content.html" %}
+                {% endfor %}
+            </div>
+        </div>
 
-    <h2>2. Dismantling the Bike</h2>
-    <p>After assessment, the bike is dismantled. All components are carefully removed and sorted into parts suitable for restoration, repair, or replacement. Every piece, from the smallest screws to the frame, is meticulously cleaned to remove dirt, grease, and corrosion.</p>
 
-    <p><em>A photo from this stage could show the bike disassembled on a workbench, with its parts organized for restoration.</em></p>
-
-    <h2>3. Restoring the Frame</h2>
-    <p>The frame is the heart of any bike and is often the most prominent feature of older Colnago models. The restoration process includes:</p>
-    <ul>
-        <li>Removing the original paint, if damaged, usually through sandblasting or chemical cleaning.</li>
-        <li>Repairing rust, cracks, or damaged joints.</li>
-        <li>Applying new paint, often in colors and styles that match the original. This includes hand-painted Colnago logos and decals, typical for the model.</li>
-    </ul>
-
-    <p>In some projects, special modifications, such as modernizing the colors, may be chosen but always with respect for the original design.</p>
-
-    <p><em>A photo of the restored frame would beautifully illustrate this phase.</em></p>
-
-    <h2>4. Restoring and Replacing Components</h2>
-    <p>Functional components are carefully cleaned and lubricated. Damaged or worn parts, such as chains, gears, or brakes, are replaced with authentic pieces, ideally from the same era. If that’s not possible, modern equivalents are used, maintaining the bike’s aesthetic integrity.</p>
-
-    <p><em>A photo showing the components before and after restoration would be ideal here.</em></p>
-
-    <h2>5. Assembling the Bike</h2>
-    <p>After restoring the frame and components, the bike is reassembled. This step requires precision to ensure all parts fit perfectly and the bike is functional and safe. This includes adjusting the gears, brakes, and chain tension.</p>
-
-    <p><em>A photo of the assembled bike ready for final adjustments would be perfect.</em></p>
-
-    <h2>6. Final Tuning and Testing</h2>
-    <p>The final step is testing the bike to ensure everything works correctly and that the bike provides the riding comfort that matches its original quality. Every detail, from smooth shifting to optimal tire pressure, is carefully checked.</p>
-
-    <p><em>A photo of the finished bike in all its glory could be the final touch.</em></p>
-
-    <h2>Result: Restored Beauty</h2>
-    <p>A restored Colnago bike is more than just a machine – it’s a piece of history brought back to life. Each reconstructed model is unique, combining meticulous craftsmanship, respect for heritage, and a passion for cycling.</p>
-
-    <p>Restoring vintage bicycles is challenging, but the result is worth it. A restored Colnago shines with its beauty once more and can serve not only as a functional bicycle but also as a decorative piece or a symbol of a passion for cycling.</p>
 
     <img src="/static/images/home-colnago1.jpg" class="mt-4" alt="colnago1">
 
