@@ -22,7 +22,7 @@
         <div class="items-center flex sm:justify-start flex-col space-y-6">
             <h1 class="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-gray-800 text-center ">{{ bike.name }}</h1>
             <div>
-                <h2 class="text-2xl font-semibold text-gray-700 text-center">Značka</h2>
+                <h2 class="text-2xl font-semibold text-gray-700 text-center">Brand</h2>
                 <a class="hover:bg-slate-200 text-gray-800 hover:text-amber-700 font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer"
                    hx-get="/brand/{{ bike.brand_id }}"
                    hx-target="#content-area"
@@ -75,7 +75,7 @@
 
     <!-- Description Section -->
     <div class="mt-10">
-        <h2 class="text-2xl font-bold mb-4">Popis</h2>
+        <h2 class="text-2xl font-bold mb-4">Description</h2>
         <div class="bg-gray-50 p-5 rounded-lg shadow-md text-gray-700">
             {{ bike.description | safe }}
         </div>
@@ -83,7 +83,7 @@
 
     <!-- Images Section -->
     <div class="mt-10">
-        <h2 class="text-2xl font-bold mb-4">Obrázky</h2>
+        <h2 class="text-2xl font-bold mb-4">Images</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for path in bike_images %}
             <a href="{{ path }}">
