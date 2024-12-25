@@ -163,9 +163,9 @@ pub async fn create_bike(
     let session_keys = BikeCreateSessionKeys::new(user.id);
 
     let bike_create = BikeCreate::new(
-        &form.name, 
-        form.model_id, 
-        "", 
+        &form.name,
+        form.model_id,
+        "",
         &form.description,
         &form.year,
         &form.price,
@@ -243,8 +243,8 @@ pub async fn hide_bike(
     path: web::Path<(Id,)>,
 ) -> Result<HttpResponse, AppError> {
     let u = authorized!(identity, request.path());
-    let _ = get_user_from_identity(u, &user_repo).await?;    
-    
+    let _ = get_user_from_identity(u, &user_repo).await?;
+
     let bike_id = path.into_inner().0;
     bike_repo.hide(&GetById::new_with_deleted(bike_id)).await?;
 
@@ -264,7 +264,7 @@ pub async fn remove_bike(
 ) -> Result<HttpResponse, AppError> {
     let u = authorized!(identity, request.path());
     let _ = get_user_from_identity(u, &user_repo).await?;
-    
+
     let bike_id = path.into_inner().0;
 
     hard_delete_bike(&bike_repo, vec![bike_id]).await?;
@@ -284,7 +284,7 @@ pub async fn restore_bike(
 ) -> Result<HttpResponse, AppError> {
     let u = authorized!(identity, request.path());
     let _ = get_user_from_identity(u, &user_repo).await?;
-    
+
     let bike_id = path.into_inner().0;
     bike_repo
         .restore(&GetById::new_with_deleted(bike_id))
@@ -307,7 +307,7 @@ pub async fn edit_bike_page(
 ) -> Result<HttpResponse, AppError> {
     let u = authorized!(identity, request.path());
     let _ = get_user_from_identity(u, &user_repo).await?;
-    
+
     let bike_id = path.into_inner().0;
     let bike: BikeDetail = <BikeRepository as DbReadOne<BikeGetById, BikeDetail>>::read_one(
         bike_repo.as_ref(),
@@ -490,6 +490,27 @@ pub async fn reupload_bike(
     };
 
     let url = format!("/bike/{}", bike_id);
+    Ok(HttpResponse::SeeOther()
+        .insert_header((LOCATION, url))
+        .finish())
+}
+
+#[get("/{id}/clone")]
+pub async fn clone_bike(
+    request: HttpRequest,
+    identity: Option<Identity>,
+    bike_repo: web::Data<BikeRepository>,
+    user_repo: web::Data<UserRepository>,
+    path: web::Path<(Id,)>,
+) -> Result<HttpResponse, AppError> {
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;
+
+    let bike = bike_repo
+        .make_clone(&GetById::new(path.into_inner().0))
+        .await?;
+
+    let url = format!("/bike/{}", bike.id);
     Ok(HttpResponse::SeeOther()
         .insert_header((LOCATION, url))
         .finish())
