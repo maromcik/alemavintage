@@ -895,6 +895,10 @@ code {
   height: 12rem;
 }
 
+.h-96 {
+  height: 24rem;
+}
+
 .min-h-screen {
   min-height: 100vh;
 }
@@ -1628,6 +1632,10 @@ code {
     height: 20rem;
   }
 
+  .sm\:h-96 {
+    height: 24rem;
+  }
+
   .sm\:w-12 {
     width: 3rem;
   }
@@ -1642,6 +1650,10 @@ code {
 
   .sm\:w-96 {
     width: 24rem;
+  }
+
+  .sm\:w-full {
+    width: 100%;
   }
 
   .sm\:grid-cols-2 {
