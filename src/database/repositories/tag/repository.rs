@@ -4,7 +4,7 @@ use crate::database::common::utilities::entity_is_correct;
 use crate::database::common::{
     DbCreate, DbDelete, DbPoolHandler, DbReadMany, DbRepository, EntityById, PoolHandler,
 };
-use crate::database::models::tag::{Tag, TagAssign, TagCreate, TagJoin, TagSearch};
+use crate::database::models::tag::{Tag, TagAssign, TagCreate, TagJoin, TagSearch, TagUnassign};
 use crate::database::models::GetById;
 use sqlx::{Postgres, Transaction};
 
@@ -95,7 +95,6 @@ impl DbCreate<TagCreate, Tag> for TagRepository {
     }
 }
 
-
 impl DbDelete<GetById, Tag> for TagRepository {
     async fn delete(&self, params: &GetById) -> DbResultMultiple<Tag> {
         let mut transaction = self.pool_handler.pool.begin().await?;
@@ -121,24 +120,22 @@ impl DbDelete<GetById, Tag> for TagRepository {
     }
 }
 
-
 impl DbCreate<TagAssign, ()> for TagRepository {
     async fn create(&self, params: &TagAssign) -> DbResultSingle<()> {
         let mut transaction = self.pool_handler.pool.begin().await?;
-        sqlx::query_as!(
-            Tag,
-            r#"
-            DELETE FROM "BikeTag"
-            WHERE bike_id = $1
-            "#,
-            params.bike_id,
-        )
-            .fetch_all(transaction.as_mut())
-            .await?;
+        // sqlx::query_as!(
+        //     Tag,
+        //     r#"
+        //     DELETE FROM "BikeTag"
+        //     WHERE bike_id = $1
+        //     "#,
+        //     params.bike_id,
+        // )
+        //     .fetch_all(transaction.as_mut())
+        //     .await?;
 
         for tag in &params.tags_ids {
-            sqlx::query_as!(
-                Tag,
+            sqlx::query!(
                 r#"
             INSERT INTO "BikeTag" (bike_id, tag_id)
             VALUES ($1, $2)
@@ -146,10 +143,31 @@ impl DbCreate<TagAssign, ()> for TagRepository {
                 params.bike_id,
                 tag
             )
-                .fetch_one(transaction.as_mut())
-                .await?;
+            .fetch_one(transaction.as_mut())
+            .await?;
         }
         transaction.commit().await?;
         Ok(())
+    }
+}
+
+impl DbDelete<TagUnassign, ()> for TagRepository {
+    async fn delete(&self, params: &TagUnassign) -> DbResultMultiple<()> {
+        let mut transaction = self.pool_handler.pool.begin().await?;
+
+        sqlx::query!(
+            r#"
+                DELETE FROM "BikeTag"
+                WHERE bike_id = $1 AND tag_id = $2
+               "#,
+            params.bike_id,
+            params.tag_id
+        )
+        .fetch_all(transaction.as_mut())
+        .await?;
+
+        transaction.commit().await?;
+
+        Ok(Vec::default())
     }
 }
