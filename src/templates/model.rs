@@ -1,4 +1,4 @@
-use crate::database::models::bike::{BikeDetail, BikeDisplay};
+use crate::database::models::bike::BikeDisplay;
 use crate::database::models::brand::Brand;
 use crate::database::models::model::{ModelDetail, ModelDisplay};
 use serde::Serialize;

@@ -107,6 +107,7 @@ pub fn configure_webapp(pool: &PgPool, app_state: AppState) -> Box<dyn FnOnce(&m
             .service(index)
             .service(about)
             .service(ActixFiles::new("/media", "./media").prefer_utf8(true))
-            .service(ActixFiles::new("/static", "./static").prefer_utf8(true));
+            .service(ActixFiles::new("/static", "./static").prefer_utf8(true))
+            .service(ActixFiles::new("/", "./webroot").prefer_utf8(true));
     })
 }

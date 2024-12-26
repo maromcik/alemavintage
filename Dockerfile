@@ -19,6 +19,7 @@ RUN cargo install --path .
 COPY ./static ./static
 COPY ./templates ./templates
 COPY ./media ./media
+COPY ./webroot ./webroot
 
 EXPOSE 8000
 
