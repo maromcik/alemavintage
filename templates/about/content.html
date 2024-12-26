@@ -1,8 +1,17 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-8">
     <!-- Header Section -->
-    We are small family company specialising in restoring vintage bikes.
+    <header class="py-8 text-center">
+        <h1 class="text-3xl font-bold text-gray-800">About Us</h1>
+        <p class="mt-4 text-gray-600">We are a small family-run business specializing in restoring and selling vintage bikes. Every bike we sell tells a story and gets a new life, thanks to our passion and craftsmanship.</p>
+    </header>
 
+    <!-- Our Story Section -->
+    <section class="my-10">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Our Story</h2>
+        <p class="text-gray-600">Based in Slovakia, our family workshop is where passion meets precision. My dad, an avid bike enthusiast and craftsman, has been restoring bicycles for years. Together, we breathe new life into timeless brands like <strong>Colnago</strong>, <strong>Hetchins</strong>, <strong>Bianchi</strong>, and <strong>Peugeot</strong>. Every vintage bike we restore combines history, artistry, and functionality. We take pride in preserving cycling heritage and sharing it with enthusiasts worldwide.</p>
+    </section>
 
+    <!-- Contact Form Section -->
     <div id="bike-contact" class="container mx-auto p-6 max-w-5xl">
         <form hx-post="/user/contact/about" hx-target="#success-area" hx-target-error="#error-area" class="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
             <h2 class="block text-gray-300 text-xl font-bold mb-2 text-center">Contact Us</h2>
@@ -10,4 +19,17 @@
         </form>
     </div>
 
+    <!-- Contact Information Section -->
+    <section class="my-10">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Get in Touch</h2>
+        <p class="text-gray-600">Feel free to reach out or visit us at our workshop. We’d love to hear from you!</p>
+        <div class="bg-gray-100 p-6 rounded-md shadow-md mt-4">
+            <ul class="list-none text-gray-700">
+                <li><strong>Address:</strong> Tehelná 87, Nové Mesto nad Váhom, Slovakia</li>
+                <li><strong>Phone:</strong> +421 </li>
+                <li><strong>Email:</strong> nabytkovavyroba@gmail.com</li>
+                <li><strong>Hours:</strong> Mon-Fri: 8:00 AM - 5:00 PM, Sat: 8:00 AM - 12:00 PM</li>
+            </ul>
+        </div>
+    </section>
 </div>

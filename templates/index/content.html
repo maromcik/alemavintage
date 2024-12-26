@@ -1,6 +1,6 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-8">
 
-    <h1 class="text-3xl font-bold text-gray-800 mb-4">Exclusive Vintage Bikes</h1>
+    <h1 class="text-3xl font-bold text-gray-800 mb-4">Selling Exclusive Vintage Bikes</h1>
     <p>Restoring vintage bicycles is more than just a hobby – it’s an art and a tribute to the history of cycling. This
         process combines craftsmanship, technical expertise, and a love for detail. Bikes from brands like Colnago,
         among the most iconic in the cycling world, require a particularly sensitive approach to preserve their
@@ -18,80 +18,102 @@
         <a href="/bike" class="mb-2"> Explore all bikes here</a>
     </div>
 
-    <h1 class="text-3xl font-bold text-gray-800 mb-2">Our Bicycles</h1>
+    <div class="mt-10">
+        {% set paths = ["/static/images/home-colnago1.jpg", "/static/images/home-colnago2.jpg",
+        "/static/images/home-colnago3.jpg", "/static/images/home-colnago4.jpg"] %}
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Our Bicycles</h1>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+            {% for path in paths %}
+            <a href="{{ path }}">
+                <div class="w-full h-80 rounded-lg overflow-hidden shadow-md">
+                    <img class="responsive-image object-cover w-full h-full" src="{{ path }}" alt="Bike Image">
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
 
-    <img src="/static/images/home-colnago1.jpg" class="mt-4" alt="colnago1">
 
-    <img src="/static/images/home-colnago2.jpg" class="mt-4" alt="colnago2">
+    <div class="mt-10">
+        <h1>Historical Bicycles and the Legend of Colnago</h1>
 
-    <img src="/static/images/home-colnago3.jpg" class="mt-4" alt="colnago3">
+        <h2>Heritage and Elegance</h2>
+        <p>Historical bicycles are more than means of transportation – they reflect engineering skill, cultural shifts,
+            and
+            artistic value. These machines, developed since the early 19th century, carry the stories of their time on
+            their
+            frames. From simple wooden bikes with solid wheels to sophisticated steel frames of the 70s and 80s – every
+            era
+            brought advancements that shaped cycling.</p>
 
-    <img src="/static/images/home-colnago4.jpg" class="mt-4" alt="colnago4">
+        <p>In the 20th century, especially between 1970 and 1990, cycling became not just a sport but a lifestyle. Bikes
+            from this period are valued for their combination of craftsmanship and functionality. Steel frames,
+            hand-brazed
+            joints, unique geometries, and innovative components turned vintage bicycles into treasures that still hold
+            high
+            value today.</p>
 
-    <h1>Historical Bicycles and the Legend of Colnago</h1>
+        <p>Bikes from this era were used not only for racing but also for recreational cycling. Brands like Bianchi,
+            Peugeot, and Colnago were industry leaders, each bringing something unique. The most notable was the Italian
+            brand Colnago, whose bold innovations and aesthetic sense influenced the entire cycling world.</p>
 
-    <h2>Heritage and Elegance</h2>
-    <p>Historical bicycles are more than means of transportation – they reflect engineering skill, cultural shifts, and
-        artistic value. These machines, developed since the early 19th century, carry the stories of their time on their
-        frames. From simple wooden bikes with solid wheels to sophisticated steel frames of the 70s and 80s – every era
-        brought advancements that shaped cycling.</p>
+        <h2>About the Colnago Brand</h2>
+        <p>Founded in 1954 by Ernesto Colnago in Cambiago, Colnago is an icon of Italian design and innovation. The
+            brand is
+            renowned for combining traditional craftsmanship with cutting-edge technology, creating bikes that are both
+            functional and beautiful.</p>
 
-    <p>In the 20th century, especially between 1970 and 1990, cycling became not just a sport but a lifestyle. Bikes
-        from this period are valued for their combination of craftsmanship and functionality. Steel frames, hand-brazed
-        joints, unique geometries, and innovative components turned vintage bicycles into treasures that still hold high
-        value today.</p>
+        <p>Ernesto Colnago began his career as a mechanic and quickly realized that bicycles could be not just tools for
+            winning but also works of art. His goal was to create bikes that pushed performance boundaries while
+            maintaining
+            timeless aesthetics. This vision led to the creation of one of the most respected brands in cycling.</p>
 
-    <p>Bikes from this era were used not only for racing but also for recreational cycling. Brands like Bianchi,
-        Peugeot, and Colnago were industry leaders, each bringing something unique. The most notable was the Italian
-        brand Colnago, whose bold innovations and aesthetic sense influenced the entire cycling world.</p>
+        <h3>Technological Innovations</h3>
+        <p>Colnago is known for its pioneering technologies. In the 1980s, the brand introduced the use of carbon fiber,
+            revolutionizing bicycle manufacturing. The first carbon frame model, the Colnago C40, became legendary in
+            classic races like Paris-Roubaix.</p>
 
-    <h2>About the Colnago Brand</h2>
-    <p>Founded in 1954 by Ernesto Colnago in Cambiago, Colnago is an icon of Italian design and innovation. The brand is
-        renowned for combining traditional craftsmanship with cutting-edge technology, creating bikes that are both
-        functional and beautiful.</p>
+        <p>The same innovative approach can be seen in steel models like the Colnago Master. This bike featured unique
+            Gilco
+            Design tubing and the Precisa straight fork, improving stiffness and handling. Additionally, Colnago
+            experimented with aerodynamic shapes, internal cable routing, and unique braking systems.</p>
 
-    <p>Ernesto Colnago began his career as a mechanic and quickly realized that bicycles could be not just tools for
-        winning but also works of art. His goal was to create bikes that pushed performance boundaries while maintaining
-        timeless aesthetics. This vision led to the creation of one of the most respected brands in cycling.</p>
+        <h3>Success in Professional Cycling</h3>
+        <p>Colnago has been an integral part of the professional peloton. Bikes from this brand helped riders like Eddy
+            Merckx, Giuseppe Saronni, and Johan Museeuw achieve victories in the world’s most prestigious races,
+            including
+            the Tour de France and Giro d’Italia.</p>
 
-    <h3>Technological Innovations</h3>
-    <p>Colnago is known for its pioneering technologies. In the 1980s, the brand introduced the use of carbon fiber,
-        revolutionizing bicycle manufacturing. The first carbon frame model, the Colnago C40, became legendary in
-        classic races like Paris-Roubaix.</p>
+        <p>Models like the Colnago Super and Colnago Mexico were favorites among racers for their lightness and agility.
+            Colnago, however, never rested on its laurels, continuously innovating to meet the demands of modern
+            racing.</p>
 
-    <p>The same innovative approach can be seen in steel models like the Colnago Master. This bike featured unique Gilco
-        Design tubing and the Precisa straight fork, improving stiffness and handling. Additionally, Colnago
-        experimented with aerodynamic shapes, internal cable routing, and unique braking systems.</p>
+        <h3>Iconic Models</h3>
+        <p>Among the most famous Colnago models are:</p>
+        <ul>
+            <li><strong>Colnago Super</strong>: A classic from the 70s that defined racing bicycles for over a decade.
+            </li>
+            <li><strong>Colnago Mexico</strong>: Designed in honor of Eddy Merckx and his hour record, it was lighter
+                and
+                stiffer than its predecessors.
+            </li>
+            <li><strong>Colnago Master</strong>: The pinnacle of steel technology, with innovative tubing and a straight
+                fork, ideal for professional races.
+            </li>
+        </ul>
 
-    <h3>Success in Professional Cycling</h3>
-    <p>Colnago has been an integral part of the professional peloton. Bikes from this brand helped riders like Eddy
-        Merckx, Giuseppe Saronni, and Johan Museeuw achieve victories in the world’s most prestigious races, including
-        the Tour de France and Giro d’Italia.</p>
+        <h3>Legacy and Future</h3>
+        <p>Colnago is more than just a bicycle brand – it’s a symbol of passion, craftsmanship, and engineering
+            precision.
+            Every bike is the result of dozens of hours of handwork and embodies the best of Italian design.</p>
 
-    <p>Models like the Colnago Super and Colnago Mexico were favorites among racers for their lightness and agility.
-        Colnago, however, never rested on its laurels, continuously innovating to meet the demands of modern racing.</p>
-
-    <h3>Iconic Models</h3>
-    <p>Among the most famous Colnago models are:</p>
-    <ul>
-        <li><strong>Colnago Super</strong>: A classic from the 70s that defined racing bicycles for over a decade.</li>
-        <li><strong>Colnago Mexico</strong>: Designed in honor of Eddy Merckx and his hour record, it was lighter and
-            stiffer than its predecessors.
-        </li>
-        <li><strong>Colnago Master</strong>: The pinnacle of steel technology, with innovative tubing and a straight
-            fork, ideal for professional races.
-        </li>
-    </ul>
-
-    <h3>Legacy and Future</h3>
-    <p>Colnago is more than just a bicycle brand – it’s a symbol of passion, craftsmanship, and engineering precision.
-        Every bike is the result of dozens of hours of handwork and embodies the best of Italian design.</p>
-
-    <p>Even today, more than 60 years after its founding, Colnago remains at the forefront of the cycling world. Their
-        modern models, like the Colnago C68, combine advanced technologies with heritage, appealing to a new generation
-        of cyclists. And for those seeking a piece of history, older Colnago models are still highly sought after by
-        collectors and classic bike enthusiasts.</p>
-
+        <p>Even today, more than 60 years after its founding, Colnago remains at the forefront of the cycling world.
+            Their
+            modern models, like the Colnago C68, combine advanced technologies with heritage, appealing to a new
+            generation
+            of cyclists. And for those seeking a piece of history, older Colnago models are still highly sought after by
+            collectors and classic bike enthusiasts.</p>
+    </div>
     <footer>
         <p>
             Discover more about Colnago bicycles by visiting their
