@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: alemavintage-db-lb-rw
+  annotations:
+    metallb.universe.tf/address-pool: privmuni
+    metallb.universe.tf/allow-shared-ip: "alemavintage-db-lb-058ea9a2-0d28-4377-b6e1-34c4f06dd41e"
+    external-dns.alpha.kubernetes.io/hostname: alemavintage.postgres.dyn.cloud.e-infra.cz
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 5432
+    targetPort: 5432
+  selector:
+    cnpg.io/cluster: alemavintage-db
+    role: primary
+  loadBalancerSourceRanges:
+  - 147.251.0.0/16
+  - 100.64.0.0/10
+  - 172.16.0.0/12
+  - 192.168.0.0/16
+  - 10.0.0.0/8
