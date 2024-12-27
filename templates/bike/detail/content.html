@@ -199,12 +199,12 @@
     <div class="mt-10">
         <h2 class="text-2xl font-bold mb-4">Images</h2>
         <div class="pswp-gallery" id="my-gallery">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
 
             {% for image in bike_images %}
             <a href="{{ image.path }}" data-pswp-width="{{ image.width }}" data-pswp-height="{{ image.height }}" target="_blank">
-                <div class="w-full h-80 rounded-lg overflow-hidden shadow-md">
-                    <img class="responsive-image object-cover w-full h-full" src="{{ image.path }}" alt="Bike Image">
+                <div class=" w-full h-32 rounded-lg overflow-hidden shadow-md">
+                    <img class="object-cover w-full h-32" src="{{ image.path }}" alt="Bike Image">
                 </div>
             </a>
             {% endfor %}
