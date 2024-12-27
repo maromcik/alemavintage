@@ -1,0 +1,196 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            INSERT INTO \"Bike\" (\n                name,\n                model_id,\n                thumbnail,\n                description,\n                year,\n                price,\n                frame,\n                seat_tube_sizes,\n                top_tube_size,\n                height,\n                headset,\n                crankset,\n                bottom_bracket,\n                front_derail,\n                rear_derail,\n                brakes,\n                shifters,\n                brake_levers,\n                saddle,\n                seat_post,\n                hubs,\n                rims,\n                handlebar,\n                stem\n            )\n            SELECT\n                name,\n                model_id,\n                '',\n                description,\n                year,\n                price,\n                frame,\n                seat_tube_sizes,\n                top_tube_size,\n                height,\n                headset,\n                crankset,\n                bottom_bracket,\n                front_derail,\n                rear_derail,\n                brakes,\n                shifters,\n                brake_levers,\n                saddle,\n                seat_post,\n                hubs,\n                rims,\n                handlebar,\n                stem\n            FROM \"Bike\"\n            WHERE id=$1\n            RETURNING *\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 1,
+        "name": "model_id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 2,
+        "name": "name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "thumbnail",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "description",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "view_count",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 6,
+        "name": "like_count",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 7,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 8,
+        "name": "edited_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 9,
+        "name": "hidden",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 10,
+        "name": "year",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 11,
+        "name": "price",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 12,
+        "name": "frame",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 13,
+        "name": "seat_tube_sizes",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 14,
+        "name": "top_tube_size",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 15,
+        "name": "height",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 16,
+        "name": "headset",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 17,
+        "name": "crankset",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 18,
+        "name": "bottom_bracket",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 19,
+        "name": "front_derail",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 20,
+        "name": "rear_derail",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 21,
+        "name": "brakes",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 22,
+        "name": "shifters",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 23,
+        "name": "brake_levers",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 24,
+        "name": "saddle",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 25,
+        "name": "seat_post",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 26,
+        "name": "hubs",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 27,
+        "name": "rims",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 28,
+        "name": "handlebar",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 29,
+        "name": "stem",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "de2769d063a899b251668a02d6c1370f61008dd465206b1fb3d1d052678c0182"
+}
