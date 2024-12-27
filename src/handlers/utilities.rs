@@ -6,20 +6,10 @@ use crate::error::{AppError, AppErrorKind};
 use actix_multipart::form::tempfile::TempFile;
 use actix_web::HttpRequest;
 
+use crate::database::models::{AppImage, ImageDimensions};
 use crate::MIN_PASS_LEN;
 use image::metadata::Orientation;
 use uuid::Uuid;
-
-pub struct ImageDimensions {
-    pub width: u32,
-    pub height: u32,
-}
-
-impl ImageDimensions {
-    pub fn new(width: u32, height: u32) -> Self {
-        Self { width, height }
-    }
-}
 
 pub fn validate_file(
     file: &TempFile,
@@ -59,59 +49,51 @@ pub fn validate_file(
     Ok(file_path)
 }
 
-pub fn save_file(file: TempFile, path: &str, dimensions: &ImageDimensions) -> Result<(), AppError> {
+pub fn save_file(
+    file: TempFile,
+    path: &str,
+    dimensions: &ImageDimensions,
+) -> Result<AppImage, AppError> {
     let original_path = file.file_name.unwrap_or("NO FILE PROVIDED".to_string());
     log::info!("saving file to .{path}");
     let mut buffer = Vec::default();
-    file
-        .file
+    file.file
         .into_file()
         .read_to_end(&mut buffer)
         .map_err(|err| {
             AppError::new(
                 AppErrorKind::FileError,
-                format!(
-                    "File '{original_path}' could not be read: {}",
-                    err.to_string()
-                )
-                .as_str(),
+                format!("File '{original_path}' could not be read: {}", err).as_str(),
             )
         })?;
-    let metadata = Metadata::new_from_buffer(&buffer)
-        .map_err(|err| {
+    let metadata = Metadata::new_from_buffer(&buffer).map_err(|err| {
         AppError::new(
             AppErrorKind::FileError,
             format!(
                 "Could not extract metadata from file '{original_path}': {}",
-                err.to_string()
+                err
             )
             .as_str(),
         )
     })?;
     let orientation = metadata.get_orientation();
 
-    let img = image::load_from_memory(&buffer)
-        .map_err(|err| {
-            AppError::new(
-                AppErrorKind::FileError,
-                format!(
-                    "File '{original_path}' could not be loaded: {}",
-                    err.to_string()
-                )
-                    .as_str(),
+    let img = image::load_from_memory(&buffer).map_err(|err| {
+        AppError::new(
+            AppErrorKind::FileError,
+            format!("File '{original_path}' could not be loaded: {}", err).as_str(),
+        )
+    })?;
+    let format = image::guess_format(&buffer).map_err(|err| {
+        AppError::new(
+            AppErrorKind::FileError,
+            format!(
+                "File format of '{original_path}' could not be determined: {}",
+                err
             )
-        })?;
-    let format = image::guess_format(&buffer)
-        .map_err(|err| {
-            AppError::new(
-                AppErrorKind::FileError,
-                format!(
-                    "File format of '{original_path}' could not be determined: {}",
-                    err.to_string()
-                )
-                    .as_str(),
-            )
-        })?;
+            .as_str(),
+        )
+    })?;
     let mut resized_img = img.resize(
         dimensions.width,
         dimensions.height,
@@ -120,11 +102,15 @@ pub fn save_file(file: TempFile, path: &str, dimensions: &ImageDimensions) -> Re
 
     resized_img.apply_orientation(map_orientation(orientation));
 
-    let path = format!(".{path}");
-    let mut output_file = BufWriter::new(File::create(&path)?);
+    let fs_path = format!(".{path}");
+    let mut output_file = BufWriter::new(File::create(&fs_path)?);
     resized_img.write_to(&mut output_file, format)?;
 
-    Ok(())
+    Ok(AppImage::new(
+        path,
+        resized_img.width() as i32,
+        resized_img.height() as i32,
+    ))
 }
 
 fn map_orientation(orientation: rexiv2::Orientation) -> Orientation {

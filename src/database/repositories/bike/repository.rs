@@ -520,7 +520,9 @@ impl DbReadMany<BikeImageSearch, BikeImage> for BikeRepository {
             SELECT
                 image.id,
                 image.bike_id,
-                image.path
+                image.path,
+                image.width,
+                image.height
             FROM
                 "BikeImage" AS image
             WHERE
@@ -543,16 +545,18 @@ impl DbCreate<BikeImageCreate, Vec<BikeImage>> for BikeRepository {
     async fn create(&self, data: &BikeImageCreate) -> DbResultSingle<Vec<BikeImage>> {
         let mut transaction = self.pool_handler.pool.begin().await?;
         let mut images = Vec::default();
-        for path in &data.paths {
+        for image in &data.bike_images {
             let bike_image = sqlx::query_as!(
                 BikeImage,
                 r#"
-                    INSERT INTO "BikeImage" (bike_id, path)
-                    VALUES ($1, $2)
+                    INSERT INTO "BikeImage" (bike_id, path, width, height)
+                    VALUES ($1, $2, $3, $4)
                     RETURNING *
                 "#,
                 data.bike_id,
-                path
+                image.path,
+                image.width,
+                image.height,
             )
             .fetch_one(transaction.as_mut())
             .await?;

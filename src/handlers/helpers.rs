@@ -4,13 +4,13 @@ use crate::database::models::bike::{
     BikeMetadataForm, BikeUpdate,
 };
 use crate::database::models::user::{User, UserSearch};
-use crate::database::models::{GetById, Id};
+use crate::database::models::{AppImage, GetById, Id, ImageDimensions};
 use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::error::{AppError, AppErrorKind};
 use crate::forms::bike::BikeUploadForm;
 use crate::forms::user::EmailForm;
-use crate::handlers::utilities::{is_htmx, remove_file, save_file, validate_file, ImageDimensions};
+use crate::handlers::utilities::{is_htmx, remove_file, save_file, validate_file};
 use crate::utils::AppState;
 use crate::{IMAGE_SIZE, THUMBNAIL_SIZE};
 use actix_identity::Identity;
@@ -40,7 +40,7 @@ pub async fn hard_delete_bike(
         hard_delete_bike_images(bike_repo, bike_id).await?;
 
         let bikes = <BikeRepository as DbDelete<GetById, Bike>>::delete(
-            &bike_repo,
+            bike_repo,
             &GetById::new_with_deleted(bike_id),
         )
         .await?;
@@ -124,15 +124,17 @@ pub async fn save_bike_images_helper(
         .into_par_iter()
         .map(|photo| {
             let path = validate_file(&photo, Uuid::new_v4(), "image", "bike")?;
-            if let Err(err) = save_file(photo, &path, &image_dimensions) {
-                remove_file(&path)?;
-                return Err(err);
+            match save_file(photo, &path, &image_dimensions) {
+                Ok(bike_image) => Ok(bike_image),
+                Err(err) => {
+                    remove_file(&path)?;
+                    Err(err)
+                }
             }
-            Ok(path)
         })
-        .collect::<Vec<Result<String, AppError>>>();
+        .collect::<Vec<Result<AppImage, AppError>>>();
     
-    let (correct_paths, errors): (Vec<String>, Vec<String>) = paths.into_iter()
+    let (bike_images, errors): (Vec<AppImage>, Vec<String>) = paths.into_iter()
         .fold((vec![], vec![]), |
             (mut correct, mut errored), path| {
             match path {
@@ -144,7 +146,7 @@ pub async fn save_bike_images_helper(
     
     
     bike_repo
-        .create(&BikeImageCreate::new(bike_id, correct_paths))
+        .create(&BikeImageCreate::new(bike_id, bike_images))
         .await?;
 
     if errors.is_empty() { Ok(()) } else { Err(AppError::new(AppErrorKind::FileError, &errors.join(", "))) }

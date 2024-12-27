@@ -74,6 +74,8 @@ CREATE TABLE IF NOT EXISTS "BikeImage"
     ---------------------------------------------
     bike_id bigserial NOT NULL,
     path    text      NOT NULL,
+    width   int       NOT NULL,
+    height  int       NOT NULL,
 
     FOREIGN KEY (bike_id) REFERENCES "Bike" (id) ON DELETE CASCADE
 );

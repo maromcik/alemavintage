@@ -89,12 +89,9 @@ pub async fn get_bike_detail(
     )
     .await?;
 
-    let bike_images: Vec<String> = bike_repo
+    let bike_images = bike_repo
         .read_many(&BikeImageSearch::new(Some(bike.id)))
-        .await?
-        .into_iter()
-        .map(|image| image.path)
-        .collect();
+        .await?;
 
     let tags: Vec<TagJoin> = tag_repo
         .read_many(&TagSearch::new(None, None, Some(&bike.id)))

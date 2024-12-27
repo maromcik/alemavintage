@@ -38,3 +38,30 @@ impl EntityById for GetById {
         self.fetch_deleted
     }
 }
+
+pub struct AppImage {
+    pub path: String,
+    pub width: i32,
+    pub height: i32,
+}
+
+impl AppImage {
+    pub fn new(path: &str, width: i32, height: i32) -> Self {
+        Self {
+            path: path.to_owned(),
+            width,
+            height,
+        }
+    }
+}
+
+pub struct ImageDimensions {
+    pub width: u32,
+    pub height: u32,
+}
+
+impl ImageDimensions {
+    pub fn new(width: u32, height: u32) -> Self {
+        Self { width, height }
+    }
+}

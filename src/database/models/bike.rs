@@ -2,7 +2,7 @@ use crate::database::common::query_parameters::{
     DbColumn, DbOrder, DbOrderColumn, DbQueryParams, DbTable,
 };
 use crate::database::common::EntityById;
-use crate::database::models::Id;
+use crate::database::models::{Id, AppImage};
 use chrono::{DateTime, Utc};
 use serde::Serialize;
 
@@ -397,11 +397,13 @@ pub struct BikeMetadataForm {
     pub bike_id: Id,
 }
 
-#[derive(sqlx::FromRow, Debug, Clone, PartialEq)]
+#[derive(sqlx::FromRow, Debug, Clone, PartialEq, Serialize)]
 pub struct BikeImage {
     pub id: Id,
     pub bike_id: Id,
     pub path: String,
+    pub width: i32,
+    pub height: i32,
 }
 
 impl EntityById for BikeImage {
@@ -450,14 +452,16 @@ impl BikeImageSearch {
     }
 }
 
+
+
 pub struct BikeImageCreate {
     pub bike_id: Id,
-    pub paths: Vec<String>,
+    pub bike_images: Vec<AppImage>,
 }
 
 impl BikeImageCreate {
-    pub fn new(bike_id: Id, paths: Vec<String>) -> Self {
-        Self { bike_id, paths }
+    pub fn new(bike_id: Id, paths: Vec<AppImage>) -> Self {
+        Self { bike_id, bike_images: paths }
     }
 }
 
