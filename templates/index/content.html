@@ -41,6 +41,7 @@
     <section class="mb-12">
         {% set paths = ["/static/images/home-colnago1.jpg", "/static/images/home-colnago2.jpg",
         "/static/images/home-colnago3.jpg", "/static/images/home-colnago4.jpg"] %}
+        <div class="bg-white rounded-lg p-6 shadow-md">
         <h2 class="text-3xl font-bold text-gray-800 mb-4">Our Bicycles</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
             {% for path in paths %}
@@ -50,6 +51,7 @@
                 </div>
             </a>
             {% endfor %}
+        </div>
         </div>
     </section>
 
