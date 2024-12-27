@@ -173,7 +173,7 @@ pub async fn create_bike(
         "",
         &form.description,
         &form.year,
-        &form.price,
+        &((form.price * 100_f64).round() as i32),
         &form.height,
         &form.top_tube_size,
         &form.frame,
@@ -326,7 +326,7 @@ pub async fn edit_bike_page(
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(BikeEditTemplate {
-        bike,
+        bike: BikeDisplay::from(bike),
         models,
         logged_in: true,
     })?;
@@ -355,7 +355,7 @@ pub async fn edit_bike(
         None,
         None,
         Some(&form.year),
-        Some(&form.price),
+        Some(&((form.price * 100_f64).round() as i32)),
         Some(&form.height),
         Some(&form.top_tube_size),
         Some(&form.frame),

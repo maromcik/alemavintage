@@ -113,7 +113,7 @@ pub struct BikeDisplay {
     pub hidden: bool,
 
     pub year: i32,
-    pub price: f64,
+    pub price: String,
     pub height: i32,
     pub top_tube_size: i32,
     pub frame: String,
@@ -150,7 +150,7 @@ impl From<BikeDetail> for BikeDisplay {
             description: markdown::to_html(&value.description),
             hidden: value.hidden,
             year: value.year,
-            price: f64::from(value.price) / 100_f64,
+            price: format!("{:.2}", value.price as f64 / 100_f64),
             height: value.height,
             top_tube_size: value.top_tube_size,
             frame: value.frame,
