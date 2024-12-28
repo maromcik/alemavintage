@@ -3,11 +3,13 @@
     <section class="text-center py-12 mb-3">
         <h1 class="text-5xl font-extrabold text-gray-800 mb-4">Selling Exclusive Vintage Bikes</h1>
         <p class="text-lg text-gray-700">
-            Restoring vintage bicycles is an art that combines craftsmanship, history, and passion. Our collection features bikes from iconic brands like Colnago, Bianchi, and Peugeot, preserving their historical value and timeless elegance.
+            Restoring vintage bicycles is an art that combines craftsmanship, history, and passion. Our collection
+            features bikes from iconic brands like Colnago, Bianchi, and Peugeot, preserving their historical value and
+            timeless elegance.
         </p>
         <a href="/bike">
-            <button class="bg-amber-600 hover:bg-amber-700 text-white mt-6 font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline">
-            Explore our bikes
+            <button class="bg-amber-500 hover:bg-amber-600 text-white mt-6 font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline">
+                Explore Our Bikes
             </button>
         </a>
     </section>
@@ -16,10 +18,15 @@
     <section class="mb-12">
         <h2 class="text-3xl font-bold text-gray-800 mb-4">Why Vintage Bikes?</h2>
         <p class="text-gray-700 leading-relaxed">
-            Vintage bicycles are more than just a mode of transport—they are a legacy of engineering and design. Bikes from the 70s and 80s are valued for their combination of craftsmanship and functionality, making them timeless treasures.
+            Vintage bicycles are more than just a mode of transport—they are a legacy of engineering and design. Bikes
+            from the 70s and 80s are valued for their combination of craftsmanship and functionality, making them
+            timeless treasures.
         </p>
         <p class="text-gray-700 leading-relaxed mt-4">
-            Our bikes honor this tradition, offering a unique cycling experience that connects you with history. Check out our limited collection on <a href="https://www.ebay.com/str/alemavintagebike" class="text-amber-600 hover:text-amber-700 underline">Ebay</a> or explore more here.
+            Our bikes honor this tradition, offering a unique cycling experience that connects you with history. Check
+            out our limited collection on <a href="https://www.ebay.com/str/alemavintagebike"
+                                             class="text-amber-500 hover:text-amber-600 underline">eBay</a> or explore
+            more here.
         </p>
     </section>
 
@@ -43,16 +50,18 @@
         {% set paths = ["/static/images/home-colnago1.jpg", "/static/images/home-colnago2.jpg",
         "/static/images/home-colnago3.jpg", "/static/images/home-colnago4.jpg"] %}
         <div class="bg-white rounded-lg p-6 shadow-md">
-        <h2 class="text-3xl font-bold text-gray-800 mb-4">Our Bikes</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-            {% for path in paths %}
-            <a href="{{ path }}">
-                <div class="w-full h-80 rounded-lg overflow-hidden shadow-md hover:scale-105 transition-transform">
-                    <img class="object-cover w-full h-full" src="{{ path }}" alt="Bike Image">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">Our Bikes</h2>
+            <div class="pswp-gallery" id="bike-detail-gallery">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+                    {% for path in paths %}
+                    <a href="{{ path }}">
+                        <div class="w-full h-80 rounded-lg overflow-hidden shadow-md hover:scale-105 transition-transform">
+                            <img class="object-cover w-full h-full" src="{{ path }}" alt="Bike Image">
+                        </div>
+                    </a>
+                    {% endfor %}
                 </div>
-            </a>
-            {% endfor %}
-        </div>
+            </div>
         </div>
     </section>
 
@@ -81,9 +90,21 @@
             Peugeot, and Colnago were industry leaders, each bringing something unique. The most notable was the Italian
             brand Colnago, whose bold innovations and aesthetic sense influenced the entire cycling world.</p>
         <p class="mt-4 inline-block">
-            Learn more about Colnago on their <a href="https://www.colnago.com/" target="_blank" class="text-amber-600 hover:text-amber-700 underline">website</a>
+            Learn more about Colnago on their <a href="https://www.colnago.com/" target="_blank"
+                                                 class="text-blue-600 underline">website</a>
         </p>
-        <p class="mt-4 inline-block">or on the <a href="https://www.bikeradar.com/" target="_blank" class="text-amber-600 hover:text-amber-700 underline">BikeRadar</a></p>.
+        <p class="mt-4 inline-block">or on the <a href="https://www.bikeradar.com/" target="_blank"
+                                                  class="text-blue-600 underline">BikeRadar</a></p>.
     </section>
-
 </div>
+
+<script type='module'>
+    import PhotoSwipeLightbox from '/static/photoswipe/photoswipe-lightbox.esm.js';
+
+    const lightbox = new PhotoSwipeLightbox({
+        gallery: '#index-our-detail',
+        children: 'a',
+        pswpModule: () => import('/static/photoswipe/photoswipe.esm.js')
+    });
+    lightbox.init();
+</script>
