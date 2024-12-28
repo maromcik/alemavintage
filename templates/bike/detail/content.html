@@ -1,7 +1,5 @@
-<a href="/bike" class="absolute top-0 left-10 mt-24 ml-8">
-    <button class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline">
-        Back
-    </button>
+<a href="/bike" class="absolute top-0 left-10 mt-24 ml-8 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded focus:outline-none focus:shadow-outline flex items-center">
+        <i class="fas fa-arrow-left mr-2"></i>
 </a>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-8 mt-6">
@@ -201,7 +199,7 @@
     <!-- Images Section -->
     <div class="mt-10">
         <h2 class="text-2xl font-bold mb-4">Images</h2>
-        <div class="pswp-gallery" id="my-gallery">
+        <div class="pswp-gallery" id="bike-detail-gallery">
         <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
 
             {% for image in bike_images %}
@@ -227,7 +225,7 @@
 <script type='module'>
     import PhotoSwipeLightbox from '/static/photoswipe/photoswipe-lightbox.esm.js';
     const lightbox = new PhotoSwipeLightbox({
-        gallery: '#my-gallery',
+        gallery: '#bike-detail-gallery',
         children: 'a',
         pswpModule: () => import('/static/photoswipe/photoswipe.esm.js')
     });
