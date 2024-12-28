@@ -5,7 +5,11 @@ module.exports = {
     '../templates/**/*.jinja', // For `.jinja` files if used
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        handwriting: ['"Pacifico"', 'cursive'],
+      },
+    },
   },
   plugins: [],
 
