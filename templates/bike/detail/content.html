@@ -26,29 +26,26 @@
                 <div>
                     <h2 class="text-2xl font-semibold text-gray-700 text-center">Brand</h2>
                     <a class="hover:bg-slate-200 text-gray-800 hover:text-amber-700 font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer"
-                       hx-get="/brand/{{ bike.brand_id }}"
-                       hx-target="#content-area"
-                       hx-push-url="/brand/{{ bike.brand_id }}">
+                       href="/brand/{{ bike.brand_id }}">
                         {{ bike.brand_name }}
                     </a>
                 </div>
                 <div>
                     <h2 class="text-2xl font-semibold text-gray-700 text-center">Model</h2>
                     <a class="hover:bg-slate-200 text-gray-800 hover:text-amber-700 font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer"
-                       hx-get="/model/{{ bike.model_id }}"
-                       hx-target="#content-area" hx-push-url="/model/{{ bike.model_id }}">
+                       href="/model/{{ bike.model_id }}">
                         {{ bike.model_name }}
                     </a>
                 </div>
                 <div>
                     <h2 class="text-2xl font-semibold text-gray-700 text-center">Year</h2>
-                    <a class="hover:bg-slate-200 text-gray-800 hover:text-amber-700 font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer">
+                    <a class="text-gray-800 font-medium text-lg rounded-md px-4 py-2 shadow-md">
                         {{ bike.year }}
                     </a>
                 </div>
                 <div>
                     <h2 class="text-2xl font-semibold text-gray-700 text-center">Price</h2>
-                    <a class="hover:bg-slate-200 text-gray-800 hover:text-amber-700 font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer">
+                    <a class="text-gray-800 font-medium text-lg rounded-md px-4 py-2 shadow-md">
                         {{ bike.price }} €
                     </a>
                 </div>
@@ -203,7 +200,7 @@
 
             {% for image in bike_images %}
             <a href="{{ image.path }}" data-pswp-width="{{ image.width }}" data-pswp-height="{{ image.height }}" target="_blank">
-                <div class=" w-full h-32 rounded-lg overflow-hidden shadow-md">
+                <div class=" w-full h-32 rounded-lg overflow-hidden shadow-md hover:scale-105 transition-transform">
                     <img class="object-cover w-full h-32" src="{{ image.path }}" alt="Bike Image">
                 </div>
             </a>
