@@ -189,7 +189,7 @@ pub async fn get_model(
     let template = env.get_template(&template_name)?;
     let body = template.render(ModelDetailTemplate {
         model: ModelDisplay::from(model),
-        bikes: bikes.into_iter().map(BikeDisplay::from).collect(),
+        bikes: bikes.into_iter().map(|bike| BikeDisplay::from(bike).description_to_markdown()).collect(),
         logged_in: identity.is_some(),
     })?;
 

@@ -147,7 +147,7 @@ impl From<BikeDetail> for BikeDisplay {
             view_count: value.view_count,
             like_count: value.like_count,
             thumbnail: if value.thumbnail.is_empty() { "/static/images/logo.png".to_string() } else { value.thumbnail },
-            description: markdown::to_html(&value.description),
+            description: value.description,
             hidden: value.hidden,
             year: value.year,
             price: format!("{:.2}", value.price as f64 / 100_f64),
@@ -172,6 +172,13 @@ impl From<BikeDetail> for BikeDisplay {
             brand_name: value.brand_name,
             model_name: value.model_name,
         }
+    }
+}
+
+impl BikeDisplay {
+    pub fn description_to_markdown(mut self) -> BikeDisplay {
+        self.description = markdown::to_html(&self.description);
+        self
     }
 }
 

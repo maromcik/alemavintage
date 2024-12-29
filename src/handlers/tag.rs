@@ -30,7 +30,7 @@ pub async fn get_tag(
     let template = env.get_template(&template_name)?;
     let body = template.render(BikesTemplate {
         logged_in: identity.is_some(),
-        bikes: bikes.into_iter().map(BikeDisplay::from).collect(),
+        bikes: bikes.into_iter().map(|bike| BikeDisplay::from(bike).description_to_markdown()).collect(),
     })?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
