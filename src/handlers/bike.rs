@@ -23,7 +23,6 @@ use crate::handlers::helpers::{
     hard_delete_bike_images, save_bike_images_helper, save_bike_thumbnail_helper,
     upload_bike_helper,
 };
-use crate::handlers::utilities::remove_file;
 use crate::templates::bike::{
     BikeCreateTemplate, BikeDisplayTemplate, BikeEditTemplate, BikeReuploadFormTemplate,
     BikeThumbnailUploadTemplate, BikeUploadFormTemplate, BikesTemplate,
@@ -35,6 +34,7 @@ use actix_multipart::form::MultipartForm;
 use actix_session::Session;
 use actix_web::http::header::LOCATION;
 use actix_web::{delete, get, post, put, web, HttpRequest, HttpResponse};
+use crate::utilities::file::remove_file;
 
 #[get("")]
 pub async fn get_bikes(
@@ -426,7 +426,7 @@ pub async fn upload_bike_thumbnail(
     )
     .await?;
 
-    let thumbnail_path = save_bike_thumbnail_helper(form.thumbnail)?;
+    let thumbnail_path = save_bike_thumbnail_helper(form.thumbnail)?.path;
 
     remove_file(&bike.thumbnail)?;
 

@@ -10,7 +10,8 @@ use crate::database::repositories::user::repository::UserRepository;
 use crate::error::{AppError, AppErrorKind};
 use crate::forms::bike::BikeUploadForm;
 use crate::forms::user::EmailForm;
-use crate::handlers::utilities::{is_htmx, remove_file, save_file, validate_file};
+use crate::handlers::utilities::is_htmx;
+use crate::utilities::image::ImageProcessor;
 use crate::utils::AppState;
 use crate::{IMAGE_SIZE, THUMBNAIL_SIZE};
 use actix_identity::Identity;
@@ -22,7 +23,7 @@ use lettre::{AsyncTransport, Message};
 use rayon::iter::IntoParallelIterator;
 use rayon::iter::ParallelIterator;
 use std::sync::Arc;
-use uuid::Uuid;
+use crate::utilities::file::remove_file;
 
 pub fn get_template_name(request: &HttpRequest, path: &str) -> String {
     if is_htmx(request) {
@@ -99,7 +100,7 @@ pub async fn upload_bike_helper(
     bike_repo: &web::Data<BikeRepository>,
     form: BikeUploadForm,
 ) -> Result<Bike, AppError> {
-    let thumbnail_path = save_bike_thumbnail_helper(form.thumbnail)?;
+    let thumbnail_path = save_bike_thumbnail_helper(form.thumbnail)?.path;
 
     let bike_update = BikeUpdate::update_thumbnail_and_mark_complete(bike_id, &thumbnail_path);
     let bikes = bike_repo.update(&bike_update).await?;
@@ -123,43 +124,39 @@ pub async fn save_bike_images_helper(
     let paths = photos
         .into_par_iter()
         .map(|photo| {
-            let path = validate_file(&photo, Uuid::new_v4(), "image", "bike")?;
-            match save_file(photo, &path, &image_dimensions) {
-                Ok(bike_image) => Ok(bike_image),
-                Err(err) => {
-                    remove_file(&path)?;
-                    Err(err)
-                }
-            }
+            Ok(ImageProcessor::builder(photo)
+                .load_image_processor()?
+                .resize_img(&image_dimensions)?)
         })
         .collect::<Vec<Result<AppImage, AppError>>>();
-    
-    let (bike_images, errors): (Vec<AppImage>, Vec<String>) = paths.into_iter()
-        .fold((vec![], vec![]), |
-            (mut correct, mut errored), path| {
-            match path {
-                Ok(p) => { correct.push(p)}
-                Err(e) => { errored.push(e.message)}
-            }
-            (correct, errored)
-        });
-    
-    
+
+    let (bike_images, errors): (Vec<AppImage>, Vec<String>) =
+        paths
+            .into_iter()
+            .fold((vec![], vec![]), |(mut correct, mut errored), path| {
+                match path {
+                    Ok(p) => correct.push(p),
+                    Err(e) => errored.push(e.message),
+                }
+                (correct, errored)
+            });
+
     bike_repo
         .create(&BikeImageCreate::new(bike_id, bike_images))
         .await?;
 
-    if errors.is_empty() { Ok(()) } else { Err(AppError::new(AppErrorKind::FileError, &errors.join(", "))) }
+    if errors.is_empty() {
+        Ok(())
+    } else {
+        Err(AppError::new(AppErrorKind::FileError, &errors.join(", ")))
+    }
 }
 
-pub fn save_bike_thumbnail_helper(thumbnail: TempFile) -> Result<String, AppError> {
-    let thumbnail_path = validate_file(&thumbnail, Uuid::new_v4(), "image", "thumbnail")?;
-    save_file(
-        thumbnail,
-        &thumbnail_path,
-        &ImageDimensions::new(THUMBNAIL_SIZE, THUMBNAIL_SIZE),
-    )?;
-    Ok(thumbnail_path)
+pub fn save_bike_thumbnail_helper(thumbnail: TempFile) -> Result<AppImage, AppError> {
+    let image = ImageProcessor::builder(thumbnail)
+        .load_image_processor()?
+        .resize_img(&ImageDimensions::new(THUMBNAIL_SIZE, THUMBNAIL_SIZE))?;
+    Ok(image)
 }
 
 pub struct Email {
