@@ -21,17 +21,19 @@ impl ImageProcessor {
     }
 
     pub fn resize_img(&self, target_dimensions: &ImageDimensions) -> Result<AppImage, AppError> {
+        let path = format!("/media/{}.{}", Uuid::new_v4(), self.extension.as_str());
+        log::info!("resizing image .{path}");
         let mut resized_img = self.dynamic_image.resize(
             target_dimensions.width,
             target_dimensions.height,
             image::imageops::FilterType::CatmullRom,
         );
-
-        let path = format!("/media/{}.{}", Uuid::new_v4(), self.extension.as_str());
+        
         resized_img.apply_orientation(self.orientation);
         let fs_path = format!(".{path}");
         let mut output_file = BufWriter::new(File::create(&fs_path)?);
         resized_img.write_to(&mut output_file, self.format)?;
+        log::info!("image saved to .{path}");
         Ok(AppImage::new(
             path.as_str(),
             resized_img.width() as i32,
