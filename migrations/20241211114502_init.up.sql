@@ -70,13 +70,13 @@ CREATE TABLE IF NOT EXISTS "Bike"
 
 CREATE TABLE IF NOT EXISTS "BikeImage"
 (
-    id      bigserial PRIMARY KEY,
+    id             bigserial PRIMARY KEY,
     ---------------------------------------------
-    bike_id bigserial NOT NULL,
-    path    text      NOT NULL,
-    width   int       NOT NULL,
-    height  int       NOT NULL,
-
+    bike_id        bigserial NOT NULL,
+    path           text      NOT NULL,
+    width          int       NOT NULL,
+    height         int       NOT NULL,
+    thumbnail_path text      NOT NULL,
     FOREIGN KEY (bike_id) REFERENCES "Bike" (id) ON DELETE CASCADE
 );
 

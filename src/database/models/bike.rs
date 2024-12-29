@@ -2,7 +2,7 @@ use crate::database::common::query_parameters::{
     DbColumn, DbOrder, DbOrderColumn, DbQueryParams, DbTable,
 };
 use crate::database::common::EntityById;
-use crate::database::models::{Id, AppImage};
+use crate::database::models::{Id};
 use chrono::{DateTime, Utc};
 use serde::Serialize;
 
@@ -411,6 +411,7 @@ pub struct BikeImage {
     pub path: String,
     pub width: i32,
     pub height: i32,
+    pub thumbnail_path: String,
 }
 
 impl EntityById for BikeImage {
@@ -459,15 +460,31 @@ impl BikeImageSearch {
     }
 }
 
-
-
 pub struct BikeImageCreate {
-    pub bike_id: Id,
-    pub bike_images: Vec<AppImage>,
+    pub path: String,
+    pub width: i32,
+    pub height: i32,
+    pub thumbnail_path: String,
 }
 
 impl BikeImageCreate {
-    pub fn new(bike_id: Id, paths: Vec<AppImage>) -> Self {
+    pub fn new(path: String, width: i32, height: i32, thumbnail_path: String) -> Self {
+        Self {
+            path,
+            width,
+            height,
+            thumbnail_path,
+        }
+    }
+}
+
+pub struct BikeImagesCreate {
+    pub bike_id: Id,
+    pub bike_images: Vec<BikeImageCreate>,
+}
+
+impl BikeImagesCreate {
+    pub fn new(bike_id: Id, paths: Vec<BikeImageCreate>) -> Self {
         Self { bike_id, bike_images: paths }
     }
 }

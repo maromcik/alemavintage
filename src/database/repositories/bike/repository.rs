@@ -13,7 +13,7 @@ use sqlx::{Postgres, Transaction};
 
 use crate::database::common::utilities::{entity_is_correct, generate_query_param_string};
 use crate::database::models::bike::{
-    Bike, BikeCreate, BikeDetail, BikeGetById, BikeImage, BikeImageCreate, BikeImageSearch,
+    Bike, BikeCreate, BikeDetail, BikeGetById, BikeImage, BikeImagesCreate, BikeImageSearch,
     BikeSearch, BikeUpdate,
 };
 use crate::database::models::GetById;
@@ -522,7 +522,8 @@ impl DbReadMany<BikeImageSearch, BikeImage> for BikeRepository {
                 image.bike_id,
                 image.path,
                 image.width,
-                image.height
+                image.height,
+                image.thumbnail_path
             FROM
                 "BikeImage" AS image
             WHERE
@@ -541,22 +542,23 @@ impl DbReadMany<BikeImageSearch, BikeImage> for BikeRepository {
     }
 }
 
-impl DbCreate<BikeImageCreate, Vec<BikeImage>> for BikeRepository {
-    async fn create(&self, data: &BikeImageCreate) -> DbResultSingle<Vec<BikeImage>> {
+impl DbCreate<BikeImagesCreate, Vec<BikeImage>> for BikeRepository {
+    async fn create(&self, data: &BikeImagesCreate) -> DbResultSingle<Vec<BikeImage>> {
         let mut transaction = self.pool_handler.pool.begin().await?;
         let mut images = Vec::default();
         for image in &data.bike_images {
             let bike_image = sqlx::query_as!(
                 BikeImage,
                 r#"
-                    INSERT INTO "BikeImage" (bike_id, path, width, height)
-                    VALUES ($1, $2, $3, $4)
+                    INSERT INTO "BikeImage" (bike_id, path, width, height, thumbnail_path)
+                    VALUES ($1, $2, $3, $4, $5)
                     RETURNING *
                 "#,
                 data.bike_id,
                 image.path,
                 image.width,
                 image.height,
+                image.thumbnail_path,
             )
             .fetch_one(transaction.as_mut())
             .await?;

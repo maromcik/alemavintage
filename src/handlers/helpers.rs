@@ -1,19 +1,16 @@
 use crate::database::common::{DbCreate, DbDelete, DbReadMany, DbReadOne, DbUpdate};
-use crate::database::models::bike::{
-    Bike, BikeCreateSessionKeys, BikeDetail, BikeGetById, BikeImage, BikeImageCreate,
-    BikeMetadataForm, BikeUpdate,
-};
+use crate::database::models::bike::{Bike, BikeCreateSessionKeys, BikeDetail, BikeGetById, BikeImage, BikeImageCreate, BikeImagesCreate, BikeMetadataForm, BikeUpdate};
 use crate::database::models::user::{User, UserSearch};
-use crate::database::models::{AppImage, GetById, Id, ImageDimensions};
+use crate::database::models::{GetById, Id};
 use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::error::{AppError, AppErrorKind};
 use crate::forms::bike::BikeUploadForm;
 use crate::forms::user::EmailForm;
 use crate::handlers::utilities::is_htmx;
-use crate::utilities::image::ImageProcessor;
+use crate::utilities::image::{AppImage, ImageDimensions, ImageProcessor};
 use crate::utils::AppState;
-use crate::{IMAGE_SIZE, THUMBNAIL_SIZE};
+use crate::{IMAGE_SIZE, LOW_IMAGE_SIZE, THUMBNAIL_SIZE};
 use actix_identity::Identity;
 use actix_multipart::form::tempfile::TempFile;
 use actix_session::Session;
@@ -121,16 +118,18 @@ pub async fn save_bike_images_helper(
     bike_id: Id,
 ) -> Result<(), AppError> {
     let image_dimensions = ImageDimensions::new(IMAGE_SIZE, IMAGE_SIZE);
+    let thumbnail_image_dimensions = ImageDimensions::new(LOW_IMAGE_SIZE, LOW_IMAGE_SIZE);
     let paths = photos
         .into_par_iter()
         .map(|photo| {
-            Ok(ImageProcessor::builder(photo)
-                .load_image_processor()?
-                .resize_img(&image_dimensions)?)
+            let processor = ImageProcessor::builder(photo).load_image_processor()?;
+            let high_res = processor.resize_img(&image_dimensions)?;
+            let thumbnail = processor.resize_img(&thumbnail_image_dimensions)?;
+            Ok(BikeImageCreate::new(high_res.path, high_res.width, high_res.height, thumbnail.path))
         })
-        .collect::<Vec<Result<AppImage, AppError>>>();
+        .collect::<Vec<Result<BikeImageCreate, AppError>>>();
 
-    let (bike_images, errors): (Vec<AppImage>, Vec<String>) =
+    let (bike_images, errors): (Vec<BikeImageCreate>, Vec<String>) =
         paths
             .into_iter()
             .fold((vec![], vec![]), |(mut correct, mut errored), path| {
@@ -142,7 +141,7 @@ pub async fn save_bike_images_helper(
             });
 
     bike_repo
-        .create(&BikeImageCreate::new(bike_id, bike_images))
+        .create(&BikeImagesCreate::new(bike_id, bike_images))
         .await?;
 
     if errors.is_empty() {

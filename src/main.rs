@@ -35,6 +35,7 @@ const MIN_PASS_LEN: usize = 6;
 
 const THUMBNAIL_SIZE: u32 = 600;
 const IMAGE_SIZE: u32 = 2000;
+const LOW_IMAGE_SIZE: u32 = 300;
 
 #[actix_web::main]
 async fn main() -> anyhow::Result<()> {
