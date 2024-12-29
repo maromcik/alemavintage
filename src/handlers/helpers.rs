@@ -61,6 +61,7 @@ pub async fn hard_delete_bike_images(
 
     for image in bike_images {
         remove_file(&image.path)?;
+        remove_file(&image.thumbnail_path)?;
     }
     Ok(())
 }
