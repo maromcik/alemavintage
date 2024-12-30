@@ -107,7 +107,7 @@
 }
 
 /*
-! tailwindcss v3.4.16 | MIT License | https://tailwindcss.com
+! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com
 */
 
 /*
@@ -745,6 +745,22 @@ code {
   top: 1rem;
 }
 
+.bottom-\[-10px\] {
+  bottom: -10px;
+}
+
+.bottom-\[-12px\] {
+  bottom: -12px;
+}
+
+.bottom-\[-16px\] {
+  bottom: -16px;
+}
+
+.bottom-\[-24px\] {
+  bottom: -24px;
+}
+
 .z-10 {
   z-index: 10;
 }
@@ -842,6 +858,14 @@ code {
 
 .mt-8 {
   margin-top: 2rem;
+}
+
+.mb-10 {
+  margin-bottom: 2.5rem;
+}
+
+.mb-24 {
+  margin-bottom: 6rem;
 }
 
 .block {
@@ -1332,6 +1356,14 @@ code {
   padding-top: 1.5rem;
 }
 
+.pt-1 {
+  padding-top: 0.25rem;
+}
+
+.pb-1 {
+  padding-bottom: 0.25rem;
+}
+
 .text-center {
   text-align: center;
 }
@@ -1676,6 +1708,10 @@ code {
 }
 
 @media (min-width: 640px) {
+  .sm\:bottom-\[-16px\] {
+    bottom: -16px;
+  }
+
   .sm\:ml-10 {
     margin-left: 2.5rem;
   }
@@ -1741,6 +1777,14 @@ code {
 }
 
 @media (min-width: 768px) {
+  .md\:mb-0 {
+    margin-bottom: 0px;
+  }
+
+  .md\:mb-5 {
+    margin-bottom: 1.25rem;
+  }
+
   .md\:w-96 {
     width: 24rem;
   }
