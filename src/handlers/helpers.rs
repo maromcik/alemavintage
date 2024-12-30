@@ -125,7 +125,7 @@ pub async fn save_bike_images_helper(
     bike_repo
         .update(&BikeUpdate::update_status(
             bike_id,
-            "<p class=\"text-orange-500\">PROCESSING IMAGES</p>",
+            "<p class=\"text-blue-500\">PROCESSING IMAGES</p>",
         ))
         .await?;
     

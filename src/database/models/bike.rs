@@ -178,7 +178,7 @@ impl From<BikeDetail> for BikeDisplay {
             stem: value.stem,
             status: value
                 .status
-                .unwrap_or("<p class=\"text-orange-500\">PROCESSING IMAGES</p>".to_string()),
+                .unwrap_or("<p>NO IMAGES FOUND</p>".to_string()),
             brand_name: value.brand_name,
             model_name: value.model_name,
         }
