@@ -152,6 +152,11 @@
         "ordinal": 29,
         "name": "stem",
         "type_info": "Text"
+      },
+      {
+        "ordinal": 30,
+        "name": "status",
+        "type_info": "Text"
       }
     ],
     "parameters": {
@@ -189,7 +194,8 @@
       false,
       false,
       false,
-      false
+      false,
+      true
     ]
   },
   "hash": "7ac43fb82c01a9c5276f8953e749fb2452707e3bb6afabea80761bb24589ca71"

@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT\n                bike.id,\n                bike.model_id,\n                bike.name,\n                bike.thumbnail,\n                bike.description,\n                bike.view_count,\n                bike.like_count,\n                bike.created_at,\n                bike.edited_at,\n                bike.hidden,\n                bike.year,\n                bike.price,\n                bike.frame,\n                bike.seat_tube_sizes,\n                bike.top_tube_size,\n                bike.height,\n                bike.headset,\n                bike.crankset,\n                bike.bottom_bracket,\n                bike.front_derail,\n                bike.rear_derail,\n                bike.brakes,\n                bike.shifters,\n                bike.brake_levers,\n                bike.saddle,\n                bike.seat_post,\n                bike.hubs,\n                bike.rims,\n                bike.handlebar,\n                bike.stem,\n                \n                brand.id as brand_id,\n                brand.name as brand_name,\n                model.name as model_name                \n            FROM\n                \"Bike\" AS bike\n                    INNER JOIN\n                \"Model\" AS model ON model.id = bike.model_id\n                    INNER JOIN\n                \"Brand\" AS brand ON brand.id = model.brand_id\n            WHERE\n                bike.id = $1\n            ",
+  "query": "\n            UPDATE \"Bike\"\n            SET\n                name = COALESCE($1, name),\n                model_id = COALESCE($2, model_id),\n                thumbnail = COALESCE($3, thumbnail),\n                description = COALESCE($4, description),\n                view_count = COALESCE($5, view_count),\n                like_count = COALESCE($6, like_count),\n                hidden = COALESCE($7, hidden),\n                year = COALESCE($8, year),\n                price = COALESCE($9, price),\n                frame = COALESCE($10, frame),\n                seat_tube_sizes = COALESCE($11, seat_tube_sizes),\n                top_tube_size = COALESCE($12, top_tube_size),\n                height = COALESCE($13, height),\n                headset = COALESCE($14, headset),\n                crankset = COALESCE($15, crankset),\n                bottom_bracket = COALESCE($16, bottom_bracket),\n                front_derail = COALESCE($17, front_derail),\n                rear_derail = COALESCE($18, rear_derail),\n                brakes = COALESCE($19, brakes),\n                shifters = COALESCE($20, shifters),\n                brake_levers = COALESCE($21 , brake_levers),\n                saddle = COALESCE($22, saddle),\n                seat_post = COALESCE($23, seat_post),\n                hubs = COALESCE($24, hubs),\n                rims = COALESCE($25, rims),\n                handlebar = COALESCE($26, handlebar),\n                stem = COALESCE($27, stem),\n                status = COALESCE($28, status),\n                edited_at = current_timestamp\n            WHERE id = $29\n            RETURNING *\n            ",
   "describe": {
     "columns": [
       {
@@ -155,22 +155,40 @@
       },
       {
         "ordinal": 30,
-        "name": "brand_id",
-        "type_info": "Int8"
-      },
-      {
-        "ordinal": 31,
-        "name": "brand_name",
-        "type_info": "Text"
-      },
-      {
-        "ordinal": 32,
-        "name": "model_name",
+        "name": "status",
         "type_info": "Text"
       }
     ],
     "parameters": {
       "Left": [
+        "Text",
+        "Int8",
+        "Text",
+        "Text",
+        "Int8",
+        "Int8",
+        "Bool",
+        "Int4",
+        "Int4",
+        "Text",
+        "Text",
+        "Int4",
+        "Int4",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
         "Int8"
       ]
     },
@@ -205,10 +223,8 @@
       false,
       false,
       false,
-      false,
-      false,
-      false
+      true
     ]
   },
-  "hash": "0ef7f39eac72d14f49162dbfee38889216b3c17b7467a05a0034b32a1b221fed"
+  "hash": "8e9aeb1a9c42e4b789958f292d812278188150f2801528ba1da0829b3d16f42c"
 }
