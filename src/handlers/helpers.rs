@@ -121,6 +121,14 @@ pub async fn save_bike_images_helper(
 ) -> Result<(), AppError> {
     let image_dimensions = ImageDimensions::new(IMAGE_SIZE, IMAGE_SIZE);
     let thumbnail_image_dimensions = ImageDimensions::new(LOW_IMAGE_SIZE, LOW_IMAGE_SIZE);
+
+    bike_repo
+        .update(&BikeUpdate::update_status(
+            bike_id,
+            "<p class=\"text-orange-500\">PROCESSING IMAGES</p>",
+        ))
+        .await?;
+    
     let paths = tokio::task::spawn_blocking(move || {
         photos
             .into_par_iter()
