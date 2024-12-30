@@ -399,6 +399,7 @@ dependencies = [
  "serde",
  "sqlx",
  "thiserror 2.0.7",
+ "tokio",
  "uuid",
 ]
 

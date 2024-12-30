@@ -233,6 +233,7 @@ impl DbReadOne<BikeGetById, BikeDetail> for BikeRepository {
                 bike.rims,
                 bike.handlebar,
                 bike.stem,
+                bike.status, 
                 
                 brand.id as brand_id,
                 brand.name as brand_name,
@@ -296,6 +297,7 @@ impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
                 bike.rims,
                 bike.handlebar,
                 bike.stem,
+                bike.status,
 
                 brand.id   AS brand_id,
                 brand.name AS brand_name,
@@ -447,8 +449,9 @@ impl DbUpdate<BikeUpdate, Bike> for BikeRepository {
                 rims = COALESCE($25, rims),
                 handlebar = COALESCE($26, handlebar),
                 stem = COALESCE($27, stem),
+                status = COALESCE($28, status),
                 edited_at = current_timestamp
-            WHERE id = $28
+            WHERE id = $29
             RETURNING *
             "#,
             params.name,
@@ -478,6 +481,7 @@ impl DbUpdate<BikeUpdate, Bike> for BikeRepository {
             params.rims,
             params.handlebar,
             params.stem,
+            params.status,
             bike.id,
         )
         .fetch_all(transaction.as_mut())

@@ -2,7 +2,7 @@ use crate::database::common::query_parameters::{
     DbColumn, DbOrder, DbOrderColumn, DbQueryParams, DbTable,
 };
 use crate::database::common::EntityById;
-use crate::database::models::{Id};
+use crate::database::models::Id;
 use chrono::{DateTime, Utc};
 use serde::Serialize;
 
@@ -39,6 +39,7 @@ pub struct Bike {
     pub rims: String,
     pub handlebar: String,
     pub stem: String,
+    pub status: Option<String>,
 }
 
 impl EntityById for Bike {
@@ -85,7 +86,8 @@ pub struct BikeDetail {
     pub rims: String,
     pub handlebar: String,
     pub stem: String,
-    
+    pub status: Option<String>,
+
     pub brand_name: String,
     pub model_name: String,
 }
@@ -132,6 +134,7 @@ pub struct BikeDisplay {
     pub rims: String,
     pub handlebar: String,
     pub stem: String,
+    pub status: String,
 
     pub brand_name: String,
     pub model_name: String,
@@ -146,7 +149,11 @@ impl From<BikeDetail> for BikeDisplay {
             model_id: value.model_id,
             view_count: value.view_count,
             like_count: value.like_count,
-            thumbnail: if value.thumbnail.is_empty() { "/static/images/logo.png".to_string() } else { value.thumbnail },
+            thumbnail: if value.thumbnail.is_empty() {
+                "/static/images/logo.png".to_string()
+            } else {
+                value.thumbnail
+            },
             description: value.description,
             hidden: value.hidden,
             year: value.year,
@@ -169,6 +176,9 @@ impl From<BikeDetail> for BikeDisplay {
             rims: value.rims,
             handlebar: value.handlebar,
             stem: value.stem,
+            status: value
+                .status
+                .unwrap_or("<p class=\"text-orange-500\">PROCESSING IMAGES</p>".to_string()),
             brand_name: value.brand_name,
             model_name: value.model_name,
         }
@@ -265,7 +275,6 @@ impl BikeCreate {
         }
     }
 }
-
 
 #[derive(Debug, Clone)]
 pub struct BikeSearch {
@@ -485,7 +494,10 @@ pub struct BikeImagesCreate {
 
 impl BikeImagesCreate {
     pub fn new(bike_id: Id, paths: Vec<BikeImageCreate>) -> Self {
-        Self { bike_id, bike_images: paths }
+        Self {
+            bike_id,
+            bike_images: paths,
+        }
     }
 }
 
@@ -519,6 +531,7 @@ pub struct BikeUpdate {
     pub rims: Option<String>,
     pub handlebar: Option<String>,
     pub stem: Option<String>,
+    pub status: Option<String>,
 }
 
 impl BikeUpdate {
@@ -553,6 +566,7 @@ impl BikeUpdate {
         rims: Option<&str>,
         handlebar: Option<&str>,
         stem: Option<&str>,
+        status: Option<&str>,
     ) -> Self {
         let change_to_owned = |value: &str| Some(value.to_owned());
         Self {
@@ -584,6 +598,7 @@ impl BikeUpdate {
             rims: rims.and_then(change_to_owned),
             handlebar: handlebar.and_then(change_to_owned),
             stem: stem.and_then(change_to_owned),
+            status: status.and_then(change_to_owned),
         }
     }
 
@@ -616,6 +631,7 @@ impl BikeUpdate {
             && self.rims.is_none()
             && self.handlebar.is_none()
             && self.stem.is_none()
+            && self.status.is_none()
     }
 
     #[allow(dead_code)]
@@ -649,6 +665,7 @@ impl BikeUpdate {
             rims: None,
             handlebar: None,
             stem: None,
+            status: None,
         }
     }
 
@@ -682,6 +699,7 @@ impl BikeUpdate {
             rims: None,
             handlebar: None,
             stem: None,
+            status: None,
         }
     }
 
@@ -715,10 +733,43 @@ impl BikeUpdate {
             rims: None,
             handlebar: None,
             stem: None,
+            status: None,
+        }
+    }
+    pub fn update_status(id: Id, status: &str) -> Self {
+        Self {
+            id,
+            model_id: None,
+            name: None,
+            thumbnail: None,
+            description: None,
+            view_count: None,
+            like_count: None,
+            hidden: None,
+            year: None,
+            price: None,
+            height: None,
+            top_tube_size: None,
+            frame: None,
+            seat_tube_sizes: None,
+            headset: None,
+            crankset: None,
+            bottom_bracket: None,
+            front_derail: None,
+            rear_derail: None,
+            brakes: None,
+            shifters: None,
+            brake_levers: None,
+            saddle: None,
+            seat_post: None,
+            hubs: None,
+            rims: None,
+            handlebar: None,
+            stem: None,
+            status: Some(status.to_owned()),
         }
     }
 }
-
 
 pub struct BikeGetById {
     pub id: Id,

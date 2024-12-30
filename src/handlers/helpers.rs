@@ -1,13 +1,16 @@
 use crate::database::common::{DbCreate, DbDelete, DbReadMany, DbReadOne, DbUpdate};
-use crate::database::models::bike::{Bike, BikeCreateSessionKeys, BikeDetail, BikeGetById, BikeImage, BikeImageCreate, BikeImagesCreate, BikeMetadataForm, BikeUpdate};
+use crate::database::models::bike::{
+    Bike, BikeCreateSessionKeys, BikeDetail, BikeGetById, BikeImage, BikeImageCreate,
+    BikeImagesCreate, BikeMetadataForm, BikeUpdate,
+};
 use crate::database::models::user::{User, UserSearch};
 use crate::database::models::{GetById, Id};
 use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::error::{AppError, AppErrorKind};
-use crate::forms::bike::BikeUploadForm;
 use crate::forms::user::EmailForm;
 use crate::handlers::utilities::is_htmx;
+use crate::utilities::file::remove_file;
 use crate::utilities::image::{AppImage, ImageDimensions, ImageProcessor};
 use crate::utils::AppState;
 use crate::{IMAGE_SIZE, LOW_IMAGE_SIZE, THUMBNAIL_SIZE};
@@ -20,7 +23,6 @@ use lettre::{AsyncTransport, Message};
 use rayon::iter::IntoParallelIterator;
 use rayon::iter::ParallelIterator;
 use std::sync::Arc;
-use crate::utilities::file::remove_file;
 
 pub fn get_template_name(request: &HttpRequest, path: &str) -> String {
     if is_htmx(request) {
@@ -96,9 +98,9 @@ pub async fn get_user_from_identity(
 pub async fn upload_bike_helper(
     bike_id: Id,
     bike_repo: &web::Data<BikeRepository>,
-    form: BikeUploadForm,
+    thumbnail: TempFile,
 ) -> Result<Bike, AppError> {
-    let thumbnail_path = save_bike_thumbnail_helper(form.thumbnail)?.path;
+    let thumbnail_path = save_bike_thumbnail_helper(thumbnail)?.path;
 
     let bike_update = BikeUpdate::update_thumbnail_and_mark_complete(bike_id, &thumbnail_path);
     let bikes = bike_repo.update(&bike_update).await?;
@@ -107,8 +109,7 @@ pub async fn upload_bike_helper(
         .into_iter()
         .next()
         .ok_or_else(|| AppError::new(AppErrorKind::NotFound, "Bike {bike_id} not found"))?;
-
-    save_bike_images_helper(form.photos, bike_repo, bike.id).await?;
+    
 
     Ok(bike)
 }
@@ -120,15 +121,23 @@ pub async fn save_bike_images_helper(
 ) -> Result<(), AppError> {
     let image_dimensions = ImageDimensions::new(IMAGE_SIZE, IMAGE_SIZE);
     let thumbnail_image_dimensions = ImageDimensions::new(LOW_IMAGE_SIZE, LOW_IMAGE_SIZE);
-    let paths = photos
-        .into_par_iter()
-        .map(|photo| {
-            let processor = ImageProcessor::builder(photo).load_image_processor()?;
-            let high_res = processor.resize_img(&image_dimensions)?;
-            let thumbnail = processor.resize_img(&thumbnail_image_dimensions)?;
-            Ok(BikeImageCreate::new(high_res.path, high_res.width, high_res.height, thumbnail.path))
-        })
-        .collect::<Vec<Result<BikeImageCreate, AppError>>>();
+    let paths = tokio::task::spawn_blocking(move || {
+        photos
+            .into_par_iter()
+            .map(|photo| {
+                let processor = ImageProcessor::builder(photo).load_image_processor()?;
+                let high_res = processor.resize_img(&image_dimensions)?;
+                let thumbnail = processor.resize_img(&thumbnail_image_dimensions)?;
+                Ok(BikeImageCreate::new(
+                    high_res.path,
+                    high_res.width,
+                    high_res.height,
+                    thumbnail.path,
+                ))
+            })
+            .collect::<Vec<Result<BikeImageCreate, AppError>>>()
+    })
+    .await?;
 
     let (bike_images, errors): (Vec<BikeImageCreate>, Vec<String>) =
         paths
@@ -145,11 +154,20 @@ pub async fn save_bike_images_helper(
         .create(&BikeImagesCreate::new(bike_id, bike_images))
         .await?;
 
+    let mut errors = errors.iter().map(|e| format!("<p class=\"text-red-500\">{e}</p>")).collect::<Vec<String>>();
+
     if errors.is_empty() {
-        Ok(())
-    } else {
-        Err(AppError::new(AppErrorKind::FileError, &errors.join(", ")))
+        errors.push("<p class=\"text-green-500\">OK</p>".to_string());
     }
+
+    bike_repo
+        .update(&BikeUpdate::update_status(
+            bike_id,
+            errors.join("\n").as_str(),
+        ))
+        .await?;
+
+    Ok(())
 }
 
 pub fn save_bike_thumbnail_helper(thumbnail: TempFile) -> Result<AppImage, AppError> {

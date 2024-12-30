@@ -27,6 +27,7 @@ use crate::templates::bike::{
     BikeCreateTemplate, BikeDisplayTemplate, BikeEditTemplate, BikeReuploadFormTemplate,
     BikeThumbnailUploadTemplate, BikeUploadFormTemplate, BikesTemplate,
 };
+use crate::utilities::file::remove_file;
 use crate::{authorized, AppState};
 use actix_identity::Identity;
 use actix_multipart::form::text::Text;
@@ -34,7 +35,6 @@ use actix_multipart::form::MultipartForm;
 use actix_session::Session;
 use actix_web::http::header::LOCATION;
 use actix_web::{delete, get, post, put, web, HttpRequest, HttpResponse};
-use crate::utilities::file::remove_file;
 
 #[get("")]
 pub async fn get_bikes(
@@ -55,7 +55,10 @@ pub async fn get_bikes(
     let template = env.get_template(&template_name)?;
     let body = template.render(BikesTemplate {
         logged_in: identity.is_some(),
-        bikes: bikes.into_iter().map(|bike| BikeDisplay::from(bike).description_to_markdown()).collect(),
+        bikes: bikes
+            .into_iter()
+            .map(|bike| BikeDisplay::from(bike).description_to_markdown())
+            .collect(),
     })?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
@@ -217,8 +220,9 @@ pub async fn upload_bike(
     let user = get_user_from_identity(u, &user_repo).await?;
     let session_keys = BikeCreateSessionKeys::new(user.id);
     let metadata = get_metadata_from_session(&session, &session_keys)?;
+    let bike_id = metadata.bike_id;
 
-    let bike = match upload_bike_helper(metadata.bike_id, &bike_repo, form).await {
+    let bike = match upload_bike_helper(bike_id, &bike_repo, form.thumbnail).await {
         Ok(bike) => bike,
         Err(err) => {
             let template_name = get_template_name(&request, "bike/admin/upload");
@@ -230,10 +234,14 @@ pub async fn upload_bike(
             return Ok(HttpResponse::Ok().content_type("text/html").body(body));
         }
     };
-
+    
+    tokio::task::spawn(async move {
+        save_bike_images_helper(form.photos, &bike_repo, bike.id).await
+    });
+    
     session.remove(session_keys.bike_id.as_str());
 
-    let url = format!("/bike/{}", bike.id);
+    let url = format!("/bike/{bike_id}",);
     Ok(HttpResponse::SeeOther()
         .insert_header((LOCATION, url))
         .finish())
@@ -374,6 +382,7 @@ pub async fn edit_bike(
         Some(&form.rims),
         Some(&form.handlebar),
         Some(&form.stem),
+        None
     );
     bike_repo.update(&book_update).await?;
 
@@ -469,7 +478,6 @@ pub async fn reupload_bike(
     bike_repo: web::Data<BikeRepository>,
     user_repo: web::Data<UserRepository>,
     MultipartForm(form): MultipartForm<BikeImagesEditForm>,
-    state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
     let u = authorized!(identity, request.path());
     let _ = get_user_from_identity(u, &user_repo).await?;
@@ -479,20 +487,11 @@ pub async fn reupload_bike(
     if form.delete_existing.unwrap_or(Text(false)).0 {
         hard_delete_bike_images(&bike_repo, bike_id).await?;
     }
-
-    match save_bike_images_helper(form.photos, &bike_repo, bike_id).await {
-        Ok(bike) => bike,
-        Err(err) => {
-            let template_name = get_template_name(&request, "bike/admin/reupload");
-            let env = state.jinja.acquire_env()?;
-            let template = env.get_template(&template_name)?;
-            let body = template.render(BikeReuploadFormTemplate {
-                message: err.message,
-                bike_id,
-            })?;
-            return Ok(HttpResponse::Ok().content_type("text/html").body(body));
-        }
-    };
+    
+    tokio::task::spawn(async move {
+        save_bike_images_helper(form.photos, &bike_repo, bike_id).await
+    });
+    
 
     let url = format!("/bike/{}", bike_id);
     Ok(HttpResponse::SeeOther()

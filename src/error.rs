@@ -12,6 +12,7 @@ use std::fmt::{Debug, Display, Formatter};
 use std::io::Error;
 use std::num::ParseIntError;
 use thiserror::Error;
+use tokio::task::JoinError;
 
 /// User facing error type
 #[derive(Error, Debug, Serialize, Clone)]
@@ -107,6 +108,12 @@ impl From<DbError> for AppError {
                 Self::new(AppErrorKind::BadRequest, &e.to_string())
             }
         }
+    }
+}
+
+impl From<JoinError> for AppError {
+    fn from(value: JoinError) -> Self {
+        Self::new(AppErrorKind::InternalServerError, value.to_string().as_str())
     }
 }
 

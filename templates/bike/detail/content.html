@@ -1,11 +1,12 @@
-<a href="/bike" class="absolute top-0 left-0 mt-20 ml-5 sm:ml-10 sm:mt-24 bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 font-bold rounded focus:outline-none focus:shadow-outline flex items-center">
+<a href="/bike"
+   class="absolute top-0 left-0 mt-20 ml-5 sm:ml-10 sm:mt-24 bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 font-bold rounded focus:outline-none focus:shadow-outline flex items-center">
     <i class="fas fa-arrow-left text-slate-100" style="a {
         @apply text-slate-100 hover:text-slate-100 transition-colors;
     }"></i>
 </a>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-8 mt-8">
-        <!-- Top Section: Thumbnail and Basic Details -->
+<div class="max-w-7xl mx-auto px-4 sm:px-8 mt-8">
+    <!-- Top Section: Thumbnail and Basic Details -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-10">
         <!-- Thumbnail -->
         <div class="flex flex-col items-center relative">
@@ -202,18 +203,26 @@
     <div class="mt-10">
         <h2 class="text-2xl font-bold mb-4">Images</h2>
         <div class="pswp-gallery" id="bike-detail-gallery">
-        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
 
-            {% for image in bike_images %}
-            <a href="{{ image.path }}" data-pswp-width="{{ image.width }}" data-pswp-height="{{ image.height }}" target="_blank">
-                <div class=" w-full h-32 rounded-lg overflow-hidden shadow-md hover:scale-105 transition-transform">
-                    <img class="object-cover w-full h-32" src="{{ image.thumbnail_path }}" alt="Bike Image">
-                </div>
-            </a>
-            {% endfor %}
+                {% for image in bike_images %}
+                <a href="{{ image.path }}" data-pswp-width="{{ image.width }}" data-pswp-height="{{ image.height }}"
+                   target="_blank">
+                    <div class=" w-full h-32 rounded-lg overflow-hidden shadow-md hover:scale-105 transition-transform">
+                        <img class="object-cover w-full h-32" src="{{ image.thumbnail_path }}" alt="Bike Image">
+                    </div>
+                </a>
+                {% endfor %}
             </div>
         </div>
     </div>
+
+    {% if logged_in %}
+    <div class="mt-10">
+        <h3>Status</h3>
+        {{ bike.status|safe }}
+    </div>
+    {% endif %}
 </div>
 
 
@@ -226,6 +235,7 @@
 
 <script type='module'>
     import PhotoSwipeLightbox from '/static/photoswipe/photoswipe-lightbox.esm.js';
+
     const lightbox = new PhotoSwipeLightbox({
         gallery: '#bike-detail-gallery',
         children: 'a',
