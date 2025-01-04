@@ -1,1 +1,0 @@
-ALTER TABLE alemavintage.public."Bike" ADD COLUMN IF NOT EXISTS status text;

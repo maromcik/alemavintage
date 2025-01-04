@@ -1,4 +1,6 @@
-INSERT INTO public."Brand" VALUES (3, 'Peugeot', '
+-- BRANDS
+INSERT INTO public."Brand"
+VALUES (3, 'Peugeot', '
 Peugeot, a cornerstone of French industry, began producing bicycles in 1882, leveraging its expertise in steel manufacturing. By 1886, Peugeot Cycles had introduced a range of models, marking the start of a rich history in cycling innovation and competition.
 
 Throughout the 20th century, Peugeot became synonymous with competitive cycling, sponsoring professional teams and achieving significant victories in events like the Tour de France. The brand''s bicycles were known for their reliability and performance, with models such as the PX-10 becoming iconic among racers and enthusiasts.
@@ -9,7 +11,8 @@ Today, Peugeot Cycles remains a key pillar in Peugeot''s mobility strategy, with
 
 For more information, visit [Peugeot Cycles Official History](https://cycles.peugeot.com/history).
 ');
-INSERT INTO public."Brand" VALUES (4, 'Bianchi', 'Bianchi, established in 1885 by Edoardo Bianchi in Milan, Italy, is the world’s oldest bicycle manufacturer still in operation. Known for its iconic **celeste** green color, Bianchi has become a symbol of Italian cycling heritage. From its early days, Bianchi distinguished itself by introducing innovative designs, including the first use of equal-sized wheels and pneumatic tires in bicycles.
+INSERT INTO public."Brand"
+VALUES (4, 'Bianchi', 'Bianchi, established in 1885 by Edoardo Bianchi in Milan, Italy, is the world’s oldest bicycle manufacturer still in operation. Known for its iconic **celeste** green color, Bianchi has become a symbol of Italian cycling heritage. From its early days, Bianchi distinguished itself by introducing innovative designs, including the first use of equal-sized wheels and pneumatic tires in bicycles.
 
 Bianchi has long been associated with competitive success. Legendary riders like Fausto Coppi and Marco Pantani achieved historic victories on Bianchi bicycles, further elevating the brand''s status. The company''s commitment to quality and performance is reflected in its range of steel, aluminum, and carbon fiber bicycles, catering to both professional and recreational cyclists.
 
@@ -17,7 +20,8 @@ Over the decades, Bianchi has embraced innovation while honoring its legacy, ens
 
 Learn more at [Bianchi Official History](https://www.bianchi.com/our-story/).
 ');
-INSERT INTO public."Brand" VALUES (2, 'Colnago', '
+INSERT INTO public."Brand"
+VALUES (2, 'Colnago', '
 Colnago, founded in 1954 by Ernesto Colnago in Cambiago, Italy, is a name synonymous with innovation and prestige in the cycling world. Initially focusing on custom race bikes, the brand quickly gained prominence for its high-quality steel frames and attention to detail. Colnago''s partnership with professional teams and legendary cyclists, such as Eddy Merckx, cemented its reputation in the competitive arena.
 
 Throughout its history, Colnago has been at the forefront of technological advancements. The brand pioneered innovations like the Precisa straight-bladed fork and was an early adopter of carbon fiber technology, collaborating with Ferrari in the 1980s. Iconic models like the Colnago Super and the Master series highlight its blend of performance and artistry. With its intricate paintwork and Italian craftsmanship, Colnago continues to be a revered name among cyclists and collectors.
@@ -34,7 +38,8 @@ For more about Colnago, visit [Colnago Official History](https://www.colnago.com
 ## Vintage Models
 
 [Colnago Past Models](https://www.colnago.com/en/collections/past-models/)');
-INSERT INTO public."Brand" VALUES (1, 'Hetchins', 'Hetchins, established in the early 1920s by Hyman Hetchin in Tottenham, London, is renowned for its intricately designed bicycle frames, particularly the distinctive "curly" or "vibrant" stays and ornate lugwork. Originally, Hetchin''s shop sold household appliances and mass-produced bicycles. In 1934, Hetchin partnered with frame builder Jack Denny, who had been experimenting with innovative curved stay designs. Recognizing the potential, Hetchin patented the design that same year, marking the beginning of Hetchins'' production of bespoke bicycles.
+INSERT INTO public."Brand"
+VALUES (1, 'Hetchins', 'Hetchins, established in the early 1920s by Hyman Hetchin in Tottenham, London, is renowned for its intricately designed bicycle frames, particularly the distinctive "curly" or "vibrant" stays and ornate lugwork. Originally, Hetchin''s shop sold household appliances and mass-produced bicycles. In 1934, Hetchin partnered with frame builder Jack Denny, who had been experimenting with innovative curved stay designs. Recognizing the potential, Hetchin patented the design that same year, marking the beginning of Hetchins'' production of bespoke bicycles.
 
 The brand quickly gained prominence, with its frames contributing to Olympic and World Championship victories in 1936. Despite challenges during World War II, Hetchins maintained production and experienced a resurgence in the 1950s. After Hyman''s passing in 1961, his son Alf took over the business, continuing the tradition of quality and craftsmanship. In 1974, the shop relocated to Southend-On-Sea due to re-zoning in Tottenham. Alf managed the business until his retirement in 1986. Since 1993, Hetchins operations have been centered in Preston, UK, under the management of David Miller, with Paul Riley as the current frame builder.
 
@@ -43,16 +48,21 @@ Today, Hetchins frames are highly sought after by collectors and cycling enthusi
 For more information, visit [Hetchins.org](https://www.hetchins.org/).');
 
 
---
--- Data for Name: Model; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-INSERT INTO public."Model" VALUES (7, 1, 'Hellenic Spyder', 'Model z roku 1973, Hellenic Spyder, bol známy svojím jedinečným dizajnom rámu s charakteristickými krivkami a detailmi. Bol to ručne vyrobený bicykel, ktorý kombinoval estetiku s výkonom.');
-INSERT INTO public."Model" VALUES (8, 4, 'Specialissima', 'Tento model bol vlajkovou loďou značky v 70. a 80. rokoch. Bol známy svojou ľahkou konštrukciou a ikonickou farbou „celeste“, čo z neho robilo obľúbenú voľbu medzi profesionálnymi cyklistami.');
-INSERT INTO public."Model" VALUES (10, 3, 'PX-10', 'Jeden z najznámejších modelov značky, PX-10, bol populárny v 70. rokoch. Bol vybavený kvalitnými komponentmi a bol často používaný v profesionálnych pretekoch. ');
-INSERT INTO public."Model" VALUES (11, 3, 'Carbolite 103', 'Model z 80. rokov, Carbolite 103, bol známy svojou odolnou konštrukciou a spoľahlivosťou, čo z neho robilo obľúbenú voľbu pre rekreačných cyklistov.');
-INSERT INTO public."Model" VALUES (9, 4, 'Campione', 'Model z 80. rokov, Campione, bol vybavený komponentmi Campagnolo Mirage a predstavoval spoľahlivý a výkonný bicykel pre nadšencov cestnej cyklistiky. ');
-INSERT INTO public."Model" VALUES (4, 2, 'Oval CX Gentleman', 'The Colnago Oval CX Gentleman, introduced in the early 1980s, is a distinctive model that blends aerodynamic innovation with urban practicality. Derived from the Colnago Oval CX—a bicycle renowned for its ovalized tubing designed to reduce air resistance—the Gentleman variant was tailored for city riding, offering both style and functionality.
+-- MODELS
+INSERT INTO public."Model"
+VALUES (7, 1, 'Hellenic Spyder',
+        'Model z roku 1973, Hellenic Spyder, bol známy svojím jedinečným dizajnom rámu s charakteristickými krivkami a detailmi. Bol to ručne vyrobený bicykel, ktorý kombinoval estetiku s výkonom.');
+INSERT INTO public."Model"
+VALUES (8, 4, 'Specialissima',
+        'Tento model bol vlajkovou loďou značky v 70. a 80. rokoch. Bol známy svojou ľahkou konštrukciou a ikonickou farbou „celeste“, čo z neho robilo obľúbenú voľbu medzi profesionálnymi cyklistami.');
+INSERT INTO public."Model"
+VALUES (10, 3, 'PX-10',
+        'Jeden z najznámejších modelov značky, PX-10, bol populárny v 70. rokoch. Bol vybavený kvalitnými komponentmi a bol často používaný v profesionálnych pretekoch. ');
+INSERT INTO public."Model"
+VALUES (11, 3, 'Carbolite 103',
+        'Model z 80. rokov, Carbolite 103, bol známy svojou odolnou konštrukciou a spoľahlivosťou, čo z neho robilo obľúbenú voľbu pre rekreačných cyklistov.');
+INSERT INTO public."Model"
+VALUES (4, 2, 'Oval CX Gentleman', 'The Colnago Oval CX Gentleman, introduced in the early 1980s, is a distinctive model that blends aerodynamic innovation with urban practicality. Derived from the Colnago Oval CX—a bicycle renowned for its ovalized tubing designed to reduce air resistance—the Gentleman variant was tailored for city riding, offering both style and functionality.
 
 ## Design and Features
 
@@ -90,7 +100,8 @@ For more detailed information and visual references, you can explore the followi
 
 These sources provide additional insights into the model''s specifications and its place in cycling history.
 ');
-INSERT INTO public."Model" VALUES (2, 2, 'Arabesque', 'The Colnago Arabesque, introduced in the early 1980s, is celebrated for its intricate craftsmanship and distinctive aesthetic, embodying the elegance and precision of Italian bicycle design. Originally produced to commemorate Colnago''s 30th anniversary in 1984, the Arabesque has become one of the most sought-after models among collectors and cycling enthusiasts.
+INSERT INTO public."Model"
+VALUES (2, 2, 'Arabesque', 'The Colnago Arabesque, introduced in the early 1980s, is celebrated for its intricate craftsmanship and distinctive aesthetic, embodying the elegance and precision of Italian bicycle design. Originally produced to commemorate Colnago''s 30th anniversary in 1984, the Arabesque has become one of the most sought-after models among collectors and cycling enthusiasts.
 
 ## Frame Design and Construction
 
@@ -122,7 +133,8 @@ For more detailed information, you can explore the following resources:
 
 These sources provide additional insights into the model''s specifications and its place in cycling history.
 ');
-INSERT INTO public."Model" VALUES (6, 2, 'Super', 'The **[Colnago Super](https://www.colnago.com/en/collections/past-models/super)**, introduced in 1968, is a landmark model in the history of competitive cycling, renowned for its lightweight construction and responsive handling. Designed by Ernesto Colnago, the Super was tailored to meet the demands of professional racers, contributing to numerous victories and solidifying Colnago''s reputation in the cycling world.
+INSERT INTO public."Model"
+VALUES (6, 2, 'Super', 'The **[Colnago Super](https://www.colnago.com/en/collections/past-models/super)**, introduced in 1968, is a landmark model in the history of competitive cycling, renowned for its lightweight construction and responsive handling. Designed by Ernesto Colnago, the Super was tailored to meet the demands of professional racers, contributing to numerous victories and solidifying Colnago''s reputation in the cycling world.
 
 ![image](https://cdn.shopify.com/s/files/1/0828/8980/2039/files/01-SUPERORIGINALE.jpg?v=1725469236&width=2000&height=1294&crop=center)
 
@@ -164,7 +176,8 @@ For more detailed information, you can explore the following resources:
 
 These sources provide additional insights into the model''s specifications and its place in cycling history.
 ');
-INSERT INTO public."Model" VALUES (1, 2, 'Mexico', 'The **[Colnago Mexico](https://www.colnago.com/en/collections/past-models/mexico)**, introduced in the mid-1970s, is a celebrated model that commemorates Eddy Merckx''s 1972 world hour record set in Mexico City. Designed to be exceptionally lightweight and responsive, the Mexico became a favorite among professional cyclists and remains highly regarded by vintage cycling enthusiasts.
+INSERT INTO public."Model"
+VALUES (1, 2, 'Mexico', 'The **[Colnago Mexico](https://www.colnago.com/en/collections/past-models/mexico)**, introduced in the mid-1970s, is a celebrated model that commemorates Eddy Merckx''s 1972 world hour record set in Mexico City. Designed to be exceptionally lightweight and responsive, the Mexico became a favorite among professional cyclists and remains highly regarded by vintage cycling enthusiasts.
 
 ![image](https://cdn.shopify.com/s/files/1/0828/8980/2039/files/05-MEXICO.jpg?v=1726567407&width=2000&height=1294&crop=center)
 
@@ -206,7 +219,8 @@ For more detailed information, you can explore the following resources:
 These sources provide additional insights into the model''s specifications and its place in cycling history.
 
 ');
-INSERT INTO public."Model" VALUES (5, 2, 'Master', 'The **[Colnago Master](https://www.colnago.com/en/products/master-bike)**, introduced in 1983, stands as a testament to Colnago''s dedication to innovation and craftsmanship in the realm of high-performance steel bicycles. Designed to meet the rigorous demands of professional racing, the Master series has evolved over the years, maintaining its status as an iconic model in cycling history.
+INSERT INTO public."Model"
+VALUES (5, 2, 'Master', 'The **[Colnago Master](https://www.colnago.com/en/products/master-bike)**, introduced in 1983, stands as a testament to Colnago''s dedication to innovation and craftsmanship in the realm of high-performance steel bicycles. Designed to meet the rigorous demands of professional racing, the Master series has evolved over the years, maintaining its status as an iconic model in cycling history.
 
 ![image](https://cdn.shopify.com/s/files/1/0828/8980/2039/files/Colnago_MASTER_-_Fondo_nero-laterale_bagliore_oro_1.jpg?v=1721219303&width=2000&height=1167&crop=center)
 
@@ -252,7 +266,8 @@ For more detailed information, you can explore the following resources:
 
 These sources provide additional insights into the model''s specifications and its place in cycling history.
 ');
-INSERT INTO public."Model" VALUES (12, 2, 'Master Più', 'The **[Colnago Master Più](https://www.colnago.com/en/collections/past-models/master-piu)**, introduced in 1987, is a distinguished model in Colnago''s Master series, renowned for its exceptional craftsmanship and performance-oriented design. Building upon the success of the original Master, the Master Più incorporated refinements that appealed to both professional cyclists and enthusiasts.
+INSERT INTO public."Model"
+VALUES (12, 2, 'Master Più', 'The **[Colnago Master Più](https://www.colnago.com/en/collections/past-models/master-piu)**, introduced in 1987, is a distinguished model in Colnago''s Master series, renowned for its exceptional craftsmanship and performance-oriented design. Building upon the success of the original Master, the Master Più incorporated refinements that appealed to both professional cyclists and enthusiasts.
 
 ![image](https://cdn.shopify.com/s/files/1/0828/8980/2039/files/06-MASTERPiu.jpg?v=1726567462&width=2000&height=1294&crop=center)
 
@@ -298,7 +313,8 @@ For more detailed information, you can explore the following resources:
 
 These sources provide additional insights into the model''s specifications and its place in cycling history.
 ');
-INSERT INTO public."Model" VALUES (3, 2, 'Oval CX', 'The Colnago Oval CX, introduced in the early 1980s, represents a significant advancement in aerodynamic bicycle design. Developed in collaboration with Columbus, this model features distinctive oval-shaped tubing aimed at reducing aerodynamic drag and enhancing frame stiffness.
+INSERT INTO public."Model"
+VALUES (3, 2, 'Oval CX', 'The Colnago Oval CX, introduced in the early 1980s, represents a significant advancement in aerodynamic bicycle design. Developed in collaboration with Columbus, this model features distinctive oval-shaped tubing aimed at reducing aerodynamic drag and enhancing frame stiffness.
 
 ## Frame Design and Construction
 
@@ -342,174 +358,101 @@ For more detailed information, you can explore the following resources:
 
 These sources provide additional insights into the model''s specifications and its place in cycling history.
 ');
+INSERT INTO public."Model"
+VALUES (9, 4, 'Campione',
+        'Model z 80. rokov, Campione, bol vybavený komponentmi Campagnolo Mirage a predstavoval spoľahlivý a výkonný bicykel pre nadšencov cestnej cyklistiky. ');
+
+
+-- BIKES
 
 INSERT INTO public."Bike"
-VALUES (1,
-        12,
-        'Beautiful Colnago Master Piu',
-        '',
-        '## Restoration
+VALUES (3, 4, 'Gentleman', '', '## Restoration
 - sand blasting
 - chroming
-- painting',
-        15,
-        0,
-        '2024-12-19 23:53:02.061463+00',
-        '2024-12-24 01:14:52.734601+00',
-        false,
-        1982,
-        200000,
-        'Columbus SL Steel Tubing',
-        'C-C: 57 cm, C-T: 58 cm',
-        56,
-        82,
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Profil',
-        'Selcof',
-        'Campagnolo Nuovo Record',
-        'Mavic',
-        '3ttt',
-        '3ttt'
-       );
-
+- painting', 2, 0, '2024-12-19 23:53:02.061463+00', '2025-01-04 13:20:37.985019+00', false, 1976, 200000,
+        'Columbus SL Steel Tubing', 'C-C: 57 cm, C-T: 58 cm', 56, 82, 'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Profil', 'Selcof',
+        'Campagnolo Nuovo Record', 'Mavic', '3ttt', '3ttt', '<p class="text-green-500">OK</p>');
 INSERT INTO public."Bike"
-VALUES (2,
-        6,
-        'Silver Colnago Super',
-        '',
-        '## Restoration
+VALUES (1, 12, 'Beautiful Colnago Master Piu', '', '## Restoration
 - sand blasting
 - chroming
-- painting',
-        15,
-        0,
-        '2024-12-19 23:53:02.061463+00',
-        '2024-12-24 01:14:52.734601+00',
-        false,
-        1978,
-        275000,
-        'Columbus SL Steel Tubing',
-        'C-C: 57 cm, C-T: 58 cm',
-        56,
-        82,
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Profil',
-        'Selcof',
-        'Campagnolo Nuovo Record',
-        'Mavic',
-        '3ttt',
-        '3ttt'
-       );
-
-
+- painting', 2, 0, '2024-12-19 23:53:02.061463+00', '2025-01-04 13:24:18.022438+00', false, 1982, 200000,
+        'Columbus SL Steel Tubing', 'C-C: 57 cm, C-T: 58 cm', 56, 82, 'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Profil', 'Selcof',
+        'Campagnolo Nuovo Record', 'Mavic', '3ttt', '3ttt', '<p class="text-green-500">OK</p>');
 INSERT INTO public."Bike"
-VALUES (3,
-        4,
-        'Gentleman',
-        '',
-        '## Restoration
+VALUES (2, 6, 'Silver Colnago Super', '', '## eBay
+You can also buy this bike via [eBay](https://www.ebay.com/itm/226156316287)
+
+## Restoration
 - sand blasting
 - chroming
-- painting',
-        15,
-        0,
-        '2024-12-19 23:53:02.061463+00',
-        '2024-12-24 01:14:52.734601+00',
-        false,
-        1976,
-        245000,
-        'Columbus SL Steel Tubing',
-        'C-C: 57 cm, C-T: 58 cm',
-        56,
-        82,
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Profil',
-        'Selcof',
-        'Campagnolo Nuovo Record',
-        'Mavic',
-        '3ttt',
-        '3ttt'
-       );
-
-
+- painting', 0, 0, '2024-12-19 23:53:02.061463+00', '2025-01-02 10:14:01.775843+00', false, 1978, 275000,
+        'Columbus SL Steel Tubing', 'C-C: 57 cm, C-T: 58 cm', 56, 82, 'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Profil', 'Selcof',
+        'Campagnolo Nuovo Record', 'Mavic', '3ttt', '3ttt', '<p class="text-green-500">OK</p>');
 INSERT INTO public."Bike"
-VALUES (4,
-        6,
-        'Yellow Colnago',
-        '',
-        '## Restoration
+VALUES (7, 6, 'Green Colnago Super', '', '## Restoration
 - sand blasting
 - chroming
-- painting',
-        15,
-        0,
-        '2024-12-19 23:53:02.061463+00',
-        '2024-12-24 01:14:52.734601+00',
-        false,
-        1972,
-        145000,
-        'Columbus SL Steel Tubing',
-        'C-C: 57 cm, C-T: 58 cm',
-        56,
-        82,
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Campagnolo Nuovo Record',
-        'Profil',
-        'Selcof',
-        'Campagnolo Nuovo Record',
-        'Mavic',
-        '3ttt',
-        '3ttt'
-       );
+- painting', 0, 0, '2024-12-30 00:50:34.143712+00', '2025-01-02 09:59:14.187003+00', false, 1978, 150000,
+        'Columbus SL Steel Tubing', 'C-C: 57 cm, C-T: 58 cm', 56, 82, 'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Profil', 'Selcof',
+        'Campagnolo Nuovo Record', 'Mavic', '3ttt', '3ttt', '<p class="text-green-500">OK</p>');
+INSERT INTO public."Bike"
+VALUES (4, 6, 'Yellow Colnago', '', '## eBay
+You can also buy this bike via [eBay](https://www.ebay.com/itm/226156264969).
 
-INSERT INTO public."User" VALUES (2, 'nabytkovavyroba@gmail.com', 'Alexander', 'Mariančík', '$pbkdf2-sha256$i=600000,l=32$UOB/uNKLd1iRmBTTmMqjFQ$OTyclcE7FXybX7hqnBP1hVGudyxME+dqsB6jaPeQgpU', 'UOB/uNKLd1iRmBTTmMqjFQ', false);
-INSERT INTO public."User" VALUES (3, 'roman.mariancik@gmail.com', 'Roman', 'Mariančík', '$pbkdf2-sha256$i=600000,l=32$UOB/uNKLd1iRmBTTmMqjFQ$OTyclcE7FXybX7hqnBP1hVGudyxME+dqsB6jaPeQgpU', 'UOB/uNKLd1iRmBTTmMqjFQ', true);
-INSERT INTO public."User" VALUES (4, 'monikarehakova333@gmail.com', 'Monika', 'Reháková', '$pbkdf2-sha256$i=600000,l=32$UOB/uNKLd1iRmBTTmMqjFQ$OTyclcE7FXybX7hqnBP1hVGudyxME+dqsB6jaPeQgpU', 'UOB/uNKLd1iRmBTTmMqjFQ', false);
-INSERT INTO public."User" VALUES (1, 'a@a.com', 'Acko', 'Ackove', '$pbkdf2-sha256$i=600000,l=32$UOB/uNKLd1iRmBTTmMqjFQ$OTyclcE7FXybX7hqnBP1hVGudyxME+dqsB6jaPeQgpU', 'UOB/uNKLd1iRmBTTmMqjFQ', true);
+## Restoration
+- sand blasting
+- chroming
+- painting
+', 0, 0, '2024-12-19 23:53:02.061463+00', '2025-01-02 10:14:17.358017+00', false, 1972, 145000,
+        'Columbus SL Steel Tubing', 'C-C: 57 cm, C-T: 58 cm', 56, 82, 'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record',
+        'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Profil', 'Selcof',
+        'Campagnolo Nuovo Record', 'Mavic', '3ttt', '3ttt', '<p class="text-green-500">OK</p>');
+
+
+
+INSERT INTO public."User"
+VALUES (2, 'nabytkovavyroba@gmail.com', 'Alexander', 'Mariančík',
+        '$pbkdf2-sha256$i=600000,l=32$UOB/uNKLd1iRmBTTmMqjFQ$OTyclcE7FXybX7hqnBP1hVGudyxME+dqsB6jaPeQgpU',
+        'UOB/uNKLd1iRmBTTmMqjFQ', false);
+INSERT INTO public."User"
+VALUES (3, 'roman.mariancik@gmail.com', 'Roman', 'Mariančík',
+        '$pbkdf2-sha256$i=600000,l=32$UOB/uNKLd1iRmBTTmMqjFQ$OTyclcE7FXybX7hqnBP1hVGudyxME+dqsB6jaPeQgpU',
+        'UOB/uNKLd1iRmBTTmMqjFQ', true);
+INSERT INTO public."User"
+VALUES (4, 'monikarehakova333@gmail.com', 'Monika', 'Reháková',
+        '$pbkdf2-sha256$i=600000,l=32$UOB/uNKLd1iRmBTTmMqjFQ$OTyclcE7FXybX7hqnBP1hVGudyxME+dqsB6jaPeQgpU',
+        'UOB/uNKLd1iRmBTTmMqjFQ', false);
+INSERT INTO public."User"
+VALUES (1, 'a@a.com', 'Acko', 'Ackove',
+        '$pbkdf2-sha256$i=600000,l=32$UOB/uNKLd1iRmBTTmMqjFQ$OTyclcE7FXybX7hqnBP1hVGudyxME+dqsB6jaPeQgpU',
+        'UOB/uNKLd1iRmBTTmMqjFQ', true);
 
 BEGIN;
 LOCK TABLE "Brand" IN EXCLUSIVE MODE;
-SELECT setval('"Brand_id_seq"', COALESCE((SELECT MAX(id)+1 FROM "Brand"), 1), false);
+SELECT setval('"Brand_id_seq"', COALESCE((SELECT MAX(id) + 1 FROM "Brand"), 1), false);
 COMMIT;
 
 BEGIN;
 LOCK TABLE "User" IN EXCLUSIVE MODE;
-SELECT setval('"User_id_seq"', COALESCE((SELECT MAX(id)+1 FROM "User"), 1), false);
+SELECT setval('"User_id_seq"', COALESCE((SELECT MAX(id) + 1 FROM "User"), 1), false);
 COMMIT;
 
 BEGIN;
 LOCK TABLE "Model" IN EXCLUSIVE MODE;
-SELECT setval('"Model_id_seq"', COALESCE((SELECT MAX(id)+1 FROM "Model"), 1), false);
+SELECT setval('"Model_id_seq"', COALESCE((SELECT MAX(id) + 1 FROM "Model"), 1), false);
 COMMIT;
 
 BEGIN;
 LOCK TABLE "Bike" IN EXCLUSIVE MODE;
-SELECT setval('"Bike_id_seq"', COALESCE((SELECT MAX(id)+1 FROM "Bike"), 1), false);
+SELECT setval('"Bike_id_seq"', COALESCE((SELECT MAX(id) + 1 FROM "Bike"), 1), false);
 COMMIT;
