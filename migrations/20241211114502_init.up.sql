@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS "Bike"
     rims            text        NOT NULL,
     handlebar       text        NOT NULL,
     stem            text        NOT NULL,
-    status          text        NOT NULL,
+    status          text,
 
     FOREIGN KEY (model_id) REFERENCES "Model" (id) ON DELETE CASCADE
 );
