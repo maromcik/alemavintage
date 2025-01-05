@@ -4,8 +4,8 @@ use crate::database::common::query_parameters::{
 use crate::database::common::repository::DbCreate;
 use crate::database::common::{DbReadMany, DbReadOne, DbUpdate};
 use crate::database::models::bike::{
-    BikeCreate, BikeCreateSessionKeys, BikeDetail, BikeDetailSessionKeys, BikeDisplay, BikeGetById,
-    BikeImageSearch, BikeSearch, BikeUpdate,
+    BikeCreate, BikeCreateSessionKeys, BikeDetail, BikeDetailSessionKeys, BikeDisplay, BikeGetById
+    , BikeImageSearch, BikeSearch, BikeUpdate,
 };
 use crate::database::models::model::ModelSearch;
 use crate::database::models::tag::{TagJoin, TagSearch};
@@ -19,15 +19,14 @@ use crate::forms::bike::{
     BikeCreateForm, BikeEditForm, BikeImagesEditForm, BikeThumbnailEditForm, BikeUploadForm,
 };
 use crate::handlers::helpers::{
-    get_metadata_from_session, get_template_name, get_user_from_identity, hard_delete_bike,
-    hard_delete_bike_images, save_bike_images_helper, save_bike_thumbnail_helper,
-    upload_bike_helper,
+    create_bike_preview, get_metadata_from_session, get_template_name, get_user_from_identity,
+    hard_delete_bike, hard_delete_bike_images, hard_delete_preview, save_bike_images_helper
+    , upload_bike_helper,
 };
 use crate::templates::bike::{
     BikeCreateTemplate, BikeDisplayTemplate, BikeEditTemplate, BikeReuploadFormTemplate,
     BikeThumbnailUploadTemplate, BikeUploadFormTemplate, BikesTemplate,
 };
-use crate::utilities::file::remove_file;
 use crate::{authorized, AppState};
 use actix_identity::Identity;
 use actix_multipart::form::text::Text;
@@ -173,7 +172,7 @@ pub async fn create_bike(
     let bike_create = BikeCreate::new(
         &form.name,
         form.model_id,
-        "",
+        None,
         &form.description,
         &form.year,
         &((form.price * 100_f64).round() as i32),
@@ -234,11 +233,11 @@ pub async fn upload_bike(
             return Ok(HttpResponse::Ok().content_type("text/html").body(body));
         }
     };
-    
-    tokio::task::spawn(async move {
-        save_bike_images_helper(form.photos, &bike_repo, bike.id).await
-    });
-    
+
+    tokio::task::spawn(
+        async move { save_bike_images_helper(form.photos, &bike_repo, bike.id).await },
+    );
+
     session.remove(session_keys.bike_id.as_str());
 
     let url = format!("/bike/{bike_id}",);
@@ -382,7 +381,7 @@ pub async fn edit_bike(
         Some(&form.rims),
         Some(&form.handlebar),
         Some(&form.stem),
-        None
+        None,
     );
     bike_repo.update(&book_update).await?;
 
@@ -429,18 +428,12 @@ pub async fn upload_bike_thumbnail(
 
     let bike_id = form.bike_id.0;
 
-    let bike: BikeDetail = <BikeRepository as DbReadOne<BikeGetById, BikeDetail>>::read_one(
-        bike_repo.as_ref(),
-        &BikeGetById::new_admin(bike_id),
-    )
-    .await?;
+    hard_delete_preview(&bike_repo, bike_id).await?;
 
-    let thumbnail_path = save_bike_thumbnail_helper(form.thumbnail)?.path;
-
-    remove_file(&bike.thumbnail)?;
+    let bike_image = create_bike_preview(form.thumbnail, &bike_repo).await?;
 
     bike_repo
-        .update(&BikeUpdate::update_thumbnail(bike.id, &thumbnail_path))
+        .update(&BikeUpdate::update_thumbnail(bike_id, bike_image.id))
         .await?;
 
     let handler = format!("/bike/{bike_id}");
@@ -483,15 +476,14 @@ pub async fn reupload_bike(
     let _ = get_user_from_identity(u, &user_repo).await?;
 
     let bike_id = form.bike_id.0;
-
+    
     if form.delete_existing.unwrap_or(Text(false)).0 {
         hard_delete_bike_images(&bike_repo, bike_id).await?;
     }
-    
-    tokio::task::spawn(async move {
-        save_bike_images_helper(form.photos, &bike_repo, bike_id).await
-    });
-    
+
+    tokio::task::spawn(
+        async move { save_bike_images_helper(form.photos, &bike_repo, bike_id).await },
+    );
 
     let url = format!("/bike/{}", bike_id);
     Ok(HttpResponse::SeeOther()

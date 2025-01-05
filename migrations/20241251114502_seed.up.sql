@@ -366,7 +366,7 @@ VALUES (9, 4, 'Campione',
 -- BIKES
 
 INSERT INTO public."Bike"
-VALUES (3, 4, 'Gentleman', '', '## Restoration
+VALUES (3, 4, 'Gentleman', NULL, '## Restoration
 - sand blasting
 - chroming
 - painting', 2, 0, '2024-12-19 23:53:02.061463+00', '2025-01-04 13:20:37.985019+00', false, 1976, 200000,
@@ -375,7 +375,7 @@ VALUES (3, 4, 'Gentleman', '', '## Restoration
         'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Profil', 'Selcof',
         'Campagnolo Nuovo Record', 'Mavic', '3ttt', '3ttt', '<p class="text-green-500">OK</p>');
 INSERT INTO public."Bike"
-VALUES (1, 12, 'Beautiful Colnago Master Piu', '', '## Restoration
+VALUES (1, 12, 'Beautiful Colnago Master Piu', NULL, '## Restoration
 - sand blasting
 - chroming
 - painting', 2, 0, '2024-12-19 23:53:02.061463+00', '2025-01-04 13:24:18.022438+00', false, 1982, 200000,
@@ -384,7 +384,7 @@ VALUES (1, 12, 'Beautiful Colnago Master Piu', '', '## Restoration
         'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Profil', 'Selcof',
         'Campagnolo Nuovo Record', 'Mavic', '3ttt', '3ttt', '<p class="text-green-500">OK</p>');
 INSERT INTO public."Bike"
-VALUES (2, 6, 'Silver Colnago Super', '', '## eBay
+VALUES (2, 6, 'Silver Colnago Super', NULL, '## eBay
 You can also buy this bike via [eBay](https://www.ebay.com/itm/226156316287)
 
 ## Restoration
@@ -396,7 +396,7 @@ You can also buy this bike via [eBay](https://www.ebay.com/itm/226156316287)
         'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Profil', 'Selcof',
         'Campagnolo Nuovo Record', 'Mavic', '3ttt', '3ttt', '<p class="text-green-500">OK</p>');
 INSERT INTO public."Bike"
-VALUES (7, 6, 'Green Colnago Super', '', '## Restoration
+VALUES (7, 6, 'Green Colnago Super', NULL, '## Restoration
 - sand blasting
 - chroming
 - painting', 0, 0, '2024-12-30 00:50:34.143712+00', '2025-01-02 09:59:14.187003+00', false, 1978, 150000,
@@ -405,7 +405,7 @@ VALUES (7, 6, 'Green Colnago Super', '', '## Restoration
         'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Profil', 'Selcof',
         'Campagnolo Nuovo Record', 'Mavic', '3ttt', '3ttt', '<p class="text-green-500">OK</p>');
 INSERT INTO public."Bike"
-VALUES (4, 6, 'Yellow Colnago', '', '## eBay
+VALUES (4, 6, 'Yellow Colnago', NULL, '## eBay
 You can also buy this bike via [eBay](https://www.ebay.com/itm/226156264969).
 
 ## Restoration

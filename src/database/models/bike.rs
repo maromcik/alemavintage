@@ -15,7 +15,7 @@ pub struct Bike {
     pub view_count: i64,
     pub like_count: i64,
     pub description: String,
-    pub thumbnail: String,
+    pub preview: Option<Id>,
     pub created_at: DateTime<Utc>,
     pub edited_at: DateTime<Utc>,
     pub hidden: bool,
@@ -55,13 +55,11 @@ impl EntityById for Bike {
 pub struct BikeDetail {
     pub id: Id,
     // --------------
-    pub name: String,
-    pub brand_id: Id,
     pub model_id: Id,
+    pub name: String,
+    pub description: String,
     pub view_count: i64,
     pub like_count: i64,
-    pub thumbnail: String,
-    pub description: String,
     pub created_at: DateTime<Utc>,
     pub edited_at: DateTime<Utc>,
     pub hidden: bool,
@@ -88,8 +86,14 @@ pub struct BikeDetail {
     pub stem: String,
     pub status: Option<String>,
 
+    pub brand_id: Id,
     pub brand_name: String,
     pub model_name: String,
+
+    pub preview_path: Option<String>,
+    pub preview_width: Option<i32>,
+    pub preview_height: Option<i32>,
+    pub preview_thumbnail_path: Option<String>,
 }
 
 impl EntityById for BikeDetail {
@@ -110,7 +114,6 @@ pub struct BikeDisplay {
     pub model_id: Id,
     pub view_count: i64,
     pub like_count: i64,
-    pub thumbnail: String,
     pub description: String,
     pub hidden: bool,
 
@@ -138,6 +141,11 @@ pub struct BikeDisplay {
 
     pub brand_name: String,
     pub model_name: String,
+
+    pub preview_path: String,
+    pub preview_width: i32,
+    pub preview_height: i32,
+    pub preview_thumbnail_path: String,
 }
 
 impl From<BikeDetail> for BikeDisplay {
@@ -149,11 +157,6 @@ impl From<BikeDetail> for BikeDisplay {
             model_id: value.model_id,
             view_count: value.view_count,
             like_count: value.like_count,
-            thumbnail: if value.thumbnail.is_empty() {
-                "/static/images/logo.png".to_string()
-            } else {
-                value.thumbnail
-            },
             description: value.description,
             hidden: value.hidden,
             year: value.year,
@@ -181,6 +184,10 @@ impl From<BikeDetail> for BikeDisplay {
                 .unwrap_or("<p>NO IMAGES FOUND</p>".to_string()),
             brand_name: value.brand_name,
             model_name: value.model_name,
+            preview_path: value.preview_path.unwrap_or("/static/images/logo.png".to_string()),
+            preview_width: value.preview_width.unwrap_or(400),
+            preview_height: value.preview_height.unwrap_or(400),
+            preview_thumbnail_path: value.preview_thumbnail_path.unwrap_or("/static/images/logo.png".to_string()),
         }
     }
 }
@@ -195,7 +202,7 @@ impl BikeDisplay {
 pub struct BikeCreate {
     pub name: String,
     pub model_id: Id,
-    pub thumbnail: String,
+    pub preview: Option<Id>,
     pub description: String,
 
     pub year: i32,
@@ -224,7 +231,7 @@ impl BikeCreate {
     pub fn new(
         name: &str,
         model_id: Id,
-        thumbnail: &str,
+        preview: Option<Id>,
         description: &str,
         year: &i32,
         price: &i32,
@@ -250,7 +257,7 @@ impl BikeCreate {
         Self {
             name: name.to_owned(),
             model_id,
-            thumbnail: thumbnail.to_owned(),
+            preview,
             description: description.to_owned(),
             year: *year,
             price: *price,
@@ -416,7 +423,7 @@ pub struct BikeMetadataForm {
 #[derive(sqlx::FromRow, Debug, Clone, PartialEq, Serialize)]
 pub struct BikeImage {
     pub id: Id,
-    pub bike_id: Id,
+    pub bike_id: Option<Id>,
     pub path: String,
     pub width: i32,
     pub height: i32,
@@ -477,25 +484,25 @@ pub struct BikeImageCreate {
 }
 
 impl BikeImageCreate {
-    pub fn new(path: String, width: i32, height: i32, thumbnail_path: String) -> Self {
+    pub fn new(path: &str, width: &i32, height: &i32, thumbnail_path: &String) -> Self {
         Self {
-            path,
-            width,
-            height,
-            thumbnail_path,
+            path: path.to_owned(),
+            width: *width,
+            height: *height,
+            thumbnail_path: thumbnail_path.to_owned(),
         }
     }
 }
 
 pub struct BikeImagesCreate {
-    pub bike_id: Id,
+    pub bike_id: Option<Id>,
     pub bike_images: Vec<BikeImageCreate>,
 }
 
 impl BikeImagesCreate {
     pub fn new(bike_id: Id, paths: Vec<BikeImageCreate>) -> Self {
         Self {
-            bike_id,
+            bike_id: Some(bike_id),
             bike_images: paths,
         }
     }
@@ -505,7 +512,7 @@ pub struct BikeUpdate {
     pub id: Id,
     pub model_id: Option<Id>,
     pub name: Option<String>,
-    pub thumbnail: Option<String>,
+    pub preview: Option<Id>,
     pub description: Option<String>,
     pub view_count: Option<i64>,
     pub like_count: Option<i64>,
@@ -541,7 +548,7 @@ impl BikeUpdate {
         id: &Id,
         name: Option<&str>,
         model_id: Option<&Id>,
-        thumbnail: Option<&str>,
+        preview: Option<&Id>,
         description: Option<&str>,
         view_count: Option<&i64>,
         like_count: Option<&i64>,
@@ -573,7 +580,7 @@ impl BikeUpdate {
             id: *id,
             name: name.and_then(change_to_owned),
             model_id: model_id.copied(),
-            thumbnail: thumbnail.and_then(change_to_owned),
+            preview: preview.copied(),
             description: description.and_then(change_to_owned),
             view_count: view_count.copied(),
             like_count: like_count.copied(),
@@ -606,10 +613,10 @@ impl BikeUpdate {
     pub const fn update_fields_none(&self) -> bool {
         self.name.is_none()
             && self.model_id.is_none()
+            && self.preview.is_none()
             && self.view_count.is_none()
             && self.like_count.is_none()
             && self.description.is_none()
-            && self.thumbnail.is_none()
             && self.hidden.is_none()
             && self.year.is_none()
             && self.price.is_none()
@@ -640,7 +647,7 @@ impl BikeUpdate {
             id,
             model_id: None,
             name: None,
-            thumbnail: None,
+            preview: None,
             description: None,
             view_count: Some(view_count),
             like_count: None,
@@ -669,12 +676,12 @@ impl BikeUpdate {
         }
     }
 
-    pub fn update_thumbnail(id: Id, thumbnail: &str) -> Self {
+    pub fn update_thumbnail(id: Id, preview: Id) -> Self {
         Self {
             id,
             model_id: None,
             name: None,
-            thumbnail: Some(thumbnail.to_owned()),
+            preview: Some(preview),
             description: None,
             view_count: None,
             like_count: None,
@@ -703,12 +710,12 @@ impl BikeUpdate {
         }
     }
 
-    pub fn update_thumbnail_and_mark_complete(id: Id, thumbnail: &str) -> Self {
+    pub fn update_thumbnail_and_mark_complete(id: Id, preview: Id) -> Self {
         Self {
             id,
             model_id: None,
             name: None,
-            thumbnail: Some(thumbnail.to_owned()),
+            preview: Some(preview),
             description: None,
             view_count: None,
             like_count: None,
@@ -741,7 +748,7 @@ impl BikeUpdate {
             id,
             model_id: None,
             name: None,
-            thumbnail: None,
+            preview: None,
             description: None,
             view_count: None,
             like_count: None,

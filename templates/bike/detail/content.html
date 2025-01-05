@@ -1,28 +1,45 @@
-<a href="/bike" class="absolute top-0 left-0 mt-20 ml-5 sm:ml-10 sm:mt-24 bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 font-bold rounded focus:outline-none focus:shadow-outline flex items-center">
+<a href="/bike"
+   class="absolute top-0 left-0 mt-20 ml-5 sm:ml-10 sm:mt-24 bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 font-bold rounded focus:outline-none focus:shadow-outline flex items-center">
     <i class="fas fa-arrow-left text-slate-100" style="a {
         @apply text-slate-100 hover:text-slate-100 transition-colors;
     }"></i>
 </a>
 
 <div class="max-w-7xl mx-auto px-4 mb-10 md:mb-5 sm:px-8 mt-8">
-        <!-- Top Section: Thumbnail and Basic Details -->
+    <!-- Top Section: Thumbnail and Basic Details -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-10">
         <!-- Thumbnail -->
-        <div class="flex flex-col items-center relative">
-            <div id="bike-thumbnail-box" class="inline-block group">
-                <div class="w-full h-96 sm:w-full sm:h-96 rounded-lg border shadow-md sm:mt-4 relative">
-                    <img class="responsive-image rounded-lg" src="{{ bike.thumbnail }}"
-                         alt="Bike Thumbnail">
-                    {% if logged_in %}
-                    {% include "bike/admin/thumbnail/detail/content.html" %}
-                    {% endif %}
+        <!-- Images Section -->
+        <div class="mt-10" style="height: 480px; overflow-y: auto">
+
+            <div class="pswp-gallery" id="bike-detail-gallery">
+
+                <div id="bike-thumbnail-box" class="group">
+                    <div class="w-full h-60 sm:w-full sm:h-60 rounded-lg border shadow-md sm:mb-8 relative">
+                        {% if logged_in %}
+                        {% include "bike/admin/thumbnail/detail/content.html" %}
+                        {% endif %}
+                        <a href="{{ bike.preview_path }}" data-pswp-width="{{ bike.preview_width }}" data-pswp-height="{{ bike.preview_height }}">
+                            <img class="responsive-image rounded-lg" src="{{ bike.preview_thumbnail_path }}"
+                                 alt="Bike Thumbnail">
+
+                        </a>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+
+                    {% for image in bike_images %}
+                    <a href="{{ image.path }}" data-pswp-width="{{ image.width }}" data-pswp-height="{{ image.height }}"
+                       target="_blank">
+                        <div class=" w-full h-32 rounded-lg overflow-hidden shadow-md hover:scale-105 transition-transform">
+                            <img class="object-cover w-full h-32" src="{{ image.thumbnail_path }}" alt="Bike Image">
+                        </div>
+                    </a>
+                    {% endfor %}
                 </div>
             </div>
-            <div class="flex items-center justify-center mt-5 text-gray-600 space-x-3">
-                <i class="fa-solid fa-eye text-2xl"></i>
-                <span class="text-2xl">{{ bike.view_count }}</span>
-            </div>
         </div>
+
 
         <!-- Bike Details -->
         <div class="items-center flex sm:justify-start flex-col space-y-6 text-center">
@@ -55,6 +72,11 @@
                         {{ bike.price }} €
                     </a>
                 </div>
+            </div>
+
+            <div class="flex items-center justify-center mt-5 text-gray-600 space-x-3">
+                <i class="fa-solid fa-eye text-2xl"></i>
+                <span class="text-2xl">{{ bike.view_count }}</span>
             </div>
             <div class="h-2"></div> <!-- Spacer element for vertical spacing -->
             {% if logged_in %}
@@ -99,6 +121,8 @@
             {% endif %}
         </div>
     </div>
+
+
     <div class="mt-10 mx-auto container">
         <button id="contact-us-btn"
                 class="bg-amber-500 hover:bg-amber-600 mx-auto rounded-md p-3 block text-white text-lg shadow-md">
@@ -198,23 +222,6 @@
     </div>
 
 
-    <!-- Images Section -->
-    <div class="mt-10">
-        <h2 class="text-2xl font-bold mb-4">Images</h2>
-        <div class="pswp-gallery" id="bike-detail-gallery">
-        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-
-            {% for image in bike_images %}
-            <a href="{{ image.path }}" data-pswp-width="{{ image.width }}" data-pswp-height="{{ image.height }}" target="_blank">
-                <div class=" w-full h-32 rounded-lg overflow-hidden shadow-md hover:scale-105 transition-transform">
-                    <img class="object-cover w-full h-32" src="{{ image.thumbnail_path }}" alt="Bike Image">
-                </div>
-            </a>
-            {% endfor %}
-            </div>
-        </div>
-    </div>
-
     {% if logged_in %}
     <div class="mt-10">
         <h3>Image Status</h3>
@@ -233,6 +240,7 @@
 
 <script type='module'>
     import PhotoSwipeLightbox from '/static/photoswipe/photoswipe-lightbox.esm.js';
+
     const lightbox = new PhotoSwipeLightbox({
         gallery: '#bike-detail-gallery',
         children: 'a',

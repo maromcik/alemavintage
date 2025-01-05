@@ -13,8 +13,8 @@ use sqlx::{Postgres, Transaction};
 
 use crate::database::common::utilities::{entity_is_correct, generate_query_param_string};
 use crate::database::models::bike::{
-    Bike, BikeCreate, BikeDetail, BikeGetById, BikeImage, BikeImagesCreate, BikeImageSearch,
-    BikeSearch, BikeUpdate,
+    Bike, BikeCreate, BikeDetail, BikeGetById, BikeImage, BikeImageCreate, BikeImageSearch,
+    BikeImagesCreate, BikeSearch, BikeUpdate,
 };
 use crate::database::models::GetById;
 
@@ -108,7 +108,7 @@ impl BikeRepository {
             INSERT INTO "Bike" (
                 name,
                 model_id,
-                thumbnail,
+                preview,
                 description,
                 year,
                 price,
@@ -134,7 +134,7 @@ impl BikeRepository {
             SELECT
                 name,
                 model_id,
-                '',
+                NULL,
                 description,
                 year,
                 price,
@@ -162,8 +162,8 @@ impl BikeRepository {
             "#,
             params.id(),
         )
-            .fetch_one(transaction.as_mut())
-            .await?;
+        .fetch_one(transaction.as_mut())
+        .await?;
         transaction.commit().await?;
         Ok(bike)
     }
@@ -199,14 +199,12 @@ impl DbReadOne<BikeGetById, BikeDetail> for BikeRepository {
             BikeRepository::increment_view_count(params, &mut transaction).await?;
         }
 
-        let maybe_bike = sqlx::query_as!(
-            BikeDetail,
+        let maybe_bike = sqlx::query_as::<_, BikeDetail>(
             r#"
             SELECT
                 bike.id,
                 bike.model_id,
                 bike.name,
-                bike.thumbnail,
                 bike.description,
                 bike.view_count,
                 bike.like_count,
@@ -237,18 +235,25 @@ impl DbReadOne<BikeGetById, BikeDetail> for BikeRepository {
                 
                 brand.id as brand_id,
                 brand.name as brand_name,
-                model.name as model_name                
+                model.name as model_name,
+
+                bike_image.path as preview_path,
+                bike_image.width as preview_width,
+                bike_image.height as preview_height,
+                bike_image.thumbnail_path as preview_thumbnail_path
             FROM
-                "Bike" AS bike
+                "Brand" AS brand
                     INNER JOIN
-                "Model" AS model ON model.id = bike.model_id
+                "Model" AS model ON brand.id = model.brand_id
                     INNER JOIN
-                "Brand" AS brand ON brand.id = model.brand_id
+                "Bike" AS bike ON model.id = bike.model_id
+                    LEFT JOIN
+                "BikeImage" AS bike_image ON bike.preview = bike_image.id
             WHERE
                 bike.id = $1
             "#,
-            params.id(),
         )
+        .bind(params.id)
         .fetch_optional(transaction.as_mut())
         .await?;
 
@@ -270,7 +275,6 @@ impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
                 bike.id,
                 bike.model_id,
                 bike.name,
-                bike.thumbnail,
                 bike.description,
                 bike.view_count,
                 bike.like_count,
@@ -301,13 +305,20 @@ impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
 
                 brand.id   AS brand_id,
                 brand.name AS brand_name,
-                model.name AS model_name
+                model.name AS model_name,
+
+                bike_image.path as preview_path,
+                bike_image.width as preview_width,
+                bike_image.height as preview_height,
+                bike_image.thumbnail_path as preview_thumbnail_path
             FROM
-                "Bike" AS bike
+                "Brand" AS brand
                     INNER JOIN
-                "Model" AS model ON model.id = bike.model_id
+                "Model" AS model ON brand.id = model.brand_id
                     INNER JOIN
-                "Brand" AS brand ON brand.id = model.brand_id
+                "Bike" AS bike ON model.id = bike.model_id
+                    LEFT JOIN
+                "BikeImage" AS bike_image ON bike.preview = bike_image.id
                     LEFT JOIN
                 "BikeTag" AS tag ON tag.bike_id = bike.id  
             WHERE
@@ -344,7 +355,7 @@ impl DbCreate<BikeCreate, Bike> for BikeRepository {
             INSERT INTO "Bike" (
                 name,
                 model_id,
-                thumbnail,
+                preview,
                 description,
                 year,
                 price,
@@ -372,7 +383,7 @@ impl DbCreate<BikeCreate, Bike> for BikeRepository {
             "#,
             params.name,
             params.model_id,
-            params.thumbnail,
+            params.preview,
             params.description,
             params.year,
             params.price,
@@ -424,7 +435,7 @@ impl DbUpdate<BikeUpdate, Bike> for BikeRepository {
             SET
                 name = COALESCE($1, name),
                 model_id = COALESCE($2, model_id),
-                thumbnail = COALESCE($3, thumbnail),
+                preview = COALESCE($3, preview),
                 description = COALESCE($4, description),
                 view_count = COALESCE($5, view_count),
                 like_count = COALESCE($6, like_count),
@@ -456,7 +467,7 @@ impl DbUpdate<BikeUpdate, Bike> for BikeRepository {
             "#,
             params.name,
             params.model_id,
-            params.thumbnail,
+            params.preview,
             params.description,
             params.view_count,
             params.like_count,
@@ -546,23 +557,44 @@ impl DbReadMany<BikeImageSearch, BikeImage> for BikeRepository {
     }
 }
 
+impl DbCreate<BikeImageCreate, BikeImage> for BikeRepository {
+    async fn create(&self, data: &BikeImageCreate) -> DbResultSingle<BikeImage> {
+        let bike_image = sqlx::query_as!(
+            BikeImage,
+            r#"
+                    INSERT INTO "BikeImage" (path, width, height, thumbnail_path)
+                    VALUES ($1, $2, $3, $4)
+                    RETURNING *
+                "#,
+            data.path,
+            data.width,
+            data.height,
+            data.thumbnail_path,
+        )
+        .fetch_one(&self.pool_handler.pool)
+        .await?;
+        Ok(bike_image)
+    }
+}
+
 impl DbCreate<BikeImagesCreate, Vec<BikeImage>> for BikeRepository {
     async fn create(&self, data: &BikeImagesCreate) -> DbResultSingle<Vec<BikeImage>> {
         let mut transaction = self.pool_handler.pool.begin().await?;
         let mut images = Vec::default();
+
         for image in &data.bike_images {
             let bike_image = sqlx::query_as!(
                 BikeImage,
                 r#"
-                    INSERT INTO "BikeImage" (bike_id, path, width, height, thumbnail_path)
+                    INSERT INTO "BikeImage" (path, width, height, thumbnail_path, bike_id)
                     VALUES ($1, $2, $3, $4, $5)
                     RETURNING *
                 "#,
-                data.bike_id,
                 image.path,
                 image.width,
                 image.height,
                 image.thumbnail_path,
+                data.bike_id,
             )
             .fetch_one(transaction.as_mut())
             .await?;

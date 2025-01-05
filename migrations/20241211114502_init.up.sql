@@ -23,21 +23,31 @@ CREATE TABLE IF NOT EXISTS "Model"
 (
     id          bigserial PRIMARY KEY,
     ---------------------------------------------
-    brand_id    bigserial NOT NULL,
-    name        text      NOT NULL,
-    description text      NOT NULL,
+    brand_id    bigint NOT NULL,
+    name        text   NOT NULL,
+    description text   NOT NULL,
 
     FOREIGN KEY (brand_id) REFERENCES "Brand" (id) ON DELETE CASCADE
 
+);
+
+CREATE TABLE IF NOT EXISTS "BikeImage"
+(
+    id             bigserial PRIMARY KEY,
+    ---------------------------------------------
+    path           text NOT NULL,
+    width          int  NOT NULL,
+    height         int  NOT NULL,
+    thumbnail_path text NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "Bike"
 (
     id              bigserial PRIMARY KEY,
     ---------------------------------------------
-    model_id        bigserial   NOT NULL,
+    model_id        bigint      NOT NULL,
     name            text        NOT NULL,
-    thumbnail       text        NOT NULL,
+    preview         bigint,
     description     text        NOT NULL,
     view_count      bigint      NOT NULL DEFAULT 0,
     like_count      bigint      NOT NULL DEFAULT 0,
@@ -66,20 +76,12 @@ CREATE TABLE IF NOT EXISTS "Bike"
     stem            text        NOT NULL,
     status          text,
 
-    FOREIGN KEY (model_id) REFERENCES "Model" (id) ON DELETE CASCADE
+    FOREIGN KEY (model_id) REFERENCES "Model" (id) ON DELETE CASCADE,
+    FOREIGN KEY (preview) REFERENCES "BikeImage" (id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS "BikeImage"
-(
-    id             bigserial PRIMARY KEY,
-    ---------------------------------------------
-    bike_id        bigserial NOT NULL,
-    path           text      NOT NULL,
-    width          int       NOT NULL,
-    height         int       NOT NULL,
-    thumbnail_path text      NOT NULL,
-    FOREIGN KEY (bike_id) REFERENCES "Bike" (id) ON DELETE CASCADE
-);
+ALTER TABLE "BikeImage" ADD COLUMN bike_id bigint;
+ALTER TABLE "BikeImage" ADD FOREIGN KEY (bike_id) REFERENCES "Bike" ON DELETE CASCADE;
 
 CREATE TABLE IF NOT EXISTS "Tag"
 (
@@ -89,8 +91,8 @@ CREATE TABLE IF NOT EXISTS "Tag"
 
 CREATE TABLE IF NOT EXISTS "BikeTag"
 (
-    bike_id bigserial,
-    tag_id  bigserial,
+    bike_id bigint,
+    tag_id  bigint,
     PRIMARY KEY (bike_id, tag_id),
     FOREIGN KEY (bike_id) REFERENCES "Bike" ON DELETE CASCADE,
     FOREIGN KEY (tag_id) REFERENCES "Tag" ON DELETE CASCADE

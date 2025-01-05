@@ -38,15 +38,29 @@ pub async fn hard_delete_bike(
 ) -> Result<(), AppError> {
     for bike_id in bike_ids {
         hard_delete_bike_images(bike_repo, bike_id).await?;
+        hard_delete_preview(bike_repo, bike_id).await?;
 
-        let bikes = <BikeRepository as DbDelete<GetById, Bike>>::delete(
+        let _ = <BikeRepository as DbDelete<GetById, Bike>>::delete(
             bike_repo,
             &GetById::new_with_deleted(bike_id),
         )
         .await?;
-        for bike in bikes {
-            remove_file(&bike.thumbnail)?;
-        }
+    }
+    Ok(())
+}
+
+pub async fn hard_delete_preview(
+    bike_repo: &web::Data<BikeRepository>,
+    bike_id: Id,
+) -> Result<(), AppError> {
+    let previews = <BikeRepository as DbDelete<GetById, BikeImage>>::delete(
+        bike_repo,
+        &GetById::new_with_deleted(bike_id),
+    )
+    .await?;
+    for preview in previews {
+        remove_file(&preview.path)?;
+        remove_file(&preview.thumbnail_path)?;
     }
     Ok(())
 }
@@ -95,21 +109,43 @@ pub async fn get_user_from_identity(
         .await?)
 }
 
+pub async fn create_bike_preview(
+    file: TempFile,
+    bike_repo: &web::Data<BikeRepository>,
+) -> Result<BikeImage, AppError> {
+    let (preview, thumbnail) = save_bike_thumbnail_helper(file)?;
+
+    match bike_repo
+        .create(&BikeImageCreate::new(
+            &preview.path,
+            &preview.width,
+            &preview.height,
+            &thumbnail.path,
+        ))
+        .await
+    {
+        Ok(bike_image) => Ok(bike_image),
+        Err(e) => {
+            remove_file(&preview.path)?;
+            remove_file(&thumbnail.path)?;
+            Err(AppError::from(e))
+        }
+    }
+}
+
 pub async fn upload_bike_helper(
     bike_id: Id,
     bike_repo: &web::Data<BikeRepository>,
     thumbnail: TempFile,
 ) -> Result<Bike, AppError> {
-    let thumbnail_path = save_bike_thumbnail_helper(thumbnail)?.path;
-
-    let bike_update = BikeUpdate::update_thumbnail_and_mark_complete(bike_id, &thumbnail_path);
+    let bike_image = create_bike_preview(thumbnail, bike_repo).await?;
+    let bike_update = BikeUpdate::update_thumbnail_and_mark_complete(bike_id, bike_image.id);
     let bikes = bike_repo.update(&bike_update).await?;
 
     let bike = bikes
         .into_iter()
         .next()
         .ok_or_else(|| AppError::new(AppErrorKind::NotFound, "Bike {bike_id} not found"))?;
-    
 
     Ok(bike)
 }
@@ -128,7 +164,7 @@ pub async fn save_bike_images_helper(
             "<p class=\"text-blue-500\">PROCESSING IMAGES</p>",
         ))
         .await?;
-    
+
     let paths = tokio::task::spawn_blocking(move || {
         photos
             .into_par_iter()
@@ -137,10 +173,10 @@ pub async fn save_bike_images_helper(
                 let high_res = processor.resize_img(&image_dimensions)?;
                 let thumbnail = processor.resize_img(&thumbnail_image_dimensions)?;
                 Ok(BikeImageCreate::new(
-                    high_res.path,
-                    high_res.width,
-                    high_res.height,
-                    thumbnail.path,
+                    &high_res.path,
+                    &high_res.width,
+                    &high_res.height,
+                    &thumbnail.path,
                 ))
             })
             .collect::<Vec<Result<BikeImageCreate, AppError>>>()
@@ -162,7 +198,10 @@ pub async fn save_bike_images_helper(
         .create(&BikeImagesCreate::new(bike_id, bike_images))
         .await?;
 
-    let mut errors = errors.iter().map(|e| format!("<p class=\"text-red-500\">{e}</p>")).collect::<Vec<String>>();
+    let mut errors = errors
+        .iter()
+        .map(|e| format!("<p class=\"text-red-500\">{e}</p>"))
+        .collect::<Vec<String>>();
 
     if errors.is_empty() {
         errors.push("<p class=\"text-green-500\">OK</p>".to_string());
@@ -178,11 +217,11 @@ pub async fn save_bike_images_helper(
     Ok(())
 }
 
-pub fn save_bike_thumbnail_helper(thumbnail: TempFile) -> Result<AppImage, AppError> {
-    let image = ImageProcessor::builder(thumbnail)
-        .load_image_processor()?
-        .resize_img(&ImageDimensions::new(THUMBNAIL_SIZE, THUMBNAIL_SIZE))?;
-    Ok(image)
+pub fn save_bike_thumbnail_helper(thumbnail: TempFile) -> Result<(AppImage, AppImage), AppError> {
+    let processor = ImageProcessor::builder(thumbnail).load_image_processor()?;
+    let preview = processor.resize_img(&ImageDimensions::new(IMAGE_SIZE, IMAGE_SIZE))?;
+    let thumbnail = processor.resize_img(&ImageDimensions::new(THUMBNAIL_SIZE, THUMBNAIL_SIZE))?;
+    Ok((preview, thumbnail))
 }
 
 pub struct Email {
