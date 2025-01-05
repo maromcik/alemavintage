@@ -1,5 +1,5 @@
 <a href="/bike"
-   class="absolute top-0 left-0 mt-20 ml-5 sm:ml-10 sm:mt-24 custom-bg-acc-500 hover:custom-bg-acc-600 text-white py-2 px-4 font-bold rounded focus:outline-none focus:shadow-outline flex items-center">
+   class="absolute top-0 left-0 mt-20 ml-5 sm:ml-10 sm:mt-24 custom-bg-acc-500 custom-bg-acc-hover-600 text-white py-2 px-4 font-bold rounded focus:outline-none focus:shadow-outline flex items-center">
     <i class="fas fa-arrow-left text-stone-100" style="a {
         @apply text-stone-100 hover:text-stone-100 transition-colors;
     }"></i>
@@ -48,14 +48,14 @@
             <div class="grid grid-cols-2 md:grid-cols-2 gap-6">
                 <div>
                     <h2 class="text-2xl font-semibold text-gray-700 text-center">Brand</h2>
-                    <a class="hover:custom-bg-200 text-gray-800 hover:text-amber-700 font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer"
+                    <a class="custom-bg-acc-hover-200 text-gray-800 hover:text-amber-700 font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer"
                        href="/brand/{{ bike.brand_id }}">
                         {{ bike.brand_name }}
                     </a>
                 </div>
                 <div>
                     <h2 class="text-2xl font-semibold text-gray-700 text-center">Model</h2>
-                    <a class="hover:custom-bg-200 text-gray-800 hover:text-amber-700 font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer"
+                    <a class="custom-bg-acc-hover-200 text-gray-800 hover:text-amber-700 font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer"
                        href="/model/{{ bike.model_id }}">
                         {{ bike.model_name }}
                     </a>
@@ -85,17 +85,17 @@
                     <button hx-get="/bike/{{ bike.id }}/edit" hx-target-error="#content-area"
                             hx-push-url="/bike/{{ bike.id }}/edit"
                             hx-target="#content-area"
-                            class="custom-bg-acc-500 hover:custom-bg-acc-600 rounded-md p-3 text-white text-lg shadow-md w-12">
+                            class="custom-bg-acc-500 custom-bg-acc-hover-600 rounded-md p-3 text-white text-lg shadow-md w-12">
                         <i class="fa-solid fa-pencil"></i>
                     </button>
                     <button hx-get="/bike/{{ bike.id }}/reupload" hx-target-error="#content-area"
                             hx-target="#content-area"
-                            class="custom-bg-acc-500 hover:custom-bg-acc-600 rounded-md p-3 text-white text-lg shadow-md w-12">
+                            class="custom-bg-acc-500 custom-bg-acc-hover-600 rounded-md p-3 text-white text-lg shadow-md w-12">
                         <i class="fa-solid fa-upload"></i>
                     </button>
                     <button hx-get="/bike/{{ bike.id }}/clone" hx-target-error="#content-area" hx-push-url="/bike"
                             hx-target="#content-area"
-                            class="custom-bg-acc-500 hover:custom-bg-acc-600 rounded-md p-3 text-white text-lg shadow-md w-12">
+                            class="custom-bg-acc-500 custom-bg-acc-hover-600 rounded-md p-3 text-white text-lg shadow-md w-12">
                         <i class="fa-solid fa-clone"></i>
                     </button>
                     {% if bike.hidden %}
@@ -112,7 +112,7 @@
                     {% else %}
                     <button hx-delete="/bike/{{ bike.id }}/hide" hx-target-error="#content-area"
                             hx-target="#content-area"
-                            class="custom-bg-acc-500 hover:custom-bg-acc-600 rounded-md p-3 text-white text-lg shadow-md w-12">
+                            class="custom-bg-acc-500 custom-bg-acc-hover-600 rounded-md p-3 text-white text-lg shadow-md w-12">
                         <i class="fa-solid fa-eye-slash"></i>
                     </button>
                     {% endif %}
@@ -121,7 +121,7 @@
             {% endif %}
             <div class="mt-10 mx-auto container">
                 <button id="contact-us-btn"
-                        class="custom-bg-acc-500 hover:custom-bg-acc-600 mx-auto rounded-md p-3 block text-white text-lg shadow-md">
+                        class="custom-bg-acc-500 custom-bg-acc-hover-600 mx-auto rounded-md p-3 block text-white text-lg shadow-md">
                     Contact Us To Buy
                 </button>
             </div>

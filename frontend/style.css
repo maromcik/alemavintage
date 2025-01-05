@@ -130,34 +130,51 @@
 
 
 /*accent color on hover*/
-/*.custom-bg-acc-hover-50 {*/
-/*    @apply bg-amber-50;*/
-/*}*/
+.custom-bg-acc-hover-50 {
+    @apply hover:bg-amber-50;
+}
 
-/*.custom-bg-acc-hover-100 {*/
-/*    @apply bg-amber-100;*/
-/*}*/
+.custom-bg-acc-hover-100 {
+    @apply  hover:bg-amber-100;
+}
 
-/*.custom-bg-acc-hover-200 {*/
-/*    @apply bg-amber-200;*/
-/*}*/
+.custom-bg-acc-hover-200 {
+    @apply  hover:bg-amber-200;
+}
 
-/*.custom-bg-acc-hover-400 {*/
-/*    @apply bg-amber-400;*/
-/*}*/
+.custom-bg-acc-hover-400 {
+    @apply  hover:bg-amber-400;
+}
 
-/*.custom-bg-acc-hover-500 {*/
-/*    @apply bg-amber-500;*/
-/*}*/
+.custom-bg-acc-hover-500 {
+    @apply  hover:bg-amber-500;
+}
 
-/*.custom-bg-acc-hover-600 {*/
-/*    @apply bg-amber-600;*/
-/*}*/
+.custom-bg-acc-hover-600 {
+    @apply  hover:bg-amber-600;
+}
 
-/*.custom-bg-acc-hover-700 {*/
-/*    @apply bg-amber-700;*/
-/*}*/
+.custom-bg-acc-hover-700 {
+    @apply  hover:bg-amber-700;
+}
 
-/*.custom-bg-acc-hover-800 {*/
-/*    @apply bg-amber-800;*/
-/*}*/
+.custom-bg-acc-hover-800 {
+    @apply  hover:bg-amber-800;
+}
+
+/*accent text*/
+.custom-text-acc-500 {
+    @apply  text-amber-500;
+}
+
+.custom-text-acc-600 {
+    @apply  text-amber-600;
+}
+
+.custom-text-acc-hover-500 {
+    @apply  hover:text-amber-500;
+}
+
+.custom-text-acc-hover-600 {
+    @apply  hover:text-amber-600;
+}
