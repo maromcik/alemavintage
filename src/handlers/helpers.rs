@@ -63,9 +63,9 @@ pub async fn hard_delete_preview(
     bike_repo: &web::Data<BikeRepository>,
     preview_id: Id,
 ) -> Result<(), AppError> {
-    let previews = <BikeRepository as DbDelete<BikeImageGetById, BikeImage>>::delete(
+    let previews = <BikeRepository as DbDelete<GetById, BikeImage>>::delete(
         bike_repo,
-        &BikeImageGetById::new(preview_id),
+        &GetById::new(preview_id),
     )
     .await?;
     for preview in previews {

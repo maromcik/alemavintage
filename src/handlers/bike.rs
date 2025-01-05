@@ -4,8 +4,8 @@ use crate::database::common::query_parameters::{
 use crate::database::common::repository::DbCreate;
 use crate::database::common::{DbReadMany, DbReadOne, DbUpdate};
 use crate::database::models::bike::{
-    BikeCreate, BikeCreateSessionKeys, BikeDetail, BikeDetailSessionKeys, BikeDisplay, BikeGetById
-    , BikeImageSearch, BikeSearch, BikeUpdate,
+    Bike, BikeCreate, BikeCreateSessionKeys, BikeDetail, BikeDetailSessionKeys, BikeDisplay,
+    BikeGetById, BikeImageSearch, BikeSearch, BikeUpdate,
 };
 use crate::database::models::model::ModelSearch;
 use crate::database::models::tag::{TagJoin, TagSearch};
@@ -18,7 +18,11 @@ use crate::error::AppError;
 use crate::forms::bike::{
     BikeCreateForm, BikeEditForm, BikeImagesEditForm, BikeThumbnailEditForm, BikeUploadForm,
 };
-use crate::handlers::helpers::{create_bike_preview, get_metadata_from_session, get_template_name, get_user_from_identity, hard_delete_bike, hard_delete_bike_images, hard_delete_previews, save_bike_images_helper, upload_bike_helper};
+use crate::handlers::helpers::{
+    create_bike_preview, get_metadata_from_session, get_template_name, get_user_from_identity,
+    hard_delete_bike, hard_delete_bike_images, hard_delete_previews, save_bike_images_helper,
+    upload_bike_helper,
+};
 use crate::templates::bike::{
     BikeCreateTemplate, BikeDisplayTemplate, BikeEditTemplate, BikeReuploadFormTemplate,
     BikeThumbnailUploadTemplate, BikeUploadFormTemplate, BikesTemplate,
@@ -424,13 +428,19 @@ pub async fn upload_bike_thumbnail(
 
     let bike_id = form.bike_id.0;
 
+    let bike: Bike = <BikeRepository as DbReadOne<GetById, Bike>>::read_one(
+        bike_repo.as_ref(),
+        &GetById::new_with_deleted(bike_id),
+    )
+    .await?;
+
+    hard_delete_previews(&bike_repo, vec![bike]).await?;
+
     let bike_image = create_bike_preview(form.thumbnail, &bike_repo).await?;
 
-    let bikes = bike_repo
+    bike_repo
         .update(&BikeUpdate::update_thumbnail(bike_id, bike_image.id))
         .await?;
-
-    hard_delete_previews(&bike_repo, bikes).await?;
 
     let handler = format!("/bike/{bike_id}");
     Ok(HttpResponse::SeeOther()

@@ -59,6 +59,25 @@ impl BikeRepository {
         Ok(())
     }
 
+    #[allow(dead_code)]
+    pub async fn unlink_preview(&self, params: &impl EntityById) -> DbResultMultiple<Bike> {
+        let mut transaction = self.pool_handler.pool.begin().await?;
+        let bikes = sqlx::query_as!(
+            Bike,
+            r#"
+            UPDATE "Bike" SET
+                preview = NULL
+            WHERE id = $1
+            RETURNING *
+            "#,
+            params.id(),
+        )
+            .fetch_all(transaction.as_mut())
+            .await?;
+        transaction.commit().await?;
+        Ok(bikes)
+    }
+    
     pub async fn restore(&self, params: &impl EntityById) -> DbResultMultiple<Bike> {
         let mut transaction = self.pool_handler.pool.begin().await?;
         let bikes = sqlx::query_as!(
