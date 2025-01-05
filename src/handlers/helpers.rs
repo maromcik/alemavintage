@@ -1,8 +1,5 @@
 use crate::database::common::{DbCreate, DbDelete, DbReadMany, DbReadOne, DbUpdate};
-use crate::database::models::bike::{
-    Bike, BikeCreateSessionKeys, BikeDetail, BikeGetById, BikeImage, BikeImageCreate,
-    BikeImagesCreate, BikeMetadataForm, BikeUpdate,
-};
+use crate::database::models::bike::{Bike, BikeCreateSessionKeys, BikeDetail, BikeGetById, BikeImage, BikeImageCreate, BikeImageGetById, BikeImagesCreate, BikeMetadataForm, BikeUpdate};
 use crate::database::models::user::{User, UserSearch};
 use crate::database::models::{GetById, Id};
 use crate::database::repositories::bike::repository::BikeRepository;
@@ -38,24 +35,37 @@ pub async fn hard_delete_bike(
 ) -> Result<(), AppError> {
     for bike_id in bike_ids {
         hard_delete_bike_images(bike_repo, bike_id).await?;
-        hard_delete_preview(bike_repo, bike_id).await?;
 
-        let _ = <BikeRepository as DbDelete<GetById, Bike>>::delete(
+        let bikes = <BikeRepository as DbDelete<GetById, Bike>>::delete(
             bike_repo,
             &GetById::new_with_deleted(bike_id),
         )
         .await?;
+        
+        hard_delete_previews(bike_repo, bikes).await?;
+    }
+    Ok(())
+}
+
+pub async fn hard_delete_previews(
+    bike_repo: &web::Data<BikeRepository>,
+    bikes: Vec<Bike>,
+)-> Result<(), AppError>{
+    for bike in bikes {
+        if let Some(preview_id) = bike.preview {
+            hard_delete_preview(bike_repo, preview_id).await?;
+        }
     }
     Ok(())
 }
 
 pub async fn hard_delete_preview(
     bike_repo: &web::Data<BikeRepository>,
-    bike_id: Id,
+    preview_id: Id,
 ) -> Result<(), AppError> {
-    let previews = <BikeRepository as DbDelete<GetById, BikeImage>>::delete(
+    let previews = <BikeRepository as DbDelete<BikeImageGetById, BikeImage>>::delete(
         bike_repo,
-        &GetById::new_with_deleted(bike_id),
+        &BikeImageGetById::new(preview_id),
     )
     .await?;
     for preview in previews {
@@ -69,9 +79,9 @@ pub async fn hard_delete_bike_images(
     bike_repo: &web::Data<BikeRepository>,
     bike_id: Id,
 ) -> Result<(), AppError> {
-    let bike_images = <BikeRepository as DbDelete<GetById, BikeImage>>::delete(
+    let bike_images = <BikeRepository as DbDelete<BikeImageGetById, BikeImage>>::delete(
         bike_repo,
-        &GetById::new_with_deleted(bike_id),
+        &BikeImageGetById::new(bike_id),
     )
     .await?;
 

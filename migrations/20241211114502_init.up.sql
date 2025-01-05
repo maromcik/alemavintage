@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS "Bike"
     status          text,
 
     FOREIGN KEY (model_id) REFERENCES "Model" (id) ON DELETE CASCADE,
-    FOREIGN KEY (preview) REFERENCES "BikeImage" (id) ON DELETE CASCADE
+    FOREIGN KEY (preview) REFERENCES "BikeImage" (id) ON DELETE SET NULL
 );
 
 ALTER TABLE "BikeImage" ADD COLUMN bike_id bigint;

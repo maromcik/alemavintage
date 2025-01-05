@@ -835,3 +835,23 @@ impl BikeDetailSessionKeys {
         }
     }
 }
+
+pub struct BikeImageGetById {
+    pub id: Id,
+}
+
+impl EntityById for BikeImageGetById {
+    fn id(&self) -> Id {
+        self.id
+    }
+
+    fn fetch_hidden(&self) -> bool {
+        false
+    }
+}
+
+impl BikeImageGetById {
+    pub fn new(id: Id) -> Self {
+        Self { id }
+    }
+}

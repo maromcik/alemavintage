@@ -12,10 +12,7 @@ use crate::database::common::{
 use sqlx::{Postgres, Transaction};
 
 use crate::database::common::utilities::{entity_is_correct, generate_query_param_string};
-use crate::database::models::bike::{
-    Bike, BikeCreate, BikeDetail, BikeGetById, BikeImage, BikeImageCreate, BikeImageSearch,
-    BikeImagesCreate, BikeSearch, BikeUpdate,
-};
+use crate::database::models::bike::{Bike, BikeCreate, BikeDetail, BikeGetById, BikeImage, BikeImageCreate, BikeImageGetById, BikeImageSearch, BikeImagesCreate, BikeSearch, BikeUpdate};
 use crate::database::models::GetById;
 
 #[derive(Clone)]
@@ -605,11 +602,9 @@ impl DbCreate<BikeImagesCreate, Vec<BikeImage>> for BikeRepository {
     }
 }
 
-impl<ById> DbDelete<ById, BikeImage> for BikeRepository
-where
-    ById: EntityById,
+impl DbDelete<BikeImageGetById, BikeImage> for BikeRepository
 {
-    async fn delete(&self, params: &ById) -> DbResultMultiple<BikeImage> {
+    async fn delete(&self, params: &BikeImageGetById) -> DbResultMultiple<BikeImage> {
         let mut transaction = self.pool_handler.pool.begin().await?;
         let images = sqlx::query_as!(
             BikeImage,
@@ -622,6 +617,26 @@ where
         )
         .fetch_all(transaction.as_mut())
         .await?;
+        transaction.commit().await?;
+        Ok(images)
+    }
+}
+
+impl DbDelete<GetById, BikeImage> for BikeRepository
+{
+    async fn delete(&self, params: &GetById) -> DbResultMultiple<BikeImage> {
+        let mut transaction = self.pool_handler.pool.begin().await?;
+        let images = sqlx::query_as!(
+            BikeImage,
+            r#"
+                DELETE FROM "BikeImage"
+                WHERE id = $1
+                RETURNING *
+            "#,
+            params.id(),
+        )
+            .fetch_all(transaction.as_mut())
+            .await?;
         transaction.commit().await?;
         Ok(images)
     }

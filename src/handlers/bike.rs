@@ -18,11 +18,7 @@ use crate::error::AppError;
 use crate::forms::bike::{
     BikeCreateForm, BikeEditForm, BikeImagesEditForm, BikeThumbnailEditForm, BikeUploadForm,
 };
-use crate::handlers::helpers::{
-    create_bike_preview, get_metadata_from_session, get_template_name, get_user_from_identity,
-    hard_delete_bike, hard_delete_bike_images, hard_delete_preview, save_bike_images_helper
-    , upload_bike_helper,
-};
+use crate::handlers::helpers::{create_bike_preview, get_metadata_from_session, get_template_name, get_user_from_identity, hard_delete_bike, hard_delete_bike_images, hard_delete_previews, save_bike_images_helper, upload_bike_helper};
 use crate::templates::bike::{
     BikeCreateTemplate, BikeDisplayTemplate, BikeEditTemplate, BikeReuploadFormTemplate,
     BikeThumbnailUploadTemplate, BikeUploadFormTemplate, BikesTemplate,
@@ -428,13 +424,13 @@ pub async fn upload_bike_thumbnail(
 
     let bike_id = form.bike_id.0;
 
-    hard_delete_preview(&bike_repo, bike_id).await?;
-
     let bike_image = create_bike_preview(form.thumbnail, &bike_repo).await?;
 
-    bike_repo
+    let bikes = bike_repo
         .update(&BikeUpdate::update_thumbnail(bike_id, bike_image.id))
         .await?;
+
+    hard_delete_previews(&bike_repo, bikes).await?;
 
     let handler = format!("/bike/{bike_id}");
     Ok(HttpResponse::SeeOther()
@@ -476,7 +472,7 @@ pub async fn reupload_bike(
     let _ = get_user_from_identity(u, &user_repo).await?;
 
     let bike_id = form.bike_id.0;
-    
+
     if form.delete_existing.unwrap_or(Text(false)).0 {
         hard_delete_bike_images(&bike_repo, bike_id).await?;
     }
