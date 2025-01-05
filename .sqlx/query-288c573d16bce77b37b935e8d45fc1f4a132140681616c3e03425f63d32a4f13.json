@@ -1,0 +1,230 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            UPDATE \"Bike\"\n            SET\n                name = COALESCE($1, name),\n                model_id = COALESCE($2, model_id),\n                preview = COALESCE($3, preview),\n                description = COALESCE($4, description),\n                view_count = COALESCE($5, view_count),\n                like_count = COALESCE($6, like_count),\n                hidden = COALESCE($7, hidden),\n                year = COALESCE($8, year),\n                price = COALESCE($9, price),\n                frame = COALESCE($10, frame),\n                seat_tube_sizes = COALESCE($11, seat_tube_sizes),\n                top_tube_size = COALESCE($12, top_tube_size),\n                height = COALESCE($13, height),\n                headset = COALESCE($14, headset),\n                crankset = COALESCE($15, crankset),\n                bottom_bracket = COALESCE($16, bottom_bracket),\n                front_derail = COALESCE($17, front_derail),\n                rear_derail = COALESCE($18, rear_derail),\n                brakes = COALESCE($19, brakes),\n                shifters = COALESCE($20, shifters),\n                brake_levers = COALESCE($21 , brake_levers),\n                saddle = COALESCE($22, saddle),\n                seat_post = COALESCE($23, seat_post),\n                hubs = COALESCE($24, hubs),\n                rims = COALESCE($25, rims),\n                handlebar = COALESCE($26, handlebar),\n                stem = COALESCE($27, stem),\n                status = COALESCE($28, status),\n                edited_at = current_timestamp\n            WHERE id = $29\n            RETURNING *\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 1,
+        "name": "model_id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 2,
+        "name": "name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "preview",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 4,
+        "name": "description",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "view_count",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 6,
+        "name": "like_count",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 7,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 8,
+        "name": "edited_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 9,
+        "name": "hidden",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 10,
+        "name": "year",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 11,
+        "name": "price",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 12,
+        "name": "frame",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 13,
+        "name": "seat_tube_sizes",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 14,
+        "name": "top_tube_size",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 15,
+        "name": "height",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 16,
+        "name": "headset",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 17,
+        "name": "crankset",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 18,
+        "name": "bottom_bracket",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 19,
+        "name": "front_derail",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 20,
+        "name": "rear_derail",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 21,
+        "name": "brakes",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 22,
+        "name": "shifters",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 23,
+        "name": "brake_levers",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 24,
+        "name": "saddle",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 25,
+        "name": "seat_post",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 26,
+        "name": "hubs",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 27,
+        "name": "rims",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 28,
+        "name": "handlebar",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 29,
+        "name": "stem",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 30,
+        "name": "status",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Int8",
+        "Int8",
+        "Text",
+        "Int8",
+        "Int8",
+        "Bool",
+        "Int4",
+        "Int4",
+        "Text",
+        "Text",
+        "Int4",
+        "Int4",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "288c573d16bce77b37b935e8d45fc1f4a132140681616c3e03425f63d32a4f13"
+}

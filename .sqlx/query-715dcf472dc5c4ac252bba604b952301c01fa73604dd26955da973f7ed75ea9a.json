@@ -1,0 +1,64 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            UPDATE \"User\"\n            SET\n                email = COALESCE($1, email),\n                name = COALESCE($2, name),\n                surname = COALESCE($3, surname),\n                password_hash = COALESCE($4, password_hash),\n                password_salt = COALESCE($5, password_salt),\n                admin = COALESCE($6, admin)\n            WHERE id = $7\n            RETURNING *\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 1,
+        "name": "email",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "surname",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "password_hash",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "password_salt",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "admin",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Bool",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "715dcf472dc5c4ac252bba604b952301c01fa73604dd26955da973f7ed75ea9a"
+}

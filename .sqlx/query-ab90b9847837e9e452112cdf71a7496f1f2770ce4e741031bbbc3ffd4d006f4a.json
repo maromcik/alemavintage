@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                DELETE FROM \"BikeTag\"\n                WHERE bike_id = $1 AND tag_id = $2\n               ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "ab90b9847837e9e452112cdf71a7496f1f2770ce4e741031bbbc3ffd4d006f4a"
+}
