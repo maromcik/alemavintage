@@ -29,7 +29,7 @@
             <div class="flex items-center space-x-40 justify-center md:justify-start ">
                 <div>
                     <h2 class="text-2xl font-semibold text-gray-800">Brand</h2>
-                    <a class="custom-bg-acc-hover-200 text-gray-800 hover:text-amber-700 font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer"
+                    <a class="custom-bg-acc-hover-600 text-gray-800 hover:text-white font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer"
                        href="/brand/{{ model.brand_id }}">
                         {{ model.brand_name }}
                     </a>
@@ -52,7 +52,7 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-8 mt-10 text-center md:text-left mb-10 md:mb-5 ">
     <h2 class="text-3xl font-bold text-gray-800 mb-4">Bikes</h2>
     <div class="custom-bg-50 rounded-lg p-6 shadow-md">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
             {% for bike in bikes %}
             {% include "bike/card/content.html" %}
             {% endfor %}
