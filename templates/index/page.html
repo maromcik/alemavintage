@@ -5,22 +5,22 @@
 <div class="flex pt-16 flex-col min-h-screen bg-slate-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-10 lg:px-48 lg:w-[80%] lg:max-w-[90%]">
         <!-- Main Content -->
-            <main id="content-area" hx-ext="response-targets">
+        <main id="content-area" hx-ext="response-targets">
 
-                {% block content %}
-                {% include "index/content.html" %}
-                {% endblock %}
+            {% block content %}
+            {% include "index/content.html" %}
+            {% endblock %}
 
-            </main>
-
+        </main>
     </div>
 </div>
 
-{% block navbar %}
-{% include "components/navbar.html" %}
-{% endblock %}
 {% block footer %}
 {% include "components/footer.html" %}
+{% endblock %}
+
+{% block navbar %}
+{% include "components/navbar.html" %}
 {% endblock %}
 </body>
 </html>
