@@ -1,5 +1,5 @@
 <div class="container mx-auto p-6 max-w-7xl">
-    <form hx-post="/brand/edit" hx-push-url="/brand/{{ brand.id }}" hx-target="#content-area" hx-target-error="#content-area" class="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <form hx-post="/brand/edit" hx-push-url="/brand/{{ brand.id }}" hx-target="#content-area" hx-target-error="#content-area" class="custom-bg-700 shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <input class="hidden" name="id" value="{{brand.id}}">
         <h2 class="block text-gray-300 text-xl font-bold mb-2 text-center">Edit Brand</h2>
 
@@ -22,7 +22,7 @@
         </div>
 
         <div class="flex justify-end">
-            <button hx-target="#content-area" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            <button hx-target="#content-area" class="custom-bg-acc-500 hover:custom-bg-acc-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="submit">
                 Save
             </button>

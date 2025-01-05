@@ -1,6 +1,6 @@
-<a href="/model" class="absolute top-0 left-0 mt-20 ml-5 sm:ml-10 sm:mt-24 bg-amber-500 hover:bg-amber-600 text-slate-100 py-2 px-4 font-bold rounded flex items-center">
-    <i class="fas fa-arrow-left text-slate-100" style="a {
-        @apply text-slate-100 hover:text-slate-100 transition-colors;
+<a href="/model" class="absolute top-0 left-0 mt-20 ml-5 sm:ml-10 sm:mt-24 custom-bg-acc-500 hover:custom-bg-acc-600 text-stone-100 py-2 px-4 font-bold rounded flex items-center">
+    <i class="fas fa-arrow-left text-stone-100" style="a {
+        @apply text-stone-100 hover:text-stone-100 transition-colors;
     }"></i>
 </a>
 
@@ -15,7 +15,7 @@
             <div class="flex space-x-4 justify-center md:justify-start ">
                 <button hx-get="/model/{{ model.id }}/edit" hx-target-error="#content-area"
                         hx-push-url="/model/{{ model.id }}/edit" hx-target="#content-area"
-                        class="bg-amber-500 hover:bg-amber-600 rounded-md p-3 text-white text-lg shadow-md w-12">
+                        class="custom-bg-acc-500 hover:custom-bg-acc-600 rounded-md p-3 text-white text-lg shadow-md w-12">
                     <i class="fa-solid fa-pencil"></i>
                 </button>
                 <button hx-delete="/model/{{ model.id }}/delete" hx-target-error="#content-area" hx-target="#content-area"
@@ -29,7 +29,7 @@
             <div class="flex items-center space-x-40 justify-center md:justify-start ">
                 <div>
                     <h2 class="text-2xl font-semibold text-gray-800">Brand</h2>
-                    <a class="hover:bg-slate-200 text-gray-800 hover:text-amber-700 font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer"
+                    <a class="hover:custom-bg-200 text-gray-800 hover:text-amber-700 font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer"
                        href="/brand/{{ model.brand_id }}">
                         {{ model.brand_name }}
                     </a>
@@ -42,7 +42,7 @@
     <!-- Description Section -->
     <div class="mt-10 text-center md:text-left">
         <h2 class="text-2xl text-gray-800 font-bold mb-4">Description</h2>
-        <div class="bg-gray-50 p-5 rounded-lg shadow-md text-gray-700">
+        <div class="custom-bg-50 p-5 rounded-lg shadow-md text-gray-700">
             {{ model.description | safe }}
         </div>
     </div>
@@ -51,7 +51,7 @@
 <!-- Bikes Section -->
 <div class="max-w-7xl mx-auto px-4 sm:px-8 mt-10 text-center md:text-left mb-10 md:mb-5 ">
     <h2 class="text-3xl font-bold text-gray-800 mb-4">Bikes</h2>
-    <div class="bg-gray-50 rounded-lg p-6 shadow-md">
+    <div class="custom-bg-50 rounded-lg p-6 shadow-md">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {% for bike in bikes %}
             {% include "bike/card/content.html" %}

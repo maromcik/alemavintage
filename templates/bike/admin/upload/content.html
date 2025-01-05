@@ -1,7 +1,7 @@
 <div class="container mx-auto p-6 max-w-7xl">
     <form id="bike_upload_form" hx-post="/bike/upload" hx-target="#content-area" hx-target-error="#error-area"
           enctype="multipart/form-data"
-          class="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4 h-full">
+          class="custom-bg-700 shadow-md rounded px-8 pt-6 pb-8 mb-4 h-full">
         <h2 class="block text-gray-300 text-xl font-bold mb-2 text-center">Upload Images</h2>
         <div id="error-area" class="text-red-500 mb-3 text-center">
             {{ message }}
@@ -28,7 +28,7 @@
 
         <div class="flex justify-end mt-10 mb-5">
 
-            <button class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            <button class="custom-bg-acc-500 hover:custom-bg-acc-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="submit"
                     onclick="document.getElementById('upload-indicator').style.display = 'inline-block';">
                 <img id="upload-indicator"
@@ -39,9 +39,9 @@
                 Create Bike
             </button>
         </div>
-        <div class="w-full bg-gray-200 rounded-full dark:bg-gray-700">
+        <div class="w-full custom-bg-200 rounded-full dark:custom-bg-700">
             <div id="progress"
-                 class="bg-amber-600 text-slate-100 text-xs font-medium text-center p-0.5 leading-none rounded-full"
+                 class="custom-bg-acc-600 text-stone-100 text-xs font-medium text-center p-0.5 leading-none rounded-full"
                  style="width: 0; display: none;">
                 0%
             </div>

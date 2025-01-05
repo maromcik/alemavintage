@@ -5,7 +5,7 @@
         {% if logged_in %}
         <button hx-get="/model/create" hx-target-error="#content-area" hx-push-url="/model/create"
                 hx-target="#content-area"
-                class="bg-amber-500 hover:bg-amber-600 text-slate-100 font-bold py-2 px-6 rounded-lg focus:outline-none focus:ring focus:ring-blue-300 hover:scale-105 transition-all duration-200"
+                class="custom-bg-acc-500 hover:custom-bg-acc-600 text-stone-100 font-bold py-2 px-6 rounded-lg focus:outline-none focus:ring focus:ring-blue-300 hover:scale-105 transition-all duration-200"
                 type="submit">
             New Model
         </button>
@@ -15,7 +15,7 @@
     <!-- Models by Brand -->
     <div class="space-y-8">
         {% for (brand, models) in models | items %}
-        <div class="bg-gray-50 rounded-lg p-6 shadow-md">
+        <div class="custom-bg-50 rounded-lg p-6 shadow-md">
             <!-- Brand Section -->
             <h3 class="text-3xl font-bold text-gray-800 mb-4">{{ brand }}</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

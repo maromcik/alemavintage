@@ -1,7 +1,7 @@
 <div id="user-mgmt-password">
     <div class="mx-auto text-center">
         <form hx-post="/user/manage/password" hx-target="#user-mgmt-password" hx-target-error="#content-area"
-              class="bg-gray-800 mx-auto bg-black shadow-lg border border-gray-800 rounded-lg p-5 flex flex-col items-center max-w-full w-96md:w-96 sm:w-96 lg:w-96 min-w-lg">
+              class="custom-bg-700 mx-auto bg-black shadow-lg border border-gray-800 rounded-lg p-5 flex flex-col items-center max-w-full w-96md:w-96 sm:w-96 lg:w-96 min-w-lg">
             {% if success %}
             <div id="success-area" class="text-green-500 mb-3" onclick=" { this.style.display = 'none'; }">
 
@@ -13,11 +13,11 @@
                 <div class="justify-between w-full">
                     <div class="flex flex-col space-y-2 w-full px-2">
                         <input type="password" name="old_password" placeholder="Staré heslo"
-                               class="p-3 rounded border border-gray-400 bg-gray-900 text-white placeholder-gray-600 focus:outline-none focus:border-amber-500">
+                               class="p-3 rounded border border-gray-400 custom-bg-800 text-white placeholder-gray-600 focus:outline-none focus:border-amber-500">
                         <input type="password" name="new_password" placeholder="Nové heslo"
-                               class="p-3 rounded border border-gray-400 bg-gray-900 text-white placeholder-gray-600 focus:outline-none focus:border-amber-500">
+                               class="p-3 rounded border border-gray-400 custom-bg-800 text-white placeholder-gray-600 focus:outline-none focus:border-amber-500">
                         <input type="password" name="confirm_password" placeholder="Nové heslo (potvrdenie)"
-                               class="p-3 rounded border border-gray-400 bg-gray-900 text-white placeholder-gray-600 focus:outline-none focus:border-amber-500">
+                               class="p-3 rounded border border-gray-400 custom-bg-800 text-white placeholder-gray-600 focus:outline-none focus:border-amber-500">
                     </div>
                 </div>
                 <span>
@@ -25,11 +25,11 @@
                       <a hx-get="/user/manage" hx-replace-url="false" hx-target="#profile-update-fields"
                          hx-target-error="#content-area" hx-swap="innerHTML"
                          hx-boost="true"
-                         class="bg-amber-500 hover:bg-amber-600 rounded-md p-2 text-white text-md shadow-md mr-2">
+                         class="custom-bg-acc-500 hover:custom-bg-acc-600 rounded-md p-2 text-white text-md shadow-md mr-2">
                             Späť na profil
                         </a>
                     <button type="submit"
-                            class="bg-amber-500 hover:bg-amber-600 rounded-md p-2 text-white text-md shadow-md">
+                            class="custom-bg-acc-500 hover:custom-bg-acc-600 rounded-md p-2 text-white text-md shadow-md">
                         <img class="htmx-indicator inline" src="/static/images/bars.svg"/>
                         Zmeniť heslo
                         <img class="htmx-indicator inline" src="/static/images/bars.svg"/>

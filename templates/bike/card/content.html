@@ -1,6 +1,6 @@
 <a class="bike-info-link cursor-pointer" href="/bike/{{ bike.id }}">
-    <div class="w-full h-full rounded-lg overflow-hidden border border-gray-300 flex flex-col transition-transform duration-300 items-center hover:scale-105 hover:shadow-md hover:border-gray-500">
-        <div class="px-4 py-2 flex flex-col w-full h-full text-center bg-gray-100 rounded-lg">
+    <div class="w-full h-full rounded-lg overflow-hidden border border-stone-300 flex flex-col transition-transform duration-300 items-center hover:scale-105 hover:shadow-md hover:border-gray-500">
+        <div class="px-4 py-2 flex flex-col w-full h-full text-center custom-bg-200 rounded-lg">
             <!-- Bike Image -->
             <img class="object-cover rounded-lg w-full h-60" src="{{ bike.preview_thumbnail_path }}" alt="Bike Image">
 
@@ -15,7 +15,7 @@
             <!-- Hidden Status -->
             {% if bike.hidden %}
             <div class="mt-2">
-                <span class="text-xs bg-amber-500 text-amber-800 py-1 px-3 rounded-lg uppercase tracking-wide">
+                <span class="text-xs custom-bg-acc-500 text-amber-800 py-1 px-3 rounded-lg uppercase tracking-wide">
                     Hidden
                 </span>
             </div>

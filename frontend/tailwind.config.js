@@ -6,6 +6,10 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: {
+        italianGreen: '#064221ff',
+        italianRed: '#901a1eff',
+      },
       fontFamily: {
         handwriting: ['"Pacifico"', 'cursive'],
       },
