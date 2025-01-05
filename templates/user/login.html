@@ -3,7 +3,7 @@
 {% include "head.html" %}
 <body class="h-screen flex justify-center items-center">
 <div id="login_box" class="w-full h-full flex justify-center items-center">
-    <form action="/user/login" method="post" class="custom-bg-700 shadow-lg border border-gray-800
+    <form action="/user/login" method="post" class="bg-forms shadow-lg border border-gray-800
     rounded-lg p-5 flex flex-col items-center
     max-w-full w-96 mx-4 md:w-96 sm:w-96 lg:w-96 xl:w-1/4">
         <h2 class="text-stone-100 text-2xl mb-6">Admin</h2>
@@ -16,7 +16,7 @@
             <input type="hidden" name="return_url" value="{{ return_url }}">
         </div>
         <button type="submit"
-                class="custom-bg-acc-500 custom-bg-acc-hover-600 rounded-md p-3 px-6 text-white text-lg shadow-md">Prihlásiť sa</button>
+                class="bg-acc bg-acc-hover rounded-md p-3 px-6 text-white text-lg shadow-md">Prihlásiť sa</button>
         <!-- <p class="text-white">Are you new here? <a href="/user/register" class="text-blue-600 hover:text-blue-400">Create an account</a>.</p> -->
     </form>
 </div>

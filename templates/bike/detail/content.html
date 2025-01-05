@@ -1,5 +1,5 @@
 <a href="/bike"
-   class="absolute top-0 left-0 mt-20 ml-5 sm:ml-10 sm:mt-24 custom-bg-acc-500 custom-bg-acc-hover-600 text-white py-2 px-4 font-bold rounded focus:outline-none focus:shadow-outline flex items-center">
+   class="absolute top-0 left-0 mt-20 ml-5 sm:ml-10 sm:mt-24 bg-acc bg-acc-hover text-white py-2 px-4 font-bold rounded focus:outline-none focus:shadow-outline flex items-center">
     <i class="fas fa-arrow-left text-stone-100" style="a {
         @apply text-stone-100 hover:text-stone-100 transition-colors;
     }"></i>
@@ -48,14 +48,14 @@
             <div class="grid grid-cols-2 md:grid-cols-2 gap-6">
                 <div>
                     <h2 class="text-2xl font-semibold text-gray-700 text-center">Brand</h2>
-                    <a class="custom-bg-acc-hover-600 text-gray-800 hover:text-white font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer"
+                    <a class="bg-acc-hover text-gray-800 hover:text-white font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer"
                        href="/brand/{{ bike.brand_id }}">
                         {{ bike.brand_name }}
                     </a>
                 </div>
                 <div>
                     <h2 class="text-2xl font-semibold text-gray-700 text-center">Model</h2>
-                    <a class="custom-bg-acc-hover-600 text-gray-800 hover:text-white font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer"
+                    <a class="bg-acc-hover text-gray-800 hover:text-white font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer"
                        href="/model/{{ bike.model_id }}">
                         {{ bike.model_name }}
                     </a>
@@ -85,17 +85,17 @@
                     <button hx-get="/bike/{{ bike.id }}/edit" hx-target-error="#content-area"
                             hx-push-url="/bike/{{ bike.id }}/edit"
                             hx-target="#content-area"
-                            class="custom-bg-acc-500 custom-bg-acc-hover-600 rounded-md p-3 text-white text-lg shadow-md w-12">
+                            class="bg-acc bg-acc-hover rounded-md p-3 text-white text-lg shadow-md w-12">
                         <i class="fa-solid fa-pencil"></i>
                     </button>
                     <button hx-get="/bike/{{ bike.id }}/reupload" hx-target-error="#content-area"
                             hx-target="#content-area"
-                            class="custom-bg-acc-500 custom-bg-acc-hover-600 rounded-md p-3 text-white text-lg shadow-md w-12">
+                            class="bg-acc bg-acc-hover rounded-md p-3 text-white text-lg shadow-md w-12">
                         <i class="fa-solid fa-upload"></i>
                     </button>
                     <button hx-get="/bike/{{ bike.id }}/clone" hx-target-error="#content-area" hx-push-url="/bike"
                             hx-target="#content-area"
-                            class="custom-bg-acc-500 custom-bg-acc-hover-600 rounded-md p-3 text-white text-lg shadow-md w-12">
+                            class="bg-acc bg-acc-hover rounded-md p-3 text-white text-lg shadow-md w-12">
                         <i class="fa-solid fa-clone"></i>
                     </button>
                     {% if bike.hidden %}
@@ -112,7 +112,7 @@
                     {% else %}
                     <button hx-delete="/bike/{{ bike.id }}/hide" hx-target-error="#content-area"
                             hx-target="#content-area"
-                            class="custom-bg-acc-500 custom-bg-acc-hover-600 rounded-md p-3 text-white text-lg shadow-md w-12">
+                            class="bg-acc bg-acc-hover rounded-md p-3 text-white text-lg shadow-md w-12">
                         <i class="fa-solid fa-eye-slash"></i>
                     </button>
                     {% endif %}
@@ -121,7 +121,7 @@
             {% endif %}
             <div class="mt-10 mx-auto container">
                 <button id="contact-us-btn"
-                        class="custom-bg-acc-500 custom-bg-acc-hover-600 mx-auto rounded-md p-3 block text-white text-lg shadow-md">
+                        class="bg-acc bg-acc-hover mx-auto rounded-md p-3 block text-white text-lg shadow-md">
                     Contact Us To Buy
                 </button>
             </div>
@@ -136,7 +136,7 @@
     <!-- Description Section -->
     <div class="mt-10">
         <h2 class="text-2xl font-bold mb-4">Description</h2>
-        <div class="custom-bg-50 p-5 rounded-lg shadow-md text-gray-700">
+        <div class="bg-panes p-5 rounded-lg shadow-md text-gray-700">
             {{ bike.description | safe }}
         </div>
     </div>
@@ -145,75 +145,75 @@
     <div class="mt-10">
         <h2 class="text-2xl font-bold mb-4">Specifications</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="custom-bg-100 p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
+            <div class="bg-page p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
                 <span class="font-semibold text-gray-700">Frame</span>
                 <span class="text-gray-600">{{ bike.frame }}</span>
             </div>
-            <div class="custom-bg-100 p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
+            <div class="bg-page p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
                 <span class="font-semibold text-gray-700">Seat Tube Sizes</span>
                 <span class="text-gray-600">{{ bike.seat_tube_sizes }}</span>
             </div>
-            <div class="custom-bg-100 p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
+            <div class="bg-page p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
                 <span class="font-semibold text-gray-700">Top Tube Size:</span>
                 <span class="text-gray-600">{{ bike.top_tube_size }} cm</span>
             </div>
-            <div class="custom-bg-100 p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
+            <div class="bg-page p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
                 <span class="font-semibold text-gray-700">Height</span>
                 <span class="text-gray-600">{{ bike.height }} cm</span>
             </div>
-            <div class="custom-bg-100 p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
+            <div class="bg-page p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
                 <span class="font-semibold text-gray-700">Headset</span>
                 <span class="text-gray-600">{{ bike.headset }}</span>
             </div>
-            <div class="custom-bg-100 p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
+            <div class="bg-page p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
                 <span class="font-semibold text-gray-700">Crankset</span>
                 <span class="text-gray-600">{{ bike.crankset }}</span>
             </div>
-            <div class="custom-bg-100 p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
+            <div class="bg-page p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
                 <span class="font-semibold text-gray-700">Bottom Bracket</span>
                 <span class="text-gray-600">{{ bike.bottom_bracket }}</span>
             </div>
-            <div class="custom-bg-100 p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
+            <div class="bg-page p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
                 <span class="font-semibold text-gray-700">Front Derailleur</span>
                 <span class="text-gray-600">{{ bike.front_derail }}</span>
             </div>
-            <div class="custom-bg-100 p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
+            <div class="bg-page p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
                 <span class="font-semibold text-gray-700">Rear Derailleur</span>
                 <span class="text-gray-600">{{ bike.rear_derail }}</span>
             </div>
-            <div class="custom-bg-100 p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
+            <div class="bg-page p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
                 <span class="font-semibold text-gray-700">Brakes</span>
                 <span class="text-gray-600">{{ bike.brakes }}</span>
             </div>
-            <div class="custom-bg-100 p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
+            <div class="bg-page p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
                 <span class="font-semibold text-gray-700">Shifters</span>
                 <span class="text-gray-600">{{ bike.shifters }}</span>
             </div>
-            <div class="custom-bg-100 p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
+            <div class="bg-page p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
                 <span class="font-semibold text-gray-700">Brake Levers</span>
                 <span class="text-gray-600">{{ bike.brake_levers }}</span>
             </div>
-            <div class="custom-bg-100 p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
+            <div class="bg-page p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
                 <span class="font-semibold text-gray-700">Saddle</span>
                 <span class="text-gray-600">{{ bike.saddle }}</span>
             </div>
-            <div class="custom-bg-100 p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
+            <div class="bg-page p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
                 <span class="font-semibold text-gray-700">Seat Post</span>
                 <span class="text-gray-600">{{ bike.seat_post }}</span>
             </div>
-            <div class="custom-bg-100 p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
+            <div class="bg-page p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
                 <span class="font-semibold text-gray-700">Hubs</span>
                 <span class="text-gray-600">{{ bike.hubs }}</span>
             </div>
-            <div class="custom-bg-100 p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
+            <div class="bg-page p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
                 <span class="font-semibold text-gray-700">Rims</span>
                 <span class="text-gray-600">{{ bike.rims }}</span>
             </div>
-            <div class="custom-bg-100 p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
+            <div class="bg-page p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
                 <span class="font-semibold text-gray-700">Handlebar</span>
                 <span class="text-gray-600">{{ bike.handlebar }}</span>
             </div>
-            <div class="custom-bg-100 p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
+            <div class="bg-page p-1 rounded-lg shadow items-center flex sm:justify-start flex-col space-y-1">
                 <span class="font-semibold text-gray-700">Stem</span>
                 <span class="text-gray-600">{{ bike.stem }}</span>
             </div>

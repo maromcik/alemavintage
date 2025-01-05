@@ -1,6 +1,6 @@
 <div class="container mx-auto p-6 max-w-7xl">
     <form id="bike_reupload_form" hx-post="/bike/reupload" hx-target="#content-area" hx-target-error="#error-area" enctype="multipart/form-data"
-          class="custom-bg-700 shadow-md rounded px-8 pt-6 pb-8 mb-4 h-full">
+          class="bg-forms shadow-md rounded px-8 pt-6 pb-8 mb-4 h-full">
         <label>
             <input class="hidden" name="bike_id" type="text" value="{{ bike_id }}">
         </label>
@@ -19,13 +19,13 @@
 
         <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mt-10">
             <label for="delete_existing" class="text-gray-300 text-sm font-bold flex items-center space-x-3">
-                <input id="delete_existing" name="delete_existing" type="checkbox" value="true" class="form-checkbox h-5 w-5 custom-text-acc-500 custom-bg-700 border-gray-600 focus:ring focus:ring-amber-600 rounded">
+                <input id="delete_existing" name="delete_existing" type="checkbox" value="true" class="form-checkbox h-5 w-5 text-acc bg-forms border-gray-600 focus:ring focus:ring-amber-600 rounded">
                 <span>Delete Existing Images</span>
             </label>
         </div>
 
         <div class="flex justify-end mt-10 mb-5">
-            <button class="custom-bg-acc-500 custom-bg-acc-hover-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            <button class="bg-acc bg-acc-hover text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="submit"
                     onclick="document.getElementById('upload-indicator').style.display = 'inline-block';">
                 <img id="upload-indicator"
@@ -37,8 +37,8 @@
             </button>
         </div>
 
-        <div class="w-full custom-bg-200 rounded-full dark:custom-bg-700">
-            <div id="progress" class="custom-bg-acc-600 text-stone-100 text-xs font-medium text-center p-0.5 leading-none rounded-full" style="width: 0; display: none;">0%</div>
+        <div class="w-full bg-cards rounded-full dark:bg-forms">
+            <div id="progress" class="bg-acc-hover text-stone-100 text-xs font-medium text-center p-0.5 leading-none rounded-full" style="width: 0; display: none;">0%</div>
         </div>
 
     </form>

@@ -8,7 +8,7 @@
             timeless elegance.
         </p>
         <a href="/bike">
-            <button class="custom-bg-acc-500 custom-bg-acc-hover-600 text-white mt-6 font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline">
+            <button class="bg-acc bg-acc-hover text-white mt-6 font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline">
                 Explore Our Bikes
             </button>
         </a>
@@ -25,7 +25,7 @@
         <p class="text-gray-700 leading-relaxed mt-4">
             Our bikes honor this tradition, offering a unique cycling experience that connects you with history. Check
             out our limited collection on <a href="https://www.ebay.com/str/alemavintagebike"
-                                             class="custom-text-acc-500 custom-text-acc-hover-600 underline">eBay</a> or explore
+                                             class="text-acc text-acc-hover underline">eBay</a> or explore
             more here.
         </p>
     </section>
@@ -33,14 +33,14 @@
     <!-- Popular Bikes Section -->
     <section class="mb-12">
         <h2 class="text-3xl font-bold text-gray-800 mb-4">Most Popular</h2>
-        <div class="bg-white rounded-lg p-6 shadow-md">
+        <div class="bg-panes rounded-lg p-6 shadow-md">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
                 {% for bike in bikes %}
                 {% include "bike/card/content.html" %}
                 {% endfor %}
             </div>
 
-            <a href="/bike" class="block text-center mt-4 custom-text-acc-500 custom-text-acc-hover-600 font-semibold">
+            <a href="/bike" class="block text-center mt-4 text-acc text-acc-hover font-semibold">
                 Explore all bikes here
             </a>
         </div>
@@ -49,7 +49,7 @@
     <section class="mb-12">
         {% set paths = ["/static/images/home-colnago1.jpg", "/static/images/home-colnago2.jpg",
         "/static/images/home-colnago3.jpg", "/static/images/home-colnago4.jpg"] %}
-        <div class="bg-white rounded-lg p-6 shadow-md">
+        <div class="bg-panes rounded-lg p-6 shadow-md">
             <h2 class="text-3xl font-bold text-gray-800 mb-4">Our Bikes</h2>
             <div class="pswp-gallery" id="bike-detail-gallery">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
@@ -66,7 +66,7 @@
     </section>
 
     <!-- Informational Section -->
-    <section class="custom-bg-50 p-6 rounded-lg shadow-md">
+    <section class="bg-panes p-6 rounded-lg shadow-md">
         <h2 class="text-3xl font-bold mb-4">Historical Bicycles and the Legend of Colnago</h2>
         <p class="leading-relaxed">
             Historical bicycles are more than means of transportation – they reflect engineering skill, cultural shifts,

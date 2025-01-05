@@ -1,4 +1,4 @@
-<a href="/brand" class="absolute top-0 left-0 mt-20 ml-5 sm:ml-10 sm:mt-24 custom-bg-acc-500 custom-bg-acc-hover-600 text-white py-2 px-4 font-bold rounded focus:outline-none focus:shadow-outline flex items-center">
+<a href="/brand" class="absolute top-0 left-0 mt-20 ml-5 sm:ml-10 sm:mt-24 bg-acc bg-acc-hover text-white py-2 px-4 font-bold rounded focus:outline-none focus:shadow-outline flex items-center">
     <i class="fas fa-arrow-left text-stone-100" style="a {
         @apply text-stone-100 hover:text-stone-100 transition-colors;
     }"></i>
@@ -14,7 +14,7 @@
             <div class="flex space-x-4 justify-center md:justify-start ">
                     <button hx-get="/brand/{{ brand.id }}/edit" hx-target-error="#content-area"
                             hx-push-url="/brand/{{ brand.id }}/edit" hx-target="#content-area"
-                            class="custom-bg-acc-500 custom-bg-acc-hover-600 rounded-md p-3 text-white text-lg shadow-md w-12">
+                            class="bg-acc bg-acc-hover rounded-md p-3 text-white text-lg shadow-md w-12">
                         <i class="fa-solid fa-pencil"></i>
                     </button>
                     <button hx-delete="/brand/{{ brand.id }}/delete" hx-target-error="#content-area" hx-target="#content-area" hx-push-url="/brand"
@@ -28,7 +28,7 @@
         <!-- Description Section -->
         <div class="mt-10 text-center md:text-left">
             <h2 class="text-2xl text-gray-800 font-bold mb-4">Description</h2>
-            <div class="custom-bg-50 p-5 rounded-lg shadow-md text-gray-700">
+            <div class="bg-panes p-5 rounded-lg shadow-md text-gray-700">
                 {{ brand.description | safe }}
             </div>
         </div>
@@ -37,7 +37,7 @@
 
 <div class="max-w-7xl mx-auto px-4 sm:px-8 mt-10 text-center md:text-left mb-10 md:mb-5">
     <h3 class="text-3xl font-bold text-gray-800 mb-4">Models</h3>
-    <div class="custom-bg-50 rounded-lg p-6 shadow-md">
+    <div class="bg-panes rounded-lg p-6 shadow-md">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6">
             {% for model in models %}
             {% include "model/card/content.html"%}
