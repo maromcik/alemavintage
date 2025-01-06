@@ -92,6 +92,10 @@
     @apply bg-amber-500;
 }
 
+.bg-acc-l {
+    @apply bg-amber-600;
+}
+
 .bg-acc-hover {
     @apply hover:bg-amber-600;
 }
