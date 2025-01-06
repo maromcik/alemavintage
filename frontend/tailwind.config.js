@@ -7,8 +7,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        italianGreen: '#064221ff',
-        italianRed: '#901a1eff',
+        // italianGreen: '#064221ff',
+        // italianRed: '#901a1eff',
+        navbarButtons: '#1f2937',
+        navbarAccent: '#92400e',
       },
       fontFamily: {
         handwriting: ['"Pacifico"', 'cursive'],
