@@ -159,3 +159,23 @@ pub struct OtherImageType {
     pub id: Id,
     pub name: String,
 }
+
+pub enum OtherImageTypeEnum {
+    Homepage,
+    About,
+    Other
+}
+
+pub trait ImageTypeId {
+    fn id(&self) -> Id;
+}
+
+impl ImageTypeId for OtherImageTypeEnum {
+    fn id(&self) -> Id {
+        match self {
+            OtherImageTypeEnum::Homepage => 1,
+            OtherImageTypeEnum::About => 2,
+            OtherImageTypeEnum::Other => 3
+        }
+    }
+}

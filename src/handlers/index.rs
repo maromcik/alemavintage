@@ -1,15 +1,15 @@
 use crate::database::common::query_parameters::{DbColumn, DbOrder, DbOrderColumn, DbQueryParams, DbTable};
+use crate::database::common::DbReadMany;
 use crate::database::models::bike::{BikeDisplay, BikeSearch};
+use crate::database::models::image::{ImageTypeId, OtherImageSearch, OtherImageTypeEnum};
 use crate::database::repositories::bike::repository::BikeRepository;
+use crate::database::repositories::image::repository::ImageRepository;
 use crate::error::AppError;
 use crate::handlers::helpers::get_template_name;
 use crate::templates::index::{AboutTemplate, IndexTemplate};
 use crate::AppState;
 use actix_identity::Identity;
 use actix_web::{get, web, HttpRequest, HttpResponse};
-use crate::database::common::DbReadMany;
-use crate::database::models::image::OtherImageSearch;
-use crate::database::repositories::image::repository::ImageRepository;
 
 #[get("/")]
 pub async fn index(
@@ -29,7 +29,7 @@ pub async fn index(
         .await?;
     
     // 1 is Homepage in DB
-    let images = image_repo.read_many(&OtherImageSearch::new(Some(1))).await?;
+    let images = image_repo.read_many(&OtherImageSearch::new(Some(OtherImageTypeEnum::Homepage.id()))).await?;
     
     let template_name = get_template_name(&request, "index");
     let env = state.jinja.acquire_env()?;
