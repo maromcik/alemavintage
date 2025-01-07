@@ -11,7 +11,7 @@
         <p class="text-gray-600">Based in Slovakia, our family workshop is where passion meets precision. My dad, an avid bike enthusiast and craftsman, has been restoring bicycles for years. Together, we breathe new life into timeless brands like <strong>Colnago</strong>, <strong>Hetchins</strong>, <strong>Bianchi</strong>, and <strong>Peugeot</strong>. Every vintage bike we restore combines history, artistry, and functionality. We take pride in preserving cycling heritage and sharing it with enthusiasts worldwide.</p>
     </section>
 
-    <div class="pswp-gallery" id="index-our-bikes">
+    <div class="pswp-gallery" id="about-us-gallery">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
             {% for image in images %}
             <a href="{{ image.path }}" data-pswp-width="{{ image.width }}" data-pswp-height="{{ image.height }}" target="_blank">
@@ -45,3 +45,14 @@
         </div>
     </section>
 </div>
+
+<script type='module'>
+    import PhotoSwipeLightbox from '/static/photoswipe/photoswipe-lightbox.esm.js';
+
+    const lightbox = new PhotoSwipeLightbox({
+        gallery: '#about-us-gallery',
+        children: 'a',
+        pswpModule: () => import('/static/photoswipe/photoswipe.esm.js')
+    });
+    lightbox.init();
+</script>
