@@ -1,7 +1,7 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-8 mb-10 md:mb-5 ">
     <!-- Header Section -->
     <div class="flex flex-col justify-center items-center py-6">
-        <h2 class="text-4xl md:text-6xl tracking-tight">Brands</h2>
+        <h2 class="text-4xl font-bold text-gray-800">Brands</h2>
         {% if logged_in %}
         <button hx-get="/brand/create" hx-target-error="#content-area" hx-push-url="/brand/create"
                 hx-target="#content-area"

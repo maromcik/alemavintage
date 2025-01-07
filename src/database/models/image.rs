@@ -160,6 +160,7 @@ pub struct OtherImageType {
     pub name: String,
 }
 
+#[allow(dead_code)]
 pub enum OtherImageTypeEnum {
     Homepage,
     About,
