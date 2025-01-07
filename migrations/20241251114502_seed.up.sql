@@ -198,9 +198,9 @@ These design elements collectively provided a competitive edge, aligning with th
 
 Over its production span, the Colnago Mexico saw several notable variants:
 
-- **Mexico Oro**: This exclusive version was covered in a very thin layer of 18-carat gold and came equipped with a Campagnolo Super Record group set, Nisi Solidal superlight rims, and a Brooks saddle, exemplifying luxury and performance. :contentReference[oaicite:0]{index=0}
+- **Mexico Oro**: This exclusive version was covered in a very thin layer of 18-carat gold and came equipped with a Campagnolo Super Record group set, Nisi Solidal superlight rims, and a Brooks saddle, exemplifying luxury and performance.
 
-- **Nuovo Mexico**: Introduced around 1983, the Nuovo Mexico featured crimped tubing with a single crimp on either side of the top tube and two offset crimps on each side of the down tube, totaling four crimps. This design enhanced frame stiffness and was the first to feature Colnago’s iconic club-shaped down tube. :contentReference[oaicite:1]{index=1}
+- **Nuovo Mexico**: Introduced around 1983, the Nuovo Mexico featured crimped tubing with a single crimp on either side of the top tube and two offset crimps on each side of the down tube, totaling four crimps. This design enhanced frame stiffness and was the first to feature Colnago’s iconic club-shaped down tube.
 
 These iterations demonstrate Colnago''s dedication to continuous improvement and adaptation to evolving cycling technologies and rider preferences.
 
@@ -254,7 +254,7 @@ Each variant represents Colnago''s pursuit of perfection, blending tradition wit
 
 ## Legacy and Modern Production
 
-The Colnago Master holds a revered place in cycling history, symbolizing the pinnacle of steel frame design. Its combination of innovative engineering and artisanal craftsmanship has made it a favorite among professional racers and cycling enthusiasts alike. Notably, the Master is still in production today, built entirely in Italy using the iconic DT15V steel tubes with the characteristic star-shaped cross-section, allowing a new generation of riders to experience its timeless performance. :contentReference[oaicite:0]{index=0}
+The Colnago Master holds a revered place in cycling history, symbolizing the pinnacle of steel frame design. Its combination of innovative engineering and artisanal craftsmanship has made it a favorite among professional racers and cycling enthusiasts alike. Notably, the Master is still in production today, built entirely in Italy using the iconic DT15V steel tubes with the characteristic star-shaped cross-section, allowing a new generation of riders to experience its timeless performance.
 
 For more detailed information, you can explore the following resources:
 
@@ -273,7 +273,7 @@ VALUES (12, 2, 'Master Più', 'The **[Colnago Master Più](https://www.colnago.c
 
 ## Frame Design and Construction
 
-The Master Più features a lugged construction utilizing proprietary Columbus Gilco S4 tubing, characterized by its star-shaped cross-section. This design enhances frame rigidity and responsiveness, contributing to superior ride quality. A notable advancement in the Master Più is the internal routing of the rear brake cable through the top tube, offering a sleeker appearance and improved aerodynamics compared to the externally routed cables of earlier models. :contentReference[oaicite:0]{index=0}
+The Master Più features a lugged construction utilizing proprietary Columbus Gilco S4 tubing, characterized by its star-shaped cross-section. This design enhances frame rigidity and responsiveness, contributing to superior ride quality. A notable advancement in the Master Più is the internal routing of the rear brake cable through the top tube, offering a sleeker appearance and improved aerodynamics compared to the externally routed cables of earlier models.
 
 ## Technical Specifications
 
@@ -346,7 +346,7 @@ These elements highlight Colnago''s commitment to both form and function in the 
 
 ## Legacy and Collectibility
 
-Produced for a limited time, the Colnago Oval CX is now considered a collector''s item, valued for its innovative design and rarity. Its unique features and historical significance make it a sought-after model among vintage bicycle enthusiasts. :contentReference[oaicite:9]{index=9}
+Produced for a limited time, the Colnago Oval CX is now considered a collector''s item, valued for its innovative design and rarity. Its unique features and historical significance make it a sought-after model among vintage bicycle enthusiasts.
 
 For more detailed information, you can explore the following resources:
 
@@ -369,7 +369,7 @@ INSERT INTO public."Bike"
 VALUES (3, 4, 'Gentleman', NULL, '## Restoration
 - sand blasting
 - chroming
-- painting', 2, 0, '2024-12-19 23:53:02.061463+00', '2025-01-04 13:20:37.985019+00', false, 1976, 200000,
+- painting', 0, 0, '2024-12-19 23:53:02.061463+00', '2025-01-04 13:20:37.985019+00', false, 1976, 200000,
         'Columbus SL Steel Tubing', 'C-C: 57 cm, C-T: 58 cm', 56, 82, 'Campagnolo Nuovo Record',
         'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record',
         'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Profil', 'Selcof',
@@ -378,7 +378,7 @@ INSERT INTO public."Bike"
 VALUES (1, 12, 'Beautiful Colnago Master Piu', NULL, '## Restoration
 - sand blasting
 - chroming
-- painting', 2, 0, '2024-12-19 23:53:02.061463+00', '2025-01-04 13:24:18.022438+00', false, 1982, 200000,
+- painting', 0, 0, '2024-12-19 23:53:02.061463+00', '2025-01-04 13:24:18.022438+00', false, 1982, 200000,
         'Columbus SL Steel Tubing', 'C-C: 57 cm, C-T: 58 cm', 56, 82, 'Campagnolo Nuovo Record',
         'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record',
         'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Campagnolo Nuovo Record', 'Profil', 'Selcof',
