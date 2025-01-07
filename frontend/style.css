@@ -52,7 +52,7 @@
     }
 
     pre {
-        @apply bg-gray-100 text-sm p-4 rounded-lg overflow-x-auto mb-4;
+        @apply bg-gray-100 dark:bg-gray-800 text-sm p-4 rounded-lg overflow-x-auto mb-4;
     }
 
     code {
