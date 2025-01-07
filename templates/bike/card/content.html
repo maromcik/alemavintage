@@ -1,15 +1,15 @@
 <a class="bike-info-link cursor-pointer" href="/bike/{{ bike.id }}">
-    <div class="w-full h-full rounded-lg overflow-hidden border border-stone-300 flex flex-col transition-transform duration-300 items-center hover:scale-105 hover:shadow-md hover:border-gray-500">
+    <div class="w-full h-full rounded-lg overflow-hidden border border-base flex flex-col transition-transform duration-300 items-center hover:scale-105 hover:shadow-md ">
         <div class="px-4 py-2 flex flex-col w-full h-full text-center bg-cards rounded-lg">
             <!-- Bike Image -->
             <img class="object-cover rounded-lg w-full h-60" src="{{ bike.preview_thumbnail_path }}" alt="Bike Image">
 
             <!-- Bike Name -->
-            <div class="font-semibold text-lg text-gray-800 mt-2">
+            <div class="font-semibold text-lg text-sat-xl mt-2">
                 {{ bike.name }}
             </div>
 
-            <div class="font-semibold text-lg text-gray-800 mt-2">
+            <div class="font-semibold text-lg text-sat-xl mt-2">
                 {{ bike.price }} €
             </div>
             <!-- Hidden Status -->

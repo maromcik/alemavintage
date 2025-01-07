@@ -1,6 +1,6 @@
-<a href="/model" class="absolute top-0 left-0 mt-20 ml-5 sm:ml-10 sm:mt-24 bg-acc bg-acc-hover text-stone-100 py-2 px-4 font-bold rounded flex items-center">
-    <i class="fas fa-arrow-left text-stone-100" style="a {
-        @apply text-stone-100 hover:text-stone-100 transition-colors;
+<a href="/model" class="absolute top-0 left-0 mt-20 ml-5 sm:ml-10 sm:mt-24 bg-acc bg-acc-hover text-button py-2 px-4 font-bold rounded flex items-center">
+    <i class="fas fa-arrow-left text-button" style="a {
+        @apply text-button hover:text-button transition-colors;
     }"></i>
 </a>
 
@@ -9,7 +9,7 @@
     <div class="text-center md:text-left grid grid-cols-1 lg:grid-cols-2 gap-10">
         <!-- Brand Details -->
         <div class="flex flex-col space-y-6">
-            <h1 class="text-3xl md:text-5xl font-bold text-gray-800 mb-0">{{ model.name }}</h1>
+            <h1 class="text-3xl md:text-5xl font-bold text-sat-xl mb-0">{{ model.name }}</h1>
             {% if logged_in %}
             <!-- Action Buttons Next to Brand -->
             <div class="flex space-x-4 justify-center md:justify-start ">
@@ -28,8 +28,8 @@
 
             <div class="flex items-center space-x-40 justify-center md:justify-start ">
                 <div>
-                    <h2 class="text-2xl font-semibold text-gray-800">Brand</h2>
-                    <a class="bg-acc-hover text-gray-800 hover:text-white font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer"
+                    <h2 class="text-2xl font-semibold text-sat-xl">Brand</h2>
+                    <a class="bg-acc-hover text-sat-xl hover:text-white font-medium text-lg rounded-md px-4 py-2 shadow-md cursor-pointer"
                        href="/brand/{{ model.brand_id }}">
                         {{ model.brand_name }}
                     </a>
@@ -41,8 +41,8 @@
 
     <!-- Description Section -->
     <div class="mt-10 text-center md:text-left">
-        <h2 class="text-2xl text-gray-800 font-bold mb-4">Description</h2>
-        <div class="bg-panes p-5 rounded-lg shadow-md text-gray-700">
+        <h2 class="text-2xl text-sat-xl font-bold mb-4">Description</h2>
+        <div class="bg-panes p-5 rounded-lg shadow-md text-sat-l">
             {{ model.description | safe }}
         </div>
     </div>
@@ -50,7 +50,7 @@
 
 <!-- Bikes Section -->
 <div class="max-w-7xl mx-auto px-4 sm:px-8 mt-10 text-center md:text-left mb-10 md:mb-5 ">
-    <h2 class="text-3xl font-bold text-gray-800 mb-4">Bikes</h2>
+    <h2 class="text-3xl font-bold text-sat-xl mb-4">Bikes</h2>
     <div class="bg-panes rounded-lg p-6 shadow-md">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
             {% for bike in bikes %}

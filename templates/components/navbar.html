@@ -1,21 +1,25 @@
 <div id="navbar"
      class="bg-ui-components p-2 sm:p-4 flex shadow-md fixed w-full z-10 top-0 h-16 sm:h-20 justify-between items-center">
     <!-- Logo -->
-    <a href="/" class="flex items-center">
+    <a id="navbar-image" href="/" class="flex items-center">
         <!-- Desktop Image -->
-        <img src="/static/images/export/alema-black.png"
-             alt="Logo"
-             class="w-full h-16 py-2 sm:py-2 md:py-1 lg:py-1 xl:py-1 2xl:py-1">
+        <picture>
+            <source srcset="/static/images/export/alema-white.png" media="(prefers-color-scheme:dark)">
+            <img src="/static/images/export/alema-black.png"
+                 alt="Logo"
+                 class="w-full h-16 py-2 sm:py-2 md:py-1 lg:py-1 xl:py-1 2xl:py-1"
+            >
+        </picture>
 
         <!-- Mobile Image -->
-<!--        <img src="/static/images/export/alema-icon-black.png"-->
-<!--             alt="Logo"-->
-<!--             class="block sm:hidden w-full h-16 py-2">-->
+        <!--        <img src="/static/images/export/alema-icon-black.png"-->
+        <!--             alt="Logo"-->
+        <!--             class="block sm:hidden w-full h-16 py-2">-->
     </a>
 
     <!-- Navigation Links Laptop View -->
     <div id="laptop-menu" class="hidden lg:flex lg:items-center lg:space-x-10 xl:space-x-16 xl:text-xl">
-        <a href="/" class="flex items-center text-navbarButtons hover:text-navbarAccent hover:scale-110 cursor-pointer">
+        <a href="/" class="flex items-center text-navbar-buttons hover:scale-110 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
                  stroke="currentColor"
                  class="w-6 h-6 mr-2">
@@ -24,11 +28,13 @@
             </svg>
             Home
         </a>
-        <a href="/bike" class="flex items-center text-navbarButtons hover:text-navbarAccent hover:scale-110 cursor-pointer">
+        <a href="/bike"
+           class="flex items-center text-navbar-buttons hover:text-navbar-buttons-acc hover:scale-110 cursor-pointer">
             <i class="fa-solid fa-bicycle text-3l w-6 h-6 mr-2 lg:mt-2 xl:mt-1"></i>
             Bikes
         </a>
-        <a href="/brand" class="flex items-center text-navbarButtons hover:text-navbarAccent hover:scale-110 cursor-pointer">
+        <a href="/brand"
+           class="flex items-center text-navbar-buttons hover:text-navbar-buttons-acc hover:scale-110 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
                  stroke="currentColor"
                  class="w-6 h-6 mr-2 mt-0 xl:mt-0.5">
@@ -37,7 +43,8 @@
             </svg>
             Brands
         </a>
-        <a href="/model" class="flex items-center text-navbarButtons hover:text-navbarAccent hover:scale-110 cursor-pointer">
+        <a href="/model"
+           class="flex items-center text-navbar-buttons hover:text-navbar-buttons-acc hover:scale-110 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
                  stroke="currentColor"
                  class="w-6 h-6 mr-2 mt-0 xl:mt-0.5">
@@ -46,7 +53,8 @@
             </svg>
             Models
         </a>
-        <a href="/about" class="flex items-center text-navbarButtons hover:text-navbarAccent hover:scale-110 cursor-pointer">
+        <a href="/about"
+           class="flex items-center text-navbar-buttons hover:text-navbar-buttons-acc hover:scale-110 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
                  stroke="currentColor"
                  class="w-6 h-6 mr-2 mt-0 xl:mt-0.5">
@@ -56,11 +64,13 @@
             About Us
         </a>
         {% if logged_in %}
-        <a href="/image" class="flex items-center text-navbarButtons hover:text-navbarAccent hover:scale-110 cursor-pointer">
+        <a href="/image"
+           class="flex items-center text-navbar-buttons hover:text-navbar-buttons-acc hover:scale-110 cursor-pointer">
             <i class="fa-solid fa-image text-3l w-6 h-6 mr-2 lg:mt-2 xl:mt-1"></i>
             Images
         </a>
-        <a href="/user/manage" class="flex items-center text-navbarButtons hover:text-navbarAccent hover:scale-110 cursor-pointer">
+        <a href="/user/manage"
+           class="flex items-center text-navbar-buttons hover:text-navbar-buttons-acc hover:scale-110 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
                  stroke="currentColor"
                  class="w-6 h-6 mr-2">
@@ -75,7 +85,8 @@
     <!-- Login/Logout -->
     <div class="hidden lg:flex lg:items-center">
         {% if logged_in %}
-        <a href="/user/logout" class="flex items-center text-navbarButtons hover:text-navbarAccent hover:scale-110">
+        <a href="/user/logout"
+           class="flex items-center text-navbar-buttons hover:text-navbar-buttons-acc hover:scale-110">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
                  stroke="currentColor"
                  class="mr-2 w-6 h-6">
@@ -85,7 +96,8 @@
             Log out
         </a>
         {% else %}
-        <a href="/user/login" class="flex items-center text-navbarButtons hover:text-navbarAccent hover:scale-110">
+        <a href="/user/login"
+           class="flex items-center text-navbar-buttons hover:text-navbar-buttons-acc hover:scale-110">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
                  stroke="currentColor"
                  class="mr-2 w-6 h-6">
@@ -106,43 +118,46 @@
                 aria-label="Toggle menu"
                 aria-expanded="false"
         >
-            <div class="w-10 h-0.5 sm:w-12 sm:h-1 m-2 bg-navbarButtons"></div>
-            <div class="w-10 h-0.5 sm:w-12 sm:h-1 m-2 bg-navbarButtons"></div>
-            <div class="w-10 h-0.5 sm:w-12 sm:h-1 m-2 bg-navbarButtons"></div>
+            <div class="w-10 h-0.5 sm:w-12 sm:h-1 m-2 bg-navbar-buttons"></div>
+            <div class="w-10 h-0.5 sm:w-12 sm:h-1 m-2 bg-navbar-buttons"></div>
+            <div class="w-10 h-0.5 sm:w-12 sm:h-1 m-2 bg-navbar-buttons"></div>
         </button>
     </div>
 </div>
 
 <!-- Navigation Links Mobile View -->
-<div id="phone-menu" class="fixed top-16 left-0 w-full bg-stone-300 text-2xl  pt-10 pb-6 lg:hidden hidden">
+<div id="phone-menu" class="fixed top-16 left-0 w-full bg-ui-hamburger text-2xl  pt-10 pb-6 lg:hidden hidden">
     <div class="flex flex-col space-y-6 items-center">
-        <a href="/" class="flex items-center  text-navbarButtons hover:text-navbarAccent hover:scale-110">
+        <a href="/" class="flex items-center  text-navbar-buttons hover:text-navbar-buttons-acc hover:scale-110">
             Home
         </a>
-        <a href="/bike" class="flex items-center  text-navbarButtons hover:text-navbarAccent hover:scale-110">
+        <a href="/bike" class="flex items-center  text-navbar-buttons hover:text-navbar-buttons-acc hover:scale-110">
             Bikes
         </a>
-        <a href="/brand" class="flex items-center  text-navbarButtons hover:text-navbarAccent hover:scale-110">
+        <a href="/brand" class="flex items-center  text-navbar-buttons hover:text-navbar-buttons-acc hover:scale-110">
             Brands
         </a>
-        <a href="/model" class="flex items-center  text-navbarButtons hover:text-navbarAccent hover:scale-110">
+        <a href="/model" class="flex items-center  text-navbar-buttons hover:text-navbar-buttons-acc hover:scale-110">
             Models
         </a>
-        <a href="/about" class="flex items-center  text-navbarButtons hover:text-navbarAccent hover:scale-110">
+        <a href="/about" class="flex items-center  text-navbar-buttons hover:text-navbar-buttons-acc hover:scale-110">
             About Us
         </a>
         {% if logged_in %}
-        <a href="/image" class="flex items-center text-navbarButtons hover:text-navbarAccent hover:scale-110">
+        <a href="/image" class="flex items-center text-navbar-buttons hover:text-navbar-buttons-acc hover:scale-110">
             Images
         </a>
-        <a href="/user/manage" class="flex items-center  text-navbarButtons hover:text-navbarAccent hover:scale-110">
+        <a href="/user/manage"
+           class="flex items-center  text-navbar-buttons hover:text-navbar-buttons-acc hover:scale-110">
             Profile
         </a>
-        <a href="/user/logout" class="flex items-center  text-navbarButtons hover:text-navbarAccent hover:scale-110">
+        <a href="/user/logout"
+           class="flex items-center  text-navbar-buttons hover:text-navbar-buttons-acc hover:scale-110">
             Log out
         </a>
         {% else %}
-        <a href="/user/login" class="flex items-center  text-navbarButtons hover:text-navbarAccent hover:scale-110">
+        <a href="/user/login"
+           class="flex items-center  text-navbar-buttons hover:text-navbar-buttons-acc hover:scale-110">
             Admin
         </a>
         {% endif %}

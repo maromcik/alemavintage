@@ -21,17 +21,17 @@
                     </div>
                 </div>
                 <span>
-                <div class="flex inline m-2">
-                      <a hx-get="/user/manage" hx-replace-url="false" hx-target="#profile-update-fields"
+                <div class="flex m-2">
+                      <button hx-get="/user/manage" hx-replace-url="false" hx-target="#profile-update-fields"
                          hx-target-error="#content-area" hx-swap="innerHTML"
                          hx-boost="true"
-                         class="bg-acc bg-acc-hover rounded-md p-2 text-white text-md shadow-md mr-2">
-                            Späť na profil
-                        </a>
+                         class="bg-acc bg-acc-hover rounded-md p-2 text-forms text-md shadow-md mr-2">
+                            Back
+                        </button>
                     <button type="submit"
-                            class="bg-acc bg-acc-hover rounded-md p-2 text-white text-md shadow-md">
+                            class="bg-acc bg-acc-hover rounded-md p-2 text-forms text-md shadow-md mr-2">
                         <img class="htmx-indicator inline" src="/static/images/bars.svg"/>
-                        Zmeniť heslo
+                        Change Password
                         <img class="htmx-indicator inline" src="/static/images/bars.svg"/>
                      </button>
                 </div>
