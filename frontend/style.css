@@ -117,16 +117,20 @@
     @apply bg-amber-600;
 }
 
-.bg-acc-hover {
-    @apply hover:bg-amber-600;
+.bg-acc-l:hover {
+    @apply bg-amber-700;
+}
+
+.bg-acc:hover {
+    @apply bg-amber-600;
 }
 
 .text-acc {
     @apply text-amber-500;
 }
 
-.text-acc-hover {
-    @apply hover:text-amber-600;
+.text-acc:hover {
+    @apply text-amber-600;
 }
 
 .text-forms {

@@ -1310,11 +1310,6 @@ code {
   line-height: 1rem;
 }
 
-.text-base {
-  font-size: 1rem;
-  line-height: 1.5rem;
-}
-
 .font-bold {
   font-weight: 700;
 }
@@ -1359,11 +1354,6 @@ code {
 .text-amber-800 {
   --tw-text-opacity: 1;
   color: rgb(146 64 14 / var(--tw-text-opacity, 1));
-}
-
-.text-green-500 {
-  --tw-text-opacity: 1;
-  color: rgb(34 197 94 / var(--tw-text-opacity, 1));
 }
 
 .text-stone-600 {
@@ -1556,7 +1546,12 @@ code {
   background-color: rgb(217 119 6 / var(--tw-bg-opacity, 1));
 }
 
-.bg-acc-hover:hover {
+.bg-acc-l:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(180 83 9 / var(--tw-bg-opacity, 1));
+}
+
+.bg-acc:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(217 119 6 / var(--tw-bg-opacity, 1));
 }
@@ -1566,7 +1561,7 @@ code {
   color: rgb(245 158 11 / var(--tw-text-opacity, 1));
 }
 
-.text-acc-hover:hover {
+.text-acc:hover {
   --tw-text-opacity: 1;
   color: rgb(217 119 6 / var(--tw-text-opacity, 1));
 }
