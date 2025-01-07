@@ -1279,6 +1279,14 @@ code {
   padding-top: 2.25rem;
 }
 
+.pt-7 {
+  padding-top: 1.75rem;
+}
+
+.pt-4 {
+  padding-top: 1rem;
+}
+
 .text-center {
   text-align: center;
 }
@@ -1856,6 +1864,14 @@ code {
     padding-top: 2.5rem;
   }
 
+  .sm\:pt-9 {
+    padding-top: 2.25rem;
+  }
+
+  .sm\:pt-8 {
+    padding-top: 2rem;
+  }
+
   .sm\:text-2xl {
     font-size: 1.5rem;
     line-height: 2rem;
@@ -1867,8 +1883,16 @@ code {
     margin-bottom: 1.25rem;
   }
 
+  .md\:h-1 {
+    height: 0.25rem;
+  }
+
   .md\:w-96 {
     width: 24rem;
+  }
+
+  .md\:w-12 {
+    width: 3rem;
   }
 
   .md\:grid-cols-1 {
