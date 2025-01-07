@@ -5,10 +5,7 @@ use crate::database::models::GetById;
 use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::error::AppError;
-use crate::forms::user::{
-    ContactAdminBikeForm, ContactAdminGeneralForm, UserLoginForm, UserLoginReturnURL,
-    UserUpdateForm, UserUpdatePasswordForm,
-};
+use crate::forms::user::{ContactAdminBikeForm, ContactAdminGeneralForm, UserLoginForm, UserLoginReturnURL, UserUpdateForm, UserUpdatePasswordForm};
 use crate::handlers::helpers::{contact_admin_helper, get_template_name, parse_user_id};
 use crate::handlers::utilities::validate_password;
 use crate::templates::user::{

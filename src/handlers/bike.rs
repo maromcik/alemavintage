@@ -5,7 +5,7 @@ use crate::database::common::repository::DbCreate;
 use crate::database::common::{DbReadMany, DbReadOne, DbUpdate};
 use crate::database::models::bike::{
     Bike, BikeCreate, BikeCreateSessionKeys, BikeDetail, BikeDetailSessionKeys, BikeDisplay,
-    BikeGetById, BikeImageSearch, BikeSearch, BikeUpdate,
+    BikeGetById, BikeSearch, BikeUpdate,
 };
 use crate::database::models::model::ModelSearch;
 use crate::database::models::tag::{TagJoin, TagSearch};
@@ -34,6 +34,8 @@ use actix_multipart::form::MultipartForm;
 use actix_session::Session;
 use actix_web::http::header::LOCATION;
 use actix_web::{delete, get, post, put, web, HttpRequest, HttpResponse};
+use crate::database::models::image::BikeImageSearch;
+use crate::database::repositories::image::repository::ImageRepository;
 
 #[get("")]
 pub async fn get_bikes(
@@ -68,6 +70,7 @@ pub async fn get_bike_detail(
     request: HttpRequest,
     identity: Option<Identity>,
     bike_repo: web::Data<BikeRepository>,
+    image_repo: web::Data<ImageRepository>,
     tag_repo: web::Data<TagRepository>,
     state: web::Data<AppState>,
     session: Session,
@@ -91,7 +94,7 @@ pub async fn get_bike_detail(
     )
     .await?;
 
-    let bike_images = bike_repo
+    let bike_images = image_repo
         .read_many(&BikeImageSearch::new(Some(bike.id)))
         .await?;
 
@@ -212,6 +215,7 @@ pub async fn upload_bike(
     session: Session,
     user_repo: web::Data<UserRepository>,
     bike_repo: web::Data<BikeRepository>,
+    image_repo: web::Data<ImageRepository>,
     MultipartForm(form): MultipartForm<BikeUploadForm>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
@@ -221,7 +225,7 @@ pub async fn upload_bike(
     let metadata = get_metadata_from_session(&session, &session_keys)?;
     let bike_id = metadata.bike_id;
 
-    let bike = match upload_bike_helper(bike_id, &bike_repo, form.thumbnail).await {
+    let bike = match upload_bike_helper(bike_id, &bike_repo, &image_repo, form.thumbnail).await {
         Ok(bike) => bike,
         Err(err) => {
             let template_name = get_template_name(&request, "bike/admin/upload");
@@ -235,7 +239,7 @@ pub async fn upload_bike(
     };
 
     tokio::task::spawn(
-        async move { save_bike_images_helper(form.photos, &bike_repo, bike.id).await },
+        async move { save_bike_images_helper(form.photos, &bike_repo, &image_repo, bike.id).await },
     );
 
     session.remove(session_keys.bike_id.as_str());
@@ -272,6 +276,7 @@ pub async fn remove_bike(
     identity: Option<Identity>,
     user_repo: web::Data<UserRepository>,
     bike_repo: web::Data<BikeRepository>,
+    image_repo: web::Data<ImageRepository>,
     path: web::Path<(Id,)>,
 ) -> Result<HttpResponse, AppError> {
     let u = authorized!(identity, request.path());
@@ -279,7 +284,7 @@ pub async fn remove_bike(
 
     let bike_id = path.into_inner().0;
 
-    hard_delete_bike(&bike_repo, vec![bike_id]).await?;
+    hard_delete_bike(&bike_repo, &image_repo, vec![bike_id]).await?;
 
     Ok(HttpResponse::SeeOther()
         .insert_header((LOCATION, "/bike"))
@@ -420,6 +425,7 @@ pub async fn upload_bike_thumbnail(
     request: HttpRequest,
     identity: Option<Identity>,
     bike_repo: web::Data<BikeRepository>,
+    image_repo: web::Data<ImageRepository>,
     user_repo: web::Data<UserRepository>,
     MultipartForm(form): MultipartForm<BikeThumbnailEditForm>,
 ) -> Result<HttpResponse, AppError> {
@@ -434,9 +440,9 @@ pub async fn upload_bike_thumbnail(
     )
     .await?;
 
-    hard_delete_previews(&bike_repo, vec![bike]).await?;
+    hard_delete_previews(&image_repo, vec![bike]).await?;
 
-    let bike_image = create_bike_preview(form.thumbnail, &bike_repo).await?;
+    let bike_image = create_bike_preview(form.thumbnail, &image_repo).await?;
 
     bike_repo
         .update(&BikeUpdate::update_thumbnail(bike_id, bike_image.id))
@@ -475,6 +481,7 @@ pub async fn reupload_bike(
     request: HttpRequest,
     identity: Option<Identity>,
     bike_repo: web::Data<BikeRepository>,
+    image_repo: web::Data<ImageRepository>,
     user_repo: web::Data<UserRepository>,
     MultipartForm(form): MultipartForm<BikeImagesEditForm>,
 ) -> Result<HttpResponse, AppError> {
@@ -484,11 +491,11 @@ pub async fn reupload_bike(
     let bike_id = form.bike_id.0;
 
     if form.delete_existing.unwrap_or(Text(false)).0 {
-        hard_delete_bike_images(&bike_repo, bike_id).await?;
+        hard_delete_bike_images(&image_repo, bike_id).await?;
     }
 
     tokio::task::spawn(
-        async move { save_bike_images_helper(form.photos, &bike_repo, bike_id).await },
+        async move { save_bike_images_helper(form.photos, &bike_repo, &image_repo, bike_id).await },
     );
 
     let url = format!("/bike/{}", bike_id);

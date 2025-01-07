@@ -1,6 +1,4 @@
-use crate::database::common::query_parameters::{
-    DbColumn, DbOrder, DbOrderColumn, DbQueryParams, DbTable,
-};
+use crate::database::common::query_parameters::DbQueryParams;
 use crate::database::common::EntityById;
 use crate::database::models::Id;
 use chrono::{DateTime, Utc};
@@ -420,93 +418,6 @@ pub struct BikeMetadataForm {
     pub bike_id: Id,
 }
 
-#[derive(sqlx::FromRow, Debug, Clone, PartialEq, Serialize)]
-pub struct BikeImage {
-    pub id: Id,
-    pub bike_id: Option<Id>,
-    pub path: String,
-    pub width: i32,
-    pub height: i32,
-    pub thumbnail_path: String,
-}
-
-impl EntityById for BikeImage {
-    fn id(&self) -> Id {
-        self.id
-    }
-
-    fn fetch_hidden(&self) -> bool {
-        false
-    }
-}
-
-pub struct BikeImageSearch {
-    pub bike_id: Option<Id>,
-    pub query_params: DbQueryParams,
-}
-
-impl BikeImageSearch {
-    pub fn new(bike_id: Option<Id>) -> Self {
-        Self {
-            bike_id,
-            query_params: DbQueryParams::order(
-                DbOrderColumn::new_column_only(DbColumn::Id, DbOrder::Asc),
-                None,
-            ),
-        }
-    }
-
-    #[allow(dead_code)]
-    pub fn with_params(bike_id: Option<Id>, query_params: DbQueryParams) -> Self {
-        Self {
-            bike_id,
-            query_params,
-        }
-    }
-
-    #[allow(dead_code)]
-    pub fn search_by_bike_id(bike_id: Id) -> Self {
-        Self {
-            bike_id: Some(bike_id),
-            query_params: DbQueryParams::order(
-                DbOrderColumn::new(DbTable::BikeImage, DbColumn::Path, DbOrder::Asc),
-                None,
-            ),
-        }
-    }
-}
-
-pub struct BikeImageCreate {
-    pub path: String,
-    pub width: i32,
-    pub height: i32,
-    pub thumbnail_path: String,
-}
-
-impl BikeImageCreate {
-    pub fn new(path: &str, width: &i32, height: &i32, thumbnail_path: &String) -> Self {
-        Self {
-            path: path.to_owned(),
-            width: *width,
-            height: *height,
-            thumbnail_path: thumbnail_path.to_owned(),
-        }
-    }
-}
-
-pub struct BikeImagesCreate {
-    pub bike_id: Option<Id>,
-    pub bike_images: Vec<BikeImageCreate>,
-}
-
-impl BikeImagesCreate {
-    pub fn new(bike_id: Id, paths: Vec<BikeImageCreate>) -> Self {
-        Self {
-            bike_id: Some(bike_id),
-            bike_images: paths,
-        }
-    }
-}
 
 pub struct BikeUpdate {
     pub id: Id,
@@ -833,25 +744,5 @@ impl BikeDetailSessionKeys {
         Self {
             visited: format!("bike_{bike_id}_visited"),
         }
-    }
-}
-
-pub struct BikeImageGetById {
-    pub id: Id,
-}
-
-impl EntityById for BikeImageGetById {
-    fn id(&self) -> Id {
-        self.id
-    }
-
-    fn fetch_hidden(&self) -> bool {
-        false
-    }
-}
-
-impl BikeImageGetById {
-    pub fn new(id: Id) -> Self {
-        Self { id }
     }
 }

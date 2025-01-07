@@ -1,5 +1,6 @@
 use crate::database::common::{DbCreate, DbDelete, DbReadMany, DbReadOne, DbUpdate};
-use crate::database::models::bike::{Bike, BikeCreateSessionKeys, BikeDetail, BikeGetById, BikeImage, BikeImageCreate, BikeImageGetById, BikeImagesCreate, BikeMetadataForm, BikeUpdate};
+use crate::database::models::bike::{Bike, BikeCreateSessionKeys, BikeDetail, BikeGetById, BikeMetadataForm, BikeUpdate};
+use crate::database::models::image::{BikeImageGetById, BikeImagesCreate, Image, ImageCreate};
 use crate::database::models::user::{User, UserSearch};
 use crate::database::models::{GetById, Id};
 use crate::database::repositories::bike::repository::BikeRepository;
@@ -20,6 +21,7 @@ use lettre::{AsyncTransport, Message};
 use rayon::iter::IntoParallelIterator;
 use rayon::iter::ParallelIterator;
 use std::sync::Arc;
+use crate::database::repositories::image::repository::ImageRepository;
 
 pub fn get_template_name(request: &HttpRequest, path: &str) -> String {
     if is_htmx(request) {
@@ -31,10 +33,11 @@ pub fn get_template_name(request: &HttpRequest, path: &str) -> String {
 
 pub async fn hard_delete_bike(
     bike_repo: &web::Data<BikeRepository>,
+    image_repo: &web::Data<ImageRepository>,
     bike_ids: Vec<Id>,
 ) -> Result<(), AppError> {
     for bike_id in bike_ids {
-        hard_delete_bike_images(bike_repo, bike_id).await?;
+        hard_delete_bike_images(image_repo, bike_id).await?;
 
         let bikes = <BikeRepository as DbDelete<GetById, Bike>>::delete(
             bike_repo,
@@ -42,29 +45,29 @@ pub async fn hard_delete_bike(
         )
         .await?;
         
-        hard_delete_previews(bike_repo, bikes).await?;
+        hard_delete_previews(image_repo, bikes).await?;
     }
     Ok(())
 }
 
 pub async fn hard_delete_previews(
-    bike_repo: &web::Data<BikeRepository>,
+    image_repo: &web::Data<ImageRepository>,
     bikes: Vec<Bike>,
 )-> Result<(), AppError>{
     for bike in bikes {
         if let Some(preview_id) = bike.preview {
-            hard_delete_preview(bike_repo, preview_id).await?;
+            hard_delete_preview(image_repo, preview_id).await?;
         }
     }
     Ok(())
 }
 
 pub async fn hard_delete_preview(
-    bike_repo: &web::Data<BikeRepository>,
+    image_repo: &web::Data<ImageRepository>,
     preview_id: Id,
 ) -> Result<(), AppError> {
-    let previews = <BikeRepository as DbDelete<GetById, BikeImage>>::delete(
-        bike_repo,
+    let previews = <ImageRepository as DbDelete<GetById, Image>>::delete(
+        image_repo,
         &GetById::new(preview_id),
     )
     .await?;
@@ -76,11 +79,11 @@ pub async fn hard_delete_preview(
 }
 
 pub async fn hard_delete_bike_images(
-    bike_repo: &web::Data<BikeRepository>,
+    image_repo: &web::Data<ImageRepository>,
     bike_id: Id,
 ) -> Result<(), AppError> {
-    let bike_images = <BikeRepository as DbDelete<BikeImageGetById, BikeImage>>::delete(
-        bike_repo,
+    let bike_images = <ImageRepository as DbDelete<BikeImageGetById, Image>>::delete(
+        image_repo,
         &BikeImageGetById::new(bike_id),
     )
     .await?;
@@ -121,12 +124,12 @@ pub async fn get_user_from_identity(
 
 pub async fn create_bike_preview(
     file: TempFile,
-    bike_repo: &web::Data<BikeRepository>,
-) -> Result<BikeImage, AppError> {
+    image_repo: &web::Data<ImageRepository>,
+) -> Result<Image, AppError> {
     let (preview, thumbnail) = save_bike_thumbnail_helper(file)?;
 
-    match bike_repo
-        .create(&BikeImageCreate::new(
+    match image_repo
+        .create(&ImageCreate::new(
             &preview.path,
             &preview.width,
             &preview.height,
@@ -146,9 +149,10 @@ pub async fn create_bike_preview(
 pub async fn upload_bike_helper(
     bike_id: Id,
     bike_repo: &web::Data<BikeRepository>,
+    image_repo: &web::Data<ImageRepository>,
     thumbnail: TempFile,
 ) -> Result<Bike, AppError> {
-    let bike_image = create_bike_preview(thumbnail, bike_repo).await?;
+    let bike_image = create_bike_preview(thumbnail, image_repo).await?;
     let bike_update = BikeUpdate::update_thumbnail_and_mark_complete(bike_id, bike_image.id);
     let bikes = bike_repo.update(&bike_update).await?;
 
@@ -163,6 +167,7 @@ pub async fn upload_bike_helper(
 pub async fn save_bike_images_helper(
     photos: Vec<TempFile>,
     bike_repo: &web::Data<BikeRepository>,
+    image_repo: &web::Data<ImageRepository>,
     bike_id: Id,
 ) -> Result<(), AppError> {
     let image_dimensions = ImageDimensions::new(IMAGE_SIZE, IMAGE_SIZE);
@@ -182,18 +187,18 @@ pub async fn save_bike_images_helper(
                 let processor = ImageProcessor::builder(photo).load_image_processor()?;
                 let high_res = processor.resize_img(&image_dimensions)?;
                 let thumbnail = processor.resize_img(&thumbnail_image_dimensions)?;
-                Ok(BikeImageCreate::new(
+                Ok(ImageCreate::new(
                     &high_res.path,
                     &high_res.width,
                     &high_res.height,
                     &thumbnail.path,
                 ))
             })
-            .collect::<Vec<Result<BikeImageCreate, AppError>>>()
+            .collect::<Vec<Result<ImageCreate, AppError>>>()
     })
     .await?;
 
-    let (bike_images, errors): (Vec<BikeImageCreate>, Vec<String>) =
+    let (bike_images, errors): (Vec<ImageCreate>, Vec<String>) =
         paths
             .into_iter()
             .fold((vec![], vec![]), |(mut correct, mut errored), path| {
@@ -204,7 +209,7 @@ pub async fn save_bike_images_helper(
                 (correct, errored)
             });
 
-    bike_repo
+    image_repo
         .create(&BikeImagesCreate::new(bike_id, bike_images))
         .await?;
 

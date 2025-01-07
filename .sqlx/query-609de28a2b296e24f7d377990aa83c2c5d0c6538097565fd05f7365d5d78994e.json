@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            INSERT INTO \"Tag\" (tag)\n            VALUES ($1)\n            RETURNING *\n            ",
+  "query": "\n            INSERT INTO \"Tag\" (name)\n            VALUES ($1)\n            RETURNING *\n            ",
   "describe": {
     "columns": [
       {
@@ -10,7 +10,7 @@
       },
       {
         "ordinal": 1,
-        "name": "tag",
+        "name": "name",
         "type_info": "Text"
       }
     ],
@@ -24,5 +24,5 @@
       false
     ]
   },
-  "hash": "53ca4c2575eba85ee13dab2bf093f8dad33061f71dd34d806eab162ece12e93a"
+  "hash": "609de28a2b296e24f7d377990aa83c2c5d0c6538097565fd05f7365d5d78994e"
 }

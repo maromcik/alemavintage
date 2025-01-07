@@ -5,13 +5,13 @@ use serde::Serialize;
 #[derive(sqlx::FromRow, Debug, PartialEq, Eq, Clone, Serialize)]
 pub struct Tag {
     pub id: Id,
-    pub tag: String,
+    pub name: String,
 }
 
 #[derive(sqlx::FromRow, Debug, PartialEq, Eq, Clone, Serialize)]
 pub struct TagJoin {
     pub id: Id,
-    pub tag: String,
+    pub name: String,
     pub bike_id: Id
 }
 
@@ -27,16 +27,16 @@ impl EntityById for Tag {
 
 #[derive(Debug, Clone)]
 pub struct TagCreate {
-    pub tag: String,
+    pub name: String,
 }
 
 
 impl TagCreate {
     #[inline]
     #[allow(dead_code)]
-    pub fn new(tag: &str) -> Self {
+    pub fn new(name: &str) -> Self {
         Self {
-            tag: tag.to_owned(),
+            name: name.to_owned(),
         }
     }
 }
@@ -77,17 +77,17 @@ impl TagUnassign {
 #[derive(Debug, Clone, Default)]
 pub struct TagSearch {
     pub id: Option<Id>,
-    pub tag: Option<String>,
+    pub name: Option<String>,
     pub bike_id: Option<Id>,
 }
 
 impl TagSearch {
     #[must_use]
     #[inline]
-    pub fn new(id: Option<&Id>, tag: Option<&str>, bike_id: Option<&Id>) -> Self {
+    pub fn new(id: Option<&Id>, name: Option<&str>, bike_id: Option<&Id>) -> Self {
         Self {
             id: id.cloned(),
-            tag: tag.map(|n| n.to_owned()),
+            name: name.map(|n| n.to_owned()),
             bike_id: bike_id.cloned(),
         }
     }

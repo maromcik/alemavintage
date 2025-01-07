@@ -437,6 +437,17 @@ VALUES (1, 'a@a.com', 'Acko', 'Ackove',
         '$pbkdf2-sha256$i=600000,l=32$UOB/uNKLd1iRmBTTmMqjFQ$OTyclcE7FXybX7hqnBP1hVGudyxME+dqsB6jaPeQgpU',
         'UOB/uNKLd1iRmBTTmMqjFQ', true);
 
+
+INSERT INTO public."OtherImageType"
+VALUES (1, 'Homepage');
+
+INSERT INTO public."OtherImageType"
+VALUES (2, 'About');
+
+INSERT INTO public."OtherImageType"
+VALUES (3, 'Other');
+
+
 BEGIN;
 LOCK TABLE "Brand" IN EXCLUSIVE MODE;
 SELECT setval('"Brand_id_seq"', COALESCE((SELECT MAX(id) + 1 FROM "Brand"), 1), false);
@@ -455,4 +466,9 @@ COMMIT;
 BEGIN;
 LOCK TABLE "Bike" IN EXCLUSIVE MODE;
 SELECT setval('"Bike_id_seq"', COALESCE((SELECT MAX(id) + 1 FROM "Bike"), 1), false);
+COMMIT;
+
+BEGIN;
+LOCK TABLE "OtherImageType" IN EXCLUSIVE MODE;
+SELECT setval('"OtherImageType_id_seq"', COALESCE((SELECT MAX(id) + 1 FROM "OtherImageType"), 1), false);
 COMMIT;

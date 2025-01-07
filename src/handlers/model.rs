@@ -23,6 +23,7 @@ use actix_web::http::header::LOCATION;
 use actix_web::{delete, get, post, web, HttpRequest, HttpResponse};
 use itertools::Itertools;
 use std::collections::HashMap;
+use crate::database::repositories::image::repository::ImageRepository;
 use crate::database::repositories::user::repository::UserRepository;
 
 #[get("/create")]
@@ -203,6 +204,7 @@ pub async fn remove_model(
     model_repo: web::Data<ModelRepository>,
     user_repo: web::Data<UserRepository>,
     bike_repo: web::Data<BikeRepository>,
+    image_repo: web::Data<ImageRepository>,
     path: web::Path<(Id,)>,
 ) -> Result<HttpResponse, AppError> {
     let u = authorized!(identity, request.path());
@@ -217,7 +219,7 @@ pub async fn remove_model(
         ))
         .await?;
 
-    hard_delete_bike(&bike_repo, bikes.iter().map(|b| b.id).collect()).await?;
+    hard_delete_bike(&bike_repo, &image_repo, bikes.iter().map(|b| b.id).collect()).await?;
 
     let _ = model_repo
         .delete(&GetById::new_with_deleted(model_id))

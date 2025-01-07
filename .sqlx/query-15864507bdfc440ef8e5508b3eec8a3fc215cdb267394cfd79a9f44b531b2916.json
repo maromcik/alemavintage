@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n                DELETE FROM \"Tag\"\n                WHERE id = $1\n                RETURNING *\n               ",
+  "query": "\n            SELECT * FROM \"OtherImageType\"\n            ORDER BY name",
   "describe": {
     "columns": [
       {
@@ -15,14 +15,12 @@
       }
     ],
     "parameters": {
-      "Left": [
-        "Int8"
-      ]
+      "Left": []
     },
     "nullable": [
       false,
       false
     ]
   },
-  "hash": "724919f4b291a53d771d7ae9e19b6f5ab155808707cd9cf8ca322e68c8a65c3b"
+  "hash": "15864507bdfc440ef8e5508b3eec8a3fc215cdb267394cfd79a9f44b531b2916"
 }

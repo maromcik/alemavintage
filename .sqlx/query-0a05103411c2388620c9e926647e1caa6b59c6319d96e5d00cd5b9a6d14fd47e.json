@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n                DELETE FROM \"BikeImage\"\n                WHERE id = $1\n                RETURNING *\n            ",
+  "query": "\n                DELETE FROM \"Image\"\n                WHERE id = $1\n                RETURNING *\n            ",
   "describe": {
     "columns": [
       {
@@ -27,11 +27,6 @@
         "ordinal": 4,
         "name": "thumbnail_path",
         "type_info": "Text"
-      },
-      {
-        "ordinal": 5,
-        "name": "bike_id",
-        "type_info": "Int8"
       }
     ],
     "parameters": {
@@ -44,9 +39,8 @@
       false,
       false,
       false,
-      false,
-      true
+      false
     ]
   },
-  "hash": "c5fb38ee933a0c472910113bc1af6deb7fced54a0d92a3ac3d259b873db6415f"
+  "hash": "0a05103411c2388620c9e926647e1caa6b59c6319d96e5d00cd5b9a6d14fd47e"
 }

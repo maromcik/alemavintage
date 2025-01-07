@@ -1,10 +1,11 @@
 use crate::database::common::EntityById;
 
-pub(crate) mod bike;
+pub mod bike;
 pub mod brand;
 pub mod model;
-pub(crate) mod user;
+pub mod user;
 pub mod tag;
+pub mod image;
 
 pub type Id = i64;
 

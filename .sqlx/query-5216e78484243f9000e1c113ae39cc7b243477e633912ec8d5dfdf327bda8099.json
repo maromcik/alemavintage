@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n                DELETE FROM \"BikeImage\"\n                WHERE bike_id = $1\n                RETURNING *\n            ",
+  "query": "\n            SELECT \n                image.id,\n                bike_image.bike_id,\n                image.path,\n                image.width,\n                image.height,\n                image.thumbnail_path\n            FROM \"Image\" AS image LEFT JOIN \"BikeImage\" AS bike_image ON image.id = bike_image.image_id \n            WHERE id = $1\n            ",
   "describe": {
     "columns": [
       {
@@ -10,28 +10,28 @@
       },
       {
         "ordinal": 1,
+        "name": "bike_id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 2,
         "name": "path",
         "type_info": "Text"
       },
       {
-        "ordinal": 2,
+        "ordinal": 3,
         "name": "width",
         "type_info": "Int4"
       },
       {
-        "ordinal": 3,
+        "ordinal": 4,
         "name": "height",
         "type_info": "Int4"
       },
       {
-        "ordinal": 4,
+        "ordinal": 5,
         "name": "thumbnail_path",
         "type_info": "Text"
-      },
-      {
-        "ordinal": 5,
-        "name": "bike_id",
-        "type_info": "Int8"
       }
     ],
     "parameters": {
@@ -45,8 +45,8 @@
       false,
       false,
       false,
-      true
+      false
     ]
   },
-  "hash": "faa29b9bbf44afdee67da1db7e1b852f9b63a39128602c67c1940ac7a9aef9fb"
+  "hash": "5216e78484243f9000e1c113ae39cc7b243477e633912ec8d5dfdf327bda8099"
 }

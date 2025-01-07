@@ -1,0 +1,36 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT\n                t.id AS id,\n                t.name AS name,\n                bt.bike_id AS bike_id\n            FROM\n                \"Tag\" AS t\n                    INNER JOIN\n                \"BikeTag\" as bt ON bt.tag_id = t.id\n            WHERE\n                (t.id = $1 OR $1 IS NULL)\n                AND (t.name = $2 OR $2 IS NULL)\n                AND (bt.bike_id = $3 OR $3 IS NULL)\n            ORDER BY name",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 1,
+        "name": "name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "bike_id",
+        "type_info": "Int8"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "40f8ddca8f104f25b28b80bdb6f7e85d3ec1b11464958b8c7cec243be3577c67"
+}

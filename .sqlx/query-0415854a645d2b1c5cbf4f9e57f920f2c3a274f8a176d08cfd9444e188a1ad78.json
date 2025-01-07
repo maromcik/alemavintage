@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                    INSERT INTO \"OtherImage\" (\n                        image_type,\n                        image_id\n                    )\n                    VALUES ($1, $2)\n                ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "0415854a645d2b1c5cbf4f9e57f920f2c3a274f8a176d08cfd9444e188a1ad78"
+}

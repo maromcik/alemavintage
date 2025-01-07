@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n                    INSERT INTO \"BikeImage\" (path, width, height, thumbnail_path)\n                    VALUES ($1, $2, $3, $4)\n                    RETURNING *\n                ",
+  "query": "\n                DELETE \n                FROM \"Image\" AS image \n                USING \"BikeImage\" AS bike_image \n                WHERE image.id = bike_image.image_id AND bike_image.bike_id = $1\n                RETURNING id, path, width, height, thumbnail_path\n            ",
   "describe": {
     "columns": [
       {
@@ -27,19 +27,11 @@
         "ordinal": 4,
         "name": "thumbnail_path",
         "type_info": "Text"
-      },
-      {
-        "ordinal": 5,
-        "name": "bike_id",
-        "type_info": "Int8"
       }
     ],
     "parameters": {
       "Left": [
-        "Text",
-        "Int4",
-        "Int4",
-        "Text"
+        "Int8"
       ]
     },
     "nullable": [
@@ -47,9 +39,8 @@
       false,
       false,
       false,
-      false,
-      true
+      false
     ]
   },
-  "hash": "f35539512bd91680353ec2ec01943e29e7e556846e0701dd60a27128941851b6"
+  "hash": "1387e0087b2c5985eb8194b80910ef5b04bb59ec977b3b05f6d81bf4fc8f3ad8"
 }

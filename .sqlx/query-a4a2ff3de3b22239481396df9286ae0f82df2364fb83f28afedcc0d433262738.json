@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                    INSERT INTO \"BikeImage\" (bike_id, image_id)\n                    VALUES ($1, $2)\n                ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "a4a2ff3de3b22239481396df9286ae0f82df2364fb83f28afedcc0d433262738"
+}

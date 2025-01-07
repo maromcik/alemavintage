@@ -17,6 +17,7 @@ use crate::{authorized, AppState};
 use actix_identity::Identity;
 use actix_web::http::header::LOCATION;
 use actix_web::{delete, get, post, web, HttpRequest, HttpResponse};
+use crate::database::repositories::image::repository::ImageRepository;
 use crate::database::repositories::user::repository::UserRepository;
 
 #[get("/create")]
@@ -165,6 +166,7 @@ pub async fn remove_brand(
     brand_repo: web::Data<BrandRepository>,
     user_repo: web::Data<UserRepository>,
     bike_repo: web::Data<BikeRepository>,
+    image_repo: web::Data<ImageRepository>,
     path: web::Path<(Id,)>,
 ) -> Result<HttpResponse, AppError> {
     let u = authorized!(identity, request.path());
@@ -179,7 +181,7 @@ pub async fn remove_brand(
         ))
         .await?;
 
-    hard_delete_bike(&bike_repo, bikes.iter().map(|b| b.id).collect()).await?;
+    hard_delete_bike(&bike_repo, &image_repo, bikes.iter().map(|b| b.id).collect()).await?;
 
     let _ = brand_repo
         .delete(&GetById::new_with_deleted(brand_id))

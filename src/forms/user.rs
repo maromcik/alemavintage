@@ -89,7 +89,6 @@ impl EmailForm for ContactAdminBikeForm {
         self.address.as_str()
     }
 
-
     fn message(&self) -> Self::FormField<'_> {
         self.message.as_str()
     }

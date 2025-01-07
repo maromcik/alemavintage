@@ -55,7 +55,7 @@ impl DbReadMany<TagSearch, TagJoin> for TagRepository {
             r#"
             SELECT
                 t.id AS id,
-                t.tag AS tag,
+                t.name AS name,
                 bt.bike_id AS bike_id
             FROM
                 "Tag" AS t
@@ -63,11 +63,11 @@ impl DbReadMany<TagSearch, TagJoin> for TagRepository {
                 "BikeTag" as bt ON bt.tag_id = t.id
             WHERE
                 (t.id = $1 OR $1 IS NULL)
-                AND (t.tag = $2 OR $2 IS NULL)
+                AND (t.name = $2 OR $2 IS NULL)
                 AND (bt.bike_id = $3 OR $3 IS NULL)
-            ORDER BY tag"#,
+            ORDER BY name"#,
             params.id,
-            params.tag,
+            params.name,
             params.bike_id
         )
         .fetch_all(&self.pool_handler.pool)
@@ -82,11 +82,11 @@ impl DbCreate<TagCreate, Tag> for TagRepository {
         let tag = sqlx::query_as!(
             Tag,
             r#"
-            INSERT INTO "Tag" (tag)
+            INSERT INTO "Tag" (name)
             VALUES ($1)
             RETURNING *
             "#,
-            params.tag,
+            params.name,
         )
         .fetch_one(&self.pool_handler.pool)
         .await?;

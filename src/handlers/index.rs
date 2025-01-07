@@ -8,13 +8,15 @@ use crate::AppState;
 use actix_identity::Identity;
 use actix_web::{get, web, HttpRequest, HttpResponse};
 use crate::database::common::DbReadMany;
+use crate::database::models::image::OtherImageSearch;
+use crate::database::repositories::image::repository::ImageRepository;
 
 #[get("/")]
 pub async fn index(
     request: HttpRequest,
     identity: Option<Identity>,
     bike_repo: web::Data<BikeRepository>,
-
+    image_repo: web::Data<ImageRepository>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
     let bikes = bike_repo
@@ -26,12 +28,16 @@ pub async fn index(
         )))
         .await?;
     
+    // 1 is Homepage in DB
+    let images = image_repo.read_many(&OtherImageSearch::new(Some(1))).await?;
+    
     let template_name = get_template_name(&request, "index");
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(IndexTemplate {
         logged_in: identity.is_some(),
         bikes: bikes.into_iter().map(|bike| BikeDisplay::from(bike).description_to_markdown()).collect(),
+        images
     })?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))

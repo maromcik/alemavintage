@@ -12,7 +12,9 @@ use crate::database::common::{
 use sqlx::{Postgres, Transaction};
 
 use crate::database::common::utilities::{entity_is_correct, generate_query_param_string};
-use crate::database::models::bike::{Bike, BikeCreate, BikeDetail, BikeGetById, BikeImage, BikeImageCreate, BikeImageGetById, BikeImageSearch, BikeImagesCreate, BikeSearch, BikeUpdate};
+use crate::database::models::bike::{
+    Bike, BikeCreate, BikeDetail, BikeGetById, BikeSearch, BikeUpdate,
+};
 use crate::database::models::GetById;
 
 #[derive(Clone)]
@@ -72,12 +74,12 @@ impl BikeRepository {
             "#,
             params.id(),
         )
-            .fetch_all(transaction.as_mut())
-            .await?;
+        .fetch_all(transaction.as_mut())
+        .await?;
         transaction.commit().await?;
         Ok(bikes)
     }
-    
+
     pub async fn restore(&self, params: &impl EntityById) -> DbResultMultiple<Bike> {
         let mut transaction = self.pool_handler.pool.begin().await?;
         let bikes = sqlx::query_as!(
@@ -253,10 +255,10 @@ impl DbReadOne<BikeGetById, BikeDetail> for BikeRepository {
                 brand.name as brand_name,
                 model.name as model_name,
 
-                bike_image.path as preview_path,
-                bike_image.width as preview_width,
-                bike_image.height as preview_height,
-                bike_image.thumbnail_path as preview_thumbnail_path
+                image.path as preview_path,
+                image.width as preview_width,
+                image.height as preview_height,
+                image.thumbnail_path as preview_thumbnail_path
             FROM
                 "Brand" AS brand
                     INNER JOIN
@@ -264,7 +266,7 @@ impl DbReadOne<BikeGetById, BikeDetail> for BikeRepository {
                     INNER JOIN
                 "Bike" AS bike ON model.id = bike.model_id
                     LEFT JOIN
-                "BikeImage" AS bike_image ON bike.preview = bike_image.id
+                "Image" AS image ON bike.preview = image.id
             WHERE
                 bike.id = $1
             "#,
@@ -323,10 +325,10 @@ impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
                 brand.name AS brand_name,
                 model.name AS model_name,
 
-                bike_image.path as preview_path,
-                bike_image.width as preview_width,
-                bike_image.height as preview_height,
-                bike_image.thumbnail_path as preview_thumbnail_path
+                image.path as preview_path,
+                image.width as preview_width,
+                image.height as preview_height,
+                image.thumbnail_path as preview_thumbnail_path
             FROM
                 "Brand" AS brand
                     INNER JOIN
@@ -334,7 +336,7 @@ impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
                     INNER JOIN
                 "Bike" AS bike ON model.id = bike.model_id
                     LEFT JOIN
-                "BikeImage" AS bike_image ON bike.preview = bike_image.id
+                "Image" AS image ON bike.preview = image.id
                     LEFT JOIN
                 "BikeTag" AS tag ON tag.bike_id = bike.id  
             WHERE
@@ -542,144 +544,5 @@ where
         transaction.commit().await?;
 
         Ok(bikes)
-    }
-}
-
-impl DbReadMany<BikeImageSearch, BikeImage> for BikeRepository {
-    async fn read_many(&self, params: &BikeImageSearch) -> DbResultMultiple<BikeImage> {
-        let mut query = r#"
-            SELECT
-                image.id,
-                image.bike_id,
-                image.path,
-                image.width,
-                image.height,
-                image.thumbnail_path
-            FROM
-                "BikeImage" AS image
-            WHERE
-                image.bike_id = $1 OR $1 IS NULL
-            "#
-        .to_owned();
-
-        let query_params = generate_query_param_string(&params.query_params);
-        query.push_str(query_params.as_str());
-
-        let images = sqlx::query_as::<_, BikeImage>(query.as_str())
-            .bind(params.bike_id)
-            .fetch_all(&self.pool_handler.pool)
-            .await?;
-        Ok(images)
-    }
-}
-
-impl DbCreate<BikeImageCreate, BikeImage> for BikeRepository {
-    async fn create(&self, data: &BikeImageCreate) -> DbResultSingle<BikeImage> {
-        let bike_image = sqlx::query_as!(
-            BikeImage,
-            r#"
-                    INSERT INTO "BikeImage" (path, width, height, thumbnail_path)
-                    VALUES ($1, $2, $3, $4)
-                    RETURNING *
-                "#,
-            data.path,
-            data.width,
-            data.height,
-            data.thumbnail_path,
-        )
-        .fetch_one(&self.pool_handler.pool)
-        .await?;
-        Ok(bike_image)
-    }
-}
-
-impl DbCreate<BikeImagesCreate, Vec<BikeImage>> for BikeRepository {
-    async fn create(&self, data: &BikeImagesCreate) -> DbResultSingle<Vec<BikeImage>> {
-        let mut transaction = self.pool_handler.pool.begin().await?;
-        let mut images = Vec::default();
-
-        for image in &data.bike_images {
-            let bike_image = sqlx::query_as!(
-                BikeImage,
-                r#"
-                    INSERT INTO "BikeImage" (path, width, height, thumbnail_path, bike_id)
-                    VALUES ($1, $2, $3, $4, $5)
-                    RETURNING *
-                "#,
-                image.path,
-                image.width,
-                image.height,
-                image.thumbnail_path,
-                data.bike_id,
-            )
-            .fetch_one(transaction.as_mut())
-            .await?;
-            images.push(bike_image);
-        }
-        transaction.commit().await?;
-        Ok(images)
-    }
-}
-
-impl DbDelete<BikeImageGetById, BikeImage> for BikeRepository
-{
-    async fn delete(&self, params: &BikeImageGetById) -> DbResultMultiple<BikeImage> {
-        let mut transaction = self.pool_handler.pool.begin().await?;
-        let images = sqlx::query_as!(
-            BikeImage,
-            r#"
-                DELETE FROM "BikeImage"
-                WHERE bike_id = $1
-                RETURNING *
-            "#,
-            params.id(),
-        )
-        .fetch_all(transaction.as_mut())
-        .await?;
-        transaction.commit().await?;
-        Ok(images)
-    }
-}
-
-impl DbDelete<GetById, BikeImage> for BikeRepository
-{
-    async fn delete(&self, params: &GetById) -> DbResultMultiple<BikeImage> {
-        let mut transaction = self.pool_handler.pool.begin().await?;
-        let images = sqlx::query_as!(
-            BikeImage,
-            r#"
-                DELETE FROM "BikeImage"
-                WHERE id = $1
-                RETURNING *
-            "#,
-            params.id(),
-        )
-            .fetch_all(transaction.as_mut())
-            .await?;
-        transaction.commit().await?;
-        Ok(images)
-    }
-}
-
-impl<T> DbReadOne<T, BikeImage> for BikeRepository
-where
-    T: EntityById,
-{
-    async fn read_one(&self, params: &T) -> DbResultSingle<BikeImage> {
-        let maybe_image = sqlx::query_as!(
-            BikeImage,
-            r#"
-            SELECT * FROM "BikeImage"
-            WHERE id = $1
-            "#,
-            params.id()
-        )
-        .fetch_optional(&self.pool_handler.pool)
-        .await?;
-        entity_is_correct(
-            maybe_image,
-            EntityError::new(BikeDeleted, BikeDoesNotExist),
-            params.fetch_hidden(),
-        )
     }
 }

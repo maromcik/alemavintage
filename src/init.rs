@@ -24,7 +24,9 @@ use actix_files::Files as ActixFiles;
 use actix_web::web;
 use actix_web::web::ServiceConfig;
 use sqlx::PgPool;
+use crate::database::repositories::image::repository::ImageRepository;
 use crate::database::repositories::tag::repository::TagRepository;
+use crate::handlers::image::{delete_image, get_images, upload_images, upload_images_page};
 use crate::handlers::tag::{create_tag, get_tag};
 
 pub fn configure_webapp(pool: &PgPool, app_state: AppState) -> Box<dyn FnOnce(&mut ServiceConfig)> {
@@ -33,6 +35,7 @@ pub fn configure_webapp(pool: &PgPool, app_state: AppState) -> Box<dyn FnOnce(&m
     let model_repository = ModelRepository::new(PoolHandler::new(pool.clone()));
     let brand_repository = BrandRepository::new(PoolHandler::new(pool.clone()));
     let tag_repository = TagRepository::new(PoolHandler::new(pool.clone()));
+    let image_repository = ImageRepository::new(PoolHandler::new(pool.clone()));
 
     let user_scope = web::scope("user")
         .app_data(web::Data::new(user_repo.clone()))
@@ -94,16 +97,24 @@ pub fn configure_webapp(pool: &PgPool, app_state: AppState) -> Box<dyn FnOnce(&m
         .service(get_tag)
         .service(create_tag);
 
+    let image_scope = web::scope("image")
+        .service(upload_images)
+        .service(upload_images_page)
+        .service(get_images)
+        .service(delete_image);
+
     Box::new(move |cfg: &mut ServiceConfig| {
         cfg
             .app_data(web::Data::new(user_repo.clone()))
             .app_data(web::Data::new(bike_repo.clone()))
+            .app_data(web::Data::new(image_repository.clone()))
             .app_data(web::Data::new(app_state))
             .service(bike_scope)
             .service(user_scope)
             .service(brand_scope)
             .service(model_scope)
             .service(tag_scope)
+            .service(image_scope)
             .service(index)
             .service(about)
             .service(ActixFiles::new("/media", "./media").prefer_utf8(true))

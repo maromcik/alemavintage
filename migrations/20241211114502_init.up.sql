@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS "Model"
 
 );
 
-CREATE TABLE IF NOT EXISTS "BikeImage"
+CREATE TABLE IF NOT EXISTS "Image"
 (
     id             bigserial PRIMARY KEY,
     ---------------------------------------------
@@ -77,16 +77,40 @@ CREATE TABLE IF NOT EXISTS "Bike"
     status          text,
 
     FOREIGN KEY (model_id) REFERENCES "Model" (id) ON DELETE CASCADE,
-    FOREIGN KEY (preview) REFERENCES "BikeImage" (id) ON DELETE SET NULL
+    FOREIGN KEY (preview) REFERENCES "Image" (id) ON DELETE SET NULL
 );
 
-ALTER TABLE "BikeImage" ADD COLUMN bike_id bigint;
-ALTER TABLE "BikeImage" ADD FOREIGN KEY (bike_id) REFERENCES "Bike" ON DELETE CASCADE;
+CREATE TABLE IF NOT EXISTS "BikeImage"
+(
+    image_id bigint NOT NULL,
+    bike_id  bigint NOT NULL,
+
+    PRIMARY KEY (bike_id, image_id),
+    FOREIGN KEY (bike_id) REFERENCES "Bike" (id) ON DELETE CASCADE,
+    FOREIGN KEY (image_id) REFERENCES "Image" (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "OtherImageType"
+(
+    id   bigserial PRIMARY KEY,
+    name text NOT NULL
+
+);
+
+CREATE TABLE IF NOT EXISTS "OtherImage"
+(
+    image_id   bigint NOT NULL,
+    image_type bigint NOT NULL,
+
+    PRIMARY KEY (image_id),
+    FOREIGN KEY (image_id) REFERENCES "Image" (id) ON DELETE CASCADE,
+    FOREIGN KEY (image_type) REFERENCES "OtherImageType" (id) ON DELETE CASCADE
+);
 
 CREATE TABLE IF NOT EXISTS "Tag"
 (
-    id  bigserial PRIMARY KEY,
-    tag text NOT NULL
+    id   bigserial PRIMARY KEY,
+    name text NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "BikeTag"
@@ -94,11 +118,12 @@ CREATE TABLE IF NOT EXISTS "BikeTag"
     bike_id bigint,
     tag_id  bigint,
     PRIMARY KEY (bike_id, tag_id),
-    FOREIGN KEY (bike_id) REFERENCES "Bike" ON DELETE CASCADE,
-    FOREIGN KEY (tag_id) REFERENCES "Tag" ON DELETE CASCADE
+    FOREIGN KEY (bike_id) REFERENCES "Bike" (id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES "Tag" (id) ON DELETE CASCADE
 
 );
 
 CREATE INDEX IF NOT EXISTS "Model_brand_id_idx" ON "Model" (brand_id);
 CREATE INDEX IF NOT EXISTS "Bike_model_id_idx" ON "Bike" (model_id);
 CREATE INDEX IF NOT EXISTS "BikeImage_bike_id_idx" ON "BikeImage" (bike_id);
+CREATE INDEX IF NOT EXISTS "OtherImage_image_type_idx" ON "OtherImage" (image_type);

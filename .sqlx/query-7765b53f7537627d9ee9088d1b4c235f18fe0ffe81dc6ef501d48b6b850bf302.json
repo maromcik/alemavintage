@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT * FROM \"BikeImage\"\n            WHERE id = $1\n            ",
+  "query": "\n                    INSERT INTO \"Image\" (path, width, height, thumbnail_path)\n                    VALUES ($1, $2, $3, $4)\n                    RETURNING *\n                ",
   "describe": {
     "columns": [
       {
@@ -27,16 +27,14 @@
         "ordinal": 4,
         "name": "thumbnail_path",
         "type_info": "Text"
-      },
-      {
-        "ordinal": 5,
-        "name": "bike_id",
-        "type_info": "Int8"
       }
     ],
     "parameters": {
       "Left": [
-        "Int8"
+        "Text",
+        "Int4",
+        "Int4",
+        "Text"
       ]
     },
     "nullable": [
@@ -44,9 +42,8 @@
       false,
       false,
       false,
-      false,
-      true
+      false
     ]
   },
-  "hash": "559db8429c594f5e114bd1c0cc44c0776ec5642089dcde36a8732747fe2eba6a"
+  "hash": "7765b53f7537627d9ee9088d1b4c235f18fe0ffe81dc6ef501d48b6b850bf302"
 }
