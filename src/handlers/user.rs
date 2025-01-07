@@ -195,7 +195,7 @@ pub async fn user_manage(
     let template = env.get_template(&template_name)?;
     let body = template.render(UserManageProfileUserFormTemplate {
         user: user_valid,
-        message: "Profil bol úspešne aktualizovaný".to_string(),
+        message: "Profile successfully updated".to_string(),
         success: true,
         logged_in: true,
     })?;
@@ -254,7 +254,7 @@ pub async fn user_manage_password(
     }
 
     let context = UserManagePasswordTemplate {
-        message: "Password update successful".to_string(),
+        message: "Password successfully updated".to_string(),
         success: true,
         logged_in: true,
     };

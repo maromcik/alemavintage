@@ -1,7 +1,7 @@
 use crate::database::models::user::User;
 use serde::Serialize;
 
-const WEAK_PASSWORD_MESSAGE: &str = "Slabé heslo! Heslo musí obsahovať aspoň jeden znak z: {malé písmeno, veľké písmeno, číslo, špeciálny znak} a musí mať dĺžku aspoň 6 znakov";
+const WEAK_PASSWORD_MESSAGE: &str = "Weak Password! Must contain at least one char from: {lower, upper, number, special} and be at least 6 characters long.";
 
 #[derive(Serialize)]
 pub struct LoginTemplate {
