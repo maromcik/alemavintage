@@ -4,9 +4,9 @@
             <form hx-post="/user/manage" hx-target="#user-mgmt-profile-form" hx-target-error="#content-area"
                   class="rounded-lg flex flex-col items-center mx-auto">
                 {% if success %}
-                <div id="success-area" class="text-green-500 mb-3" onclick=" { this.style.display = 'none'; }">
+                <div id="success-area" class="text-success mb-3" onclick=" { this.style.display = 'none'; }">
                     {% else %}
-                    <div id="error-area2" class="text-red-500 mb-3" onclick=" { this.style.display = 'none'; }">
+                    <div id="error-area2" class="text-error mb-3" onclick=" { this.style.display = 'none'; }">
                         {% endif %}
                         {{ message }}
                     </div>

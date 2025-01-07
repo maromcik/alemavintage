@@ -165,3 +165,11 @@
 .border-base:hover {
     @apply border-stone-700 dark:border-stone-200
 }
+
+.text-error {
+    @apply  text-red-500 dark:text-red-800
+}
+
+.text-success {
+    @apply  text-green-500 dark:text-green-800
+}
