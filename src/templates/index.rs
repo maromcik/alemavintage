@@ -12,4 +12,5 @@ pub struct IndexTemplate {
 #[derive(Serialize)]
 pub struct AboutTemplate {
     pub logged_in: bool,
+    pub images: Vec<OtherImage>
 }

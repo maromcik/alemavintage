@@ -11,6 +11,18 @@
         <p class="text-gray-600">Based in Slovakia, our family workshop is where passion meets precision. My dad, an avid bike enthusiast and craftsman, has been restoring bicycles for years. Together, we breathe new life into timeless brands like <strong>Colnago</strong>, <strong>Hetchins</strong>, <strong>Bianchi</strong>, and <strong>Peugeot</strong>. Every vintage bike we restore combines history, artistry, and functionality. We take pride in preserving cycling heritage and sharing it with enthusiasts worldwide.</p>
     </section>
 
+    <div class="pswp-gallery" id="index-our-bikes">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+            {% for image in images %}
+            <a href="{{ image.path }}" data-pswp-width="{{ image.width }}" data-pswp-height="{{ image.height }}" target="_blank">
+                <div class="w-full h-80 rounded-lg overflow-hidden shadow-md hover:scale-105 transition-transform">
+                    <img class="object-cover w-full h-full" src="{{ image.thumbnail_path }}" alt="Image">
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
     <!-- Contact Form Section -->
     <div id="bike-contact" class="container mx-auto p-6 max-w-5xl">
         <form hx-post="/user/contact/about" hx-target="#success-area" hx-target-error="#error-area" class="bg-forms shadow-md rounded px-8 pt-6 pb-8 mb-4">

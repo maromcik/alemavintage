@@ -27,8 +27,7 @@ pub async fn index(
             identity.is_none().then_some(DbTable::Bike),
         )))
         .await?;
-    
-    // 1 is Homepage in DB
+
     let images = image_repo.read_many(&OtherImageSearch::new(Some(OtherImageTypeEnum::Homepage.id()))).await?;
     
     let template_name = get_template_name(&request, "index");
@@ -47,13 +46,18 @@ pub async fn index(
 pub async fn about(
     request: HttpRequest,
     identity: Option<Identity>,
+    image_repo: web::Data<ImageRepository>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
     let template_name = get_template_name(&request, "about");
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
+
+    let images = image_repo.read_many(&OtherImageSearch::new(Some(OtherImageTypeEnum::About.id()))).await?;
+
     let body = template.render(AboutTemplate {
         logged_in: identity.is_some(),
+        images
     })?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
