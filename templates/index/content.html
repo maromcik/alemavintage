@@ -1,10 +1,10 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-8 mb-8">
     <section class="text-center py-12 mb-3">
 
-        <h1 class="text-5xl font-extrabold text-sat-xl mb-8">Welcome to Alema Vintage Bikes!</h1>
-        <h2 class="text-xl font-extrabold text-sat-xl mb-10">Giving Exclusive Vintage Bikes a Second Life</h2>
+        <h1 class="text-3xl md:text-5xl font-extrabold text-sat-xl mb-8">Welcome to Alema Vintage Bikes!</h1>
 
         <div class="bg-panes rounded-lg p-6 shadow-md">
+            <h2 class="text-xl font-extrabold text-sat-xl mb-10">Giving Exclusive Vintage Bikes a Second Life</h2>
             <p class="text-lg text-sat-l">
                 We’re a family-run business from a small town in Slovakia, and we found passion in restoring and selling iconic vintage bicycles from legendary brands
                 like <span class="font-semibold">Colnago, Bianchi,</span> and <span class="font-semibold">Peugeot</span>.
@@ -30,8 +30,8 @@
 
     <!-- Popular Bikes Section -->
     <section class="mb-12">
-        <h2 class="text-3xl font-bold text-sat-xl mb-4">Most Popular</h2>
         <div class="bg-panes rounded-lg p-6 shadow-md">
+            <h2 class="text-3xl font-bold text-sat-xl mb-4">Most Popular</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
                 {% for bike in bikes %}
                 {% include "bike/card/content.html" %}

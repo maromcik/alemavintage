@@ -215,11 +215,11 @@ pub async fn save_bike_images_helper(
 
     let mut errors = errors
         .iter()
-        .map(|e| format!("<p class=\"text-red-500\">{e}</p>"))
+        .map(|e| format!("<p class=\"text-error\">{e}</p>"))
         .collect::<Vec<String>>();
 
     if errors.is_empty() {
-        errors.push("<p class=\"text-green-500\">OK</p>".to_string());
+        errors.push("<p class=\"text-success\">OK</p>".to_string());
     }
 
     bike_repo
