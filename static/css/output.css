@@ -1571,6 +1571,16 @@ code {
   color: rgb(217 119 6 / var(--tw-text-opacity, 1));
 }
 
+.text-acc-xl {
+  --tw-text-opacity: 1;
+  color: rgb(180 83 9 / var(--tw-text-opacity, 1));
+}
+
+.text-acc-xl:hover {
+  --tw-text-opacity: 1;
+  color: rgb(146 64 14 / var(--tw-text-opacity, 1));
+}
+
 .text-forms {
   --tw-text-opacity: 1;
   color: rgb(209 213 219 / var(--tw-text-opacity, 1));

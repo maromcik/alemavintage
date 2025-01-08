@@ -133,6 +133,14 @@
     @apply text-amber-600;
 }
 
+.text-acc-xl {
+    @apply text-amber-700;
+}
+
+.text-acc-xl:hover {
+    @apply text-amber-800;
+}
+
 .text-forms {
     @apply text-gray-300 dark:text-gray-800
 }
