@@ -27,16 +27,16 @@ impl UserManagePasswordTemplate {
 }
 
 #[derive(Serialize)]
-pub struct UserManageProfileTemplate {
-    pub user: User,
+pub struct UserManageProfileTemplate<'a> {
+    pub user: &'a User,
     pub message: String,
     pub success: bool,
     pub logged_in: bool,
 }
 
 #[derive(Serialize)]
-pub struct UserManageProfileUserFormTemplate {
-    pub user: User,
+pub struct UserManageProfileUserFormTemplate<'a> {
+    pub user: &'a User,
     pub message: String,
     pub success: bool,
     pub logged_in: bool,

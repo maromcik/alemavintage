@@ -43,7 +43,7 @@ pub async fn create_model_page(
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(ModelCreateTemplate {
-        brands,
+        brands: &brands,
         logged_in: true,
     })?;
 
@@ -94,8 +94,8 @@ pub async fn edit_model_page(
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(ModelEditTemplate {
-        model,
-        brands,
+        model: &model,
+        brands: &brands,
         logged_in: true,
     })?;
 
@@ -156,7 +156,7 @@ pub async fn get_models(
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(ModelTemplate {
-        models: models_grouped,
+        models: &models_grouped,
         logged_in: identity.is_some(),
     })?;
 
@@ -189,8 +189,8 @@ pub async fn get_model(
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(ModelDetailTemplate {
-        model: ModelDisplay::from(model),
-        bikes: bikes.into_iter().map(|bike| BikeDisplay::from(bike).description_to_markdown()).collect(),
+        model: &ModelDisplay::from(model),
+        bikes: &bikes.into_iter().map(|bike| BikeDisplay::from(bike).description_to_markdown()).collect(),
         logged_in: identity.is_some(),
     })?;
 

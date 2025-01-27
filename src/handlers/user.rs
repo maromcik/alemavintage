@@ -111,7 +111,7 @@ pub async fn user_manage_form_page(
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(UserManageProfileTemplate {
-        user,
+        user: &user,
         message: String::new(),
         success: true,
         logged_in: true,
@@ -156,7 +156,7 @@ pub async fn user_manage_profile_form(
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(UserManageProfileUserFormTemplate {
-        user,
+        user: &user,
         message: String::new(),
         success: true,
         logged_in: true,
@@ -194,7 +194,7 @@ pub async fn user_manage(
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(UserManageProfileUserFormTemplate {
-        user: user_valid,
+        user: &user_valid,
         message: "Profile successfully updated".to_string(),
         success: true,
         logged_in: true,

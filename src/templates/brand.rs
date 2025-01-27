@@ -8,26 +8,26 @@ pub struct BrandCreateTemplate {
 }
 
 #[derive(Serialize)]
-pub struct BrandEditTemplate {
-    pub brand: Brand,
+pub struct BrandEditTemplate<'a> {
+    pub brand: &'a Brand,
     pub logged_in: bool,
 }
 
 #[derive(Serialize)]
-pub struct BrandTemplate {
-    pub brands: Vec<Brand>,
+pub struct BrandTemplate<'a> {
+    pub brands: &'a Vec<Brand>,
     pub logged_in: bool,
 }
 
 #[derive(Serialize)]
-pub struct BrandContentTemplate {
-    pub brands: Vec<Brand>,
+pub struct BrandContentTemplate<'a> {
+    pub brands: &'a Vec<Brand>,
     pub logged_in: bool,
 }
 
 #[derive(Serialize)]
-pub struct BrandDetailTemplate {
-    pub brand: BrandDisplay,
-    pub models: Vec<ModelDetail>,
+pub struct BrandDetailTemplate<'a> {
+    pub brand: &'a BrandDisplay,
+    pub models: &'a Vec<ModelDetail>,
     pub logged_in: bool,
 }

@@ -38,7 +38,7 @@ pub async fn get_images(
     let template = env.get_template(&template_name)?;
     let body = template.render(ImagesTemplate {
         logged_in: true,
-        images,
+        images: &images,
     })?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
@@ -61,8 +61,8 @@ pub async fn upload_images_page(
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(ImageUploadFormTemplate {
-        message: String::new(),
-        image_types
+        message: "",
+        image_types: &image_types
     })?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))

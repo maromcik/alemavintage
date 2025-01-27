@@ -35,8 +35,8 @@ pub async fn index(
     let template = env.get_template(&template_name)?;
     let body = template.render(IndexTemplate {
         logged_in: identity.is_some(),
-        bikes: bikes.into_iter().map(|bike| BikeDisplay::from(bike).description_to_markdown()).collect(),
-        images
+        bikes: &bikes.into_iter().map(|bike| BikeDisplay::from(bike).description_to_markdown()).collect(),
+        images: &images
     })?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
@@ -57,7 +57,7 @@ pub async fn about(
 
     let body = template.render(AboutTemplate {
         logged_in: identity.is_some(),
-        images
+        images: &images
     })?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))

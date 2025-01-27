@@ -6,29 +6,29 @@ use serde::Serialize;
 use crate::database::models::image::BikeImage;
 
 #[derive(Serialize)]
-pub struct BikesTemplate {
+pub struct BikesTemplate<'a> {
     pub logged_in: bool,
-    pub bikes: Vec<BikeDisplay>,
+    pub bikes: &'a Vec<BikeDisplay>,
 }
 
 #[derive(Serialize)]
-pub struct BikeCreateTemplate {
-    pub models: Vec<ModelDetail>,
-    pub logged_in: bool,
-}
-
-#[derive(Serialize)]
-pub struct BikeEditTemplate {
-    pub bike: BikeDisplay,
-    pub models: Vec<ModelDetail>,
+pub struct BikeCreateTemplate<'a> {
+    pub models: &'a Vec<ModelDetail>,
     pub logged_in: bool,
 }
 
 #[derive(Serialize)]
-pub struct BikeDisplayTemplate {
-    pub bike: BikeDisplay,
-    pub bike_images: Vec<BikeImage>,
-    pub tags: Vec<TagJoin>,
+pub struct BikeEditTemplate<'a> {
+    pub bike: &'a BikeDisplay,
+    pub models: &'a Vec<ModelDetail>,
+    pub logged_in: bool,
+}
+
+#[derive(Serialize)]
+pub struct BikeDisplayTemplate<'a> {
+    pub bike: &'a BikeDisplay,
+    pub bike_images: &'a Vec<BikeImage>,
+    pub tags: &'a Vec<TagJoin>,
     pub logged_in: bool,
 }
 

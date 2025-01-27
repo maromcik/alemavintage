@@ -56,7 +56,7 @@ pub async fn get_bikes(
     let template = env.get_template(&template_name)?;
     let body = template.render(BikesTemplate {
         logged_in: identity.is_some(),
-        bikes: bikes
+        bikes: &bikes
             .into_iter()
             .map(|bike| BikeDisplay::from(bike).description_to_markdown())
             .collect(),
@@ -106,9 +106,9 @@ pub async fn get_bike_detail(
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(BikeDisplayTemplate {
-        bike: BikeDisplay::from(bike).description_to_markdown(),
-        bike_images,
-        tags,
+        bike: &BikeDisplay::from(bike).description_to_markdown(),
+        bike_images: &bike_images,
+        tags: &tags,
         logged_in: identity.is_some(),
     })?;
 
@@ -132,7 +132,7 @@ pub async fn create_bike_page(
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(BikeCreateTemplate {
-        models,
+        models: &models,
         logged_in: true,
     })?;
 
@@ -338,8 +338,8 @@ pub async fn edit_bike_page(
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(BikeEditTemplate {
-        bike: BikeDisplay::from(bike),
-        models,
+        bike: &BikeDisplay::from(bike),
+        models: &models,
         logged_in: true,
     })?;
 

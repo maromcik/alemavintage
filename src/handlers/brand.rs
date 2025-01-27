@@ -76,7 +76,7 @@ pub async fn edit_brand_page(
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(BrandEditTemplate {
-        brand,
+        brand: &brand,
         logged_in: true,
     })?;
 
@@ -121,7 +121,7 @@ pub async fn get_brands(
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(BrandTemplate {
-        brands,
+        brands: &brands,
         logged_in: identity.is_some(),
     })?;
 
@@ -151,8 +151,8 @@ pub async fn get_brand(
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(BrandDetailTemplate {
-        brand: BrandDisplay::from(brand),
-        models,
+        brand: &BrandDisplay::from(brand),
+        models: &models,
         logged_in: identity.is_some(),
     })?;
 
