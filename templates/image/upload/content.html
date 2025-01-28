@@ -11,7 +11,7 @@
                 Image Type
             </label>
             <select name="image_type"
-                    class="shadow border text-forms rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
+                    class="shadow border text-forms-input rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
                     id="image_type">
                 {% for image_type in image_types %}
                 <option value="{{ image_type.id }}">{{ image_type.name }}</option>
@@ -29,7 +29,7 @@
         </div>
         
         <div class="flex justify-end mt-10 mb-5">
-            <button class="bg-acc  text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            <button class="bg-acc text-button font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="submit"
                     onclick="document.getElementById('upload-indicator').style.display = 'inline-block';">
                 <img id="upload-indicator"

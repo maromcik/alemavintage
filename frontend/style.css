@@ -145,6 +145,9 @@
     @apply text-gray-300 dark:text-gray-800
 }
 
+.text-forms-input {
+    @apply text-gray-800
+}
 
 .text-sat-m {
     @apply text-gray-600 dark:text-gray-300

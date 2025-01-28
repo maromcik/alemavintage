@@ -7,7 +7,7 @@
                 Name
             </label>
             <input name="name"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline"
+                   class="shadow appearance-none text-stone-800 border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline"
                    id="bike-name" type="text" placeholder="Bike Name">
         </div>
 
@@ -15,7 +15,7 @@
             <label class="block text-forms text-sm font-bold mb-2" for="model">
                 Model
             </label>
-            <select name="model_id" class="shadow border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline" id="model">
+            <select name="model_id" class="shadow border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline" id="model">
                 {% for model in models %}
                 <option value="{{ model.id }}">{{ model.brand_name }} - {{ model.name }}</option>
                 {% endfor %}
@@ -24,102 +24,102 @@
 
         <div class="mb-4">
             <label class="block text-forms text-sm font-bold mb-2" for="year">Year</label>
-            <input name="year" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline" id="year" type="number" placeholder="Year" value="0">
+            <input name="year" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline" id="year" type="number" placeholder="Year" value="0">
         </div>
 
         <div class="mb-4">
             <label class="block text-forms text-sm font-bold mb-2" for="price">Price</label>
-            <input name="price" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline" id="price" type="number" placeholder="Price" step=".01" value="0.00">
+            <input name="price" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline" id="price" type="number" placeholder="Price" step=".01" value="0.00">
         </div>
 
         <div class="mb-4">
             <label class="block text-forms text-sm font-bold mb-2" for="height">Height</label>
-            <input name="height" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline" id="height" type="number" placeholder="Height" value="0">
+            <input name="height" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline" id="height" type="number" placeholder="Height" value="0">
         </div>
 
         <div class="mb-4">
             <label class="block text-forms text-sm font-bold mb-2" for="top_tube_size">Top Tube Size</label>
-            <input name="top_tube_size" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline" id="top_tube_size" type="number" placeholder="Top Tube Size" value="0">
+            <input name="top_tube_size" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline" id="top_tube_size" type="number" placeholder="Top Tube Size" value="0">
         </div>
 
         <div class="mb-4">
             <label class="block text-forms text-sm font-bold mb-2" for="frame">Frame</label>
-            <input name="frame" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline" id="frame" type="text" placeholder="Frame">
+            <input name="frame" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline" id="frame" type="text" placeholder="Frame">
         </div>
 
         <div class="mb-4">
             <label class="block text-forms text-sm font-bold mb-2" for="seat_tube_sizes">Seat Tube Sizes</label>
-            <input name="seat_tube_sizes" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline" id="seat_tube_sizes" type="text" placeholder="Seat Tube Sizes">
+            <input name="seat_tube_sizes" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline" id="seat_tube_sizes" type="text" placeholder="Seat Tube Sizes">
         </div>
 
         <div class="mb-4">
             <label class="block text-forms text-sm font-bold mb-2" for="headset">Headset</label>
-            <input name="headset" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline" id="headset" type="text" placeholder="Headset">
+            <input name="headset" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline" id="headset" type="text" placeholder="Headset">
         </div>
 
         <div class="mb-4">
             <label class="block text-forms text-sm font-bold mb-2" for="crankset">Crankset</label>
-            <input name="crankset" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline" id="crankset" type="text" placeholder="Crankset">
+            <input name="crankset" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline" id="crankset" type="text" placeholder="Crankset">
         </div>
 
         <div class="mb-4">
             <label class="block text-forms text-sm font-bold mb-2" for="bottom_bracket">Bottom Bracket</label>
-            <input name="bottom_bracket" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline" id="bottom_bracket" type="text" placeholder="Bottom Bracket">
+            <input name="bottom_bracket" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline" id="bottom_bracket" type="text" placeholder="Bottom Bracket">
         </div>
 
         <div class="mb-4">
             <label class="block text-forms text-sm font-bold mb-2" for="front_derail">Front Derailleur</label>
-            <input name="front_derail" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline" id="front_derail" type="text" placeholder="Front Derailleur">
+            <input name="front_derail" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline" id="front_derail" type="text" placeholder="Front Derailleur">
         </div>
 
         <div class="mb-4">
             <label class="block text-forms text-sm font-bold mb-2" for="rear_derail">Rear Derailleur</label>
-            <input name="rear_derail" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline" id="rear_derail" type="text" placeholder="Rear Derailleur">
+            <input name="rear_derail" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline" id="rear_derail" type="text" placeholder="Rear Derailleur">
         </div>
 
         <div class="mb-4">
             <label class="block text-forms text-sm font-bold mb-2" for="brakes">Brakes</label>
-            <input name="brakes" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline" id="brakes" type="text" placeholder="Brakes">
+            <input name="brakes" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline" id="brakes" type="text" placeholder="Brakes">
         </div>
 
         <div class="mb-4">
             <label class="block text-forms text-sm font-bold mb-2" for="shifters">Shifters</label>
-            <input name="shifters" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline" id="shifters" type="text" placeholder="Shifters">
+            <input name="shifters" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline" id="shifters" type="text" placeholder="Shifters">
         </div>
 
         <div class="mb-4">
             <label class="block text-forms text-sm font-bold mb-2" for="brake_levers">Brake Levers</label>
-            <input name="brake_levers" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline" id="brake_levers" type="text" placeholder="Brake Levers">
+            <input name="brake_levers" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline" id="brake_levers" type="text" placeholder="Brake Levers">
         </div>
 
         <div class="mb-4">
             <label class="block text-forms text-sm font-bold mb-2" for="saddle">Saddle</label>
-            <input name="saddle" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline" id="saddle" type="text" placeholder="Saddle">
+            <input name="saddle" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline" id="saddle" type="text" placeholder="Saddle">
         </div>
 
         <div class="mb-4">
             <label class="block text-forms text-sm font-bold mb-2" for="seat_post">Seat Post</label>
-            <input name="seat_post" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline" id="seat_post" type="text" placeholder="Seat Post">
+            <input name="seat_post" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline" id="seat_post" type="text" placeholder="Seat Post">
         </div>
 
         <div class="mb-4">
             <label class="block text-forms text-sm font-bold mb-2" for="hubs">Hubs</label>
-            <input name="hubs" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline" id="hubs" type="text" placeholder="Hubs">
+            <input name="hubs" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline" id="hubs" type="text" placeholder="Hubs">
         </div>
 
         <div class="mb-4">
             <label class="block text-forms text-sm font-bold mb-2" for="rims">Rims</label>
-            <input name="rims" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline" id="rims" type="text" placeholder="Rims">
+            <input name="rims" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline" id="rims" type="text" placeholder="Rims">
         </div>
 
         <div class="mb-4">
             <label class="block text-forms text-sm font-bold mb-2" for="handlebar">Handlebar</label>
-            <input name="handlebar" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline" id="handlebar" type="text" placeholder="Handlebar">
+            <input name="handlebar" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline" id="handlebar" type="text" placeholder="Handlebar">
         </div>
 
         <div class="mb-4">
             <label class="block text-forms text-sm font-bold mb-2" for="stem">Stem</label>
-            <input name="stem" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline" id="stem" type="text" placeholder="Stem">
+            <input name="stem" class="shadow appearance-none border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline" id="stem" type="text" placeholder="Stem">
         </div>
 
         <div class="mb-4">
@@ -128,7 +128,7 @@
             </label>
             <textarea name="description"
                       rows="30"
-                      class="shadow appearance-none border rounded w-full py-2 px-3 text-forms leading-tight focus:outline-none focus:shadow-outline"
+                      class="shadow appearance-none border rounded w-full py-2 px-3 text-forms-input leading-tight focus:outline-none focus:shadow-outline"
                       id="description" placeholder="Description"></textarea>
         </div>
 
