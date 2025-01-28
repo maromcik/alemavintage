@@ -1641,7 +1641,7 @@ code {
 
 .text-button {
   --tw-text-opacity: 1;
-  color: rgb(245 245 244 / var(--tw-text-opacity, 1));
+  color: rgb(68 64 60 / var(--tw-text-opacity, 1));
 }
 
 @media (prefers-color-scheme: dark) {

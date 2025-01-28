@@ -162,7 +162,7 @@
 }
 
 .text-button {
-    @apply text-stone-100 dark:text-stone-900
+    @apply text-stone-700 dark:text-stone-900
 }
 
 .text-navbar-buttons {
