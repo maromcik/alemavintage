@@ -27,7 +27,7 @@ mod utilities;
 
 const DEFAULT_HOSTNAME: &str = "localhost";
 const DEFAULT_PORT: &str = "8000";
-const SECS_IN_WEEK: i64 = 60 * 60 * 24 * 7;
+const SECS_IN_MONTH: i64 = 60 * 60 * 24 * 30;
 const PAYLOAD_LIMIT: usize = 16 * 1024 * 1024 * 1024; // 16GiB
 
 const FORM_LIMIT: usize = 16 * 1024 * 1024; // 16MiB
@@ -87,7 +87,7 @@ async fn main() -> anyhow::Result<()> {
                     .cookie_secure(use_secure_cookie)
                     .session_lifecycle(
                         PersistentSession::default()
-                            .session_ttl(actix_web::cookie::time::Duration::seconds(SECS_IN_WEEK)),
+                            .session_ttl(actix_web::cookie::time::Duration::seconds(SECS_IN_MONTH)),
                     )
                     .build(),
             )
