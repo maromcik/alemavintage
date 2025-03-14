@@ -5,17 +5,17 @@ edition = "2021"
 
 [dependencies]
 actix-files = { version = "0.6.6" }
-actix-web = "4.9.0"
-anyhow = { version = "1.0.94", features = [] }
-chrono = { version = "0.4.39", features = ["serde"] }
+actix-web = "4.10.2"
+anyhow = { version = "1.0.97", features = [] }
+chrono = { version = "0.4.40", features = ["serde"] }
 dotenv = "0.15.0"
 dotenvy = "0.15.7"
 env_logger = "0.11.5"
 futures = "0.3.31"
 hmac = "0.13.0-pre.4"
 log = "0.4.22"
-serde = { version = "1.0.216", features = ["derive"] }
-sqlx = { version = "0.8.2", features = ["chrono", "runtime-tokio-native-tls", "postgres", "bigdecimal"] }
+serde = { version = "1.0.219", features = ["derive"] }
+sqlx = { version = "0.8.3", features = ["chrono", "runtime-tokio-native-tls", "postgres", "bigdecimal"] }
 thiserror = "2.0.7"
 uuid = { version = "1.11.0", features = ["v4"] }
 pbkdf2 = { version = "0.12.2", features = ["simple"] }
@@ -29,9 +29,9 @@ lazy_static = "1.5.0"
 image = "0.25.5"
 rayon = "1.10.0"
 rexiv2 = "0.10.0"
-minijinja = { version = "2.5.0", features = ["loader"] }
-minijinja-autoreload = "2.5.0"
-itertools = "0.13.0"
+minijinja = { version = "2.8.0", features = ["loader"] }
+minijinja-autoreload = "2.8.0"
+itertools = "0.14.0"
 markdown = "1.0.0-alpha.21"
 lettre = { version = "0.11.11", features = ["tokio1-native-tls"] }
-tokio = "1.42.0"
+tokio = "1.44.1"
