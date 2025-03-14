@@ -45,7 +45,7 @@ async fn main() -> anyhow::Result<()> {
     let host = parse_host();
     let host2 = host.clone();
     
-    let pool = setup_pool(10_u32).await?;
+    let pool = setup_pool(200_u32).await?;
     let jinja = Arc::new(create_reloader("templates".to_owned()));
     let mailer = Arc::new(create_mailer().map_err(|e| anyhow!(e.message))?);
     let domain  = env::var("PUBLIC_DOMAIN").unwrap_or(format!("http://{host}"));
