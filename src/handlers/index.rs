@@ -49,11 +49,11 @@ pub async fn about(
     image_repo: web::Data<ImageRepository>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
+    let images = image_repo.read_many(&OtherImageSearch::new(Some(OtherImageTypeEnum::About.id()))).await?;
+    
     let template_name = get_template_name(&request, "about");
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
-
-    let images = image_repo.read_many(&OtherImageSearch::new(Some(OtherImageTypeEnum::About.id()))).await?;
 
     let body = template.render(AboutTemplate {
         logged_in: identity.is_some(),
