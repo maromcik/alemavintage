@@ -13,6 +13,7 @@ use std::io::Error;
 use std::num::ParseIntError;
 use thiserror::Error;
 use tokio::task::JoinError;
+use zip::result::ZipError;
 
 /// User facing error type
 #[derive(Error, Debug, Serialize, Clone)]
@@ -39,6 +40,8 @@ pub enum AppErrorKind {
     EmailError,
     #[error("email address error")]
     EmailAddressError,
+    #[error("zip error")]
+    ZipError,
 }
 
 // impl From<askama::Error> for AppError {
@@ -189,6 +192,12 @@ impl From<ParseIntError> for AppError {
     }
 }
 
+impl From<zip::result::ZipError> for AppError {
+    fn from(value: ZipError) -> Self {
+        Self::new(AppErrorKind::ZipError, "Could not zip file")
+    }
+}
+
 impl Display for AppError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
@@ -211,7 +220,8 @@ impl ResponseError for AppError {
             | AppErrorKind::IdentityError
             | AppErrorKind::SessionError
             | AppErrorKind::EmailError
-            | AppErrorKind::FileError => StatusCode::INTERNAL_SERVER_ERROR,
+            | AppErrorKind::FileError
+            | AppErrorKind::ZipError => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 

@@ -5,7 +5,7 @@ use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::brand::repository::BrandRepository;
 use crate::database::repositories::model::repository::ModelRepository;
 use crate::database::repositories::user::repository::UserRepository;
-use crate::handlers::bike::{clone_bike, create_bike, create_bike_page, edit_bike, edit_bike_page, get_bike_detail, get_bikes, hide_bike, remove_bike, restore_bike, reupload_bike, reupload_bike_page, upload_bike, upload_bike_page, upload_bike_thumbnail, upload_bike_thumbnail_page};
+use crate::handlers::bike::{clone_bike, create_bike, create_bike_page, download_bike_images, edit_bike, edit_bike_page, get_bike_detail, get_bikes, hide_bike, remove_bike, restore_bike, reupload_bike, reupload_bike_page, upload_bike, upload_bike_page, upload_bike_thumbnail, upload_bike_thumbnail_page};
 use crate::handlers::brand::{
     create_brand, create_brand_page, edit_brand, edit_brand_page, get_brand, get_brands,
     remove_brand,
@@ -68,7 +68,9 @@ pub fn configure_webapp(pool: &PgPool, app_state: AppState) -> Box<dyn FnOnce(&m
         .service(reupload_bike_page)
         .service(reupload_bike)
         .service(remove_bike)
-        .service(clone_bike);
+        .service(clone_bike)
+
+        .service(download_bike_images);
 
     let brand_scope = web::scope("brand")
         .app_data(web::Data::new(brand_repository.clone()))

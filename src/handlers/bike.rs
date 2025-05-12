@@ -7,10 +7,12 @@ use crate::database::models::bike::{
     Bike, BikeCreate, BikeCreateSessionKeys, BikeDetail, BikeDetailSessionKeys, BikeDisplay,
     BikeGetById, BikeSearch, BikeUpdate,
 };
+use crate::database::models::image::BikeImageSearch;
 use crate::database::models::model::ModelSearch;
 use crate::database::models::tag::{TagJoin, TagSearch};
 use crate::database::models::{GetById, Id};
 use crate::database::repositories::bike::repository::BikeRepository;
+use crate::database::repositories::image::repository::ImageRepository;
 use crate::database::repositories::model::repository::ModelRepository;
 use crate::database::repositories::tag::repository::TagRepository;
 use crate::database::repositories::user::repository::UserRepository;
@@ -34,8 +36,8 @@ use actix_multipart::form::MultipartForm;
 use actix_session::Session;
 use actix_web::http::header::LOCATION;
 use actix_web::{delete, get, post, put, web, HttpRequest, HttpResponse};
-use crate::database::models::image::BikeImageSearch;
-use crate::database::repositories::image::repository::ImageRepository;
+use std::io::Write;
+use zip::write::{FileOptions, SimpleFileOptions};
 
 #[get("")]
 pub async fn get_bikes(
@@ -238,9 +240,9 @@ pub async fn upload_bike(
         }
     };
 
-    tokio::task::spawn(
-        async move { save_bike_images_helper(form.photos, &bike_repo, &image_repo, bike.id).await },
-    );
+    tokio::task::spawn(async move {
+        save_bike_images_helper(form.photos, &bike_repo, &image_repo, bike.id).await
+    });
 
     session.remove(session_keys.bike_id.as_str());
 
@@ -494,9 +496,9 @@ pub async fn reupload_bike(
         hard_delete_bike_images(&image_repo, bike_id).await?;
     }
 
-    tokio::task::spawn(
-        async move { save_bike_images_helper(form.photos, &bike_repo, &image_repo, bike_id).await },
-    );
+    tokio::task::spawn(async move {
+        save_bike_images_helper(form.photos, &bike_repo, &image_repo, bike_id).await
+    });
 
     let url = format!("/bike/{}", bike_id);
     Ok(HttpResponse::SeeOther()
@@ -523,4 +525,51 @@ pub async fn clone_bike(
     Ok(HttpResponse::SeeOther()
         .insert_header((LOCATION, url))
         .finish())
+}
+
+#[get("/{id}/download")]
+pub async fn download_bike_images(
+    request: HttpRequest,
+    identity: Option<Identity>,
+    bike_repo: web::Data<BikeRepository>,
+    user_repo: web::Data<UserRepository>,
+    image_repo: web::Data<ImageRepository>,
+    path: web::Path<(Id,)>,
+) -> Result<HttpResponse, AppError> {
+    let u = authorized!(identity, request.path());
+    let _ = get_user_from_identity(u, &user_repo).await?;
+
+    let bike: BikeDetail = <BikeRepository as DbReadOne<BikeGetById, BikeDetail>>::read_one(
+        bike_repo.as_ref(),
+        &BikeGetById::new(path.into_inner().0, false, false),
+    )
+    .await?;
+
+    let bike_images = image_repo
+        .read_many(&BikeImageSearch::new(Some(bike.id)))
+        .await?;
+
+    let paths = bike_images
+        .into_iter()
+        .map(|bike_image| format!(".{}", bike_image.path))
+        .collect::<Vec<_>>();
+
+    let buf = Vec::new();
+    let mut zip = zip::ZipWriter::new(std::io::Cursor::new(buf));
+    let options = SimpleFileOptions::default().compression_method(zip::CompressionMethod::Stored);
+
+    for (index, path) in paths.iter().enumerate() {
+        let file_contents = tokio::fs::read(path).await?;
+        zip.start_file(path, options)?;
+        zip.write_all(&file_contents)?;
+    }
+    let zip_contents = zip.finish()?.into_inner();
+
+    Ok(HttpResponse::Ok()
+        .content_type("application/zip")
+        .insert_header((
+            "Content-Disposition",
+            format!("attachment; filename=\"bike_{}_images.zip\"", bike.id),
+        ))
+        .body(zip_contents))
 }

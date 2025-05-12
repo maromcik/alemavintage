@@ -93,6 +93,10 @@
                             class="bg-acc  rounded-md p-3 text-button text-lg shadow-md w-12">
                         <i class="fa-solid fa-upload"></i>
                     </button>
+                    <a href="/bike/{{ bike.id }}/download"
+                       class="bg-acc  rounded-md p-3 text-button text-lg shadow-md w-12">
+                        <i class="fa-solid fa-download"></i>
+                    </a>
                     <button hx-get="/bike/{{ bike.id }}/clone" hx-target-error="#content-area" hx-push-url="/bike"
                             hx-target="#content-area"
                             class="bg-acc  rounded-md p-3 text-button text-lg shadow-md w-12">
