@@ -85,38 +85,38 @@
                     <button hx-get="/bike/{{ bike.id }}/edit" hx-target-error="#content-area"
                             hx-push-url="/bike/{{ bike.id }}/edit"
                             hx-target="#content-area"
-                            class="bg-acc  rounded-md p-3 text-button text-lg shadow-md w-12">
+                            class="bg-yellow-400 hover:bg-yellow-500  rounded-md p-3 text-button text-lg shadow-md w-12">
                         <i class="fa-solid fa-pencil"></i>
                     </button>
                     <button hx-get="/bike/{{ bike.id }}/reupload" hx-target-error="#content-area"
                             hx-target="#content-area"
-                            class="bg-acc  rounded-md p-3 text-button text-lg shadow-md w-12">
+                            class="bg-purple-500 hover:bg-purple-600  rounded-md p-3 text-button text-lg shadow-md w-12">
                         <i class="fa-solid fa-upload"></i>
                     </button>
                     <a href="/bike/{{ bike.id }}/download"
-                       class="bg-acc  rounded-md p-3 text-button text-lg shadow-md w-12">
+                       class="bg-cyan-500 hover:bg-cyan-600  rounded-md p-3 text-button text-lg shadow-md w-12">
                         <i class="fa-solid fa-download"></i>
                     </a>
                     <button hx-get="/bike/{{ bike.id }}/clone" hx-target-error="#content-area" hx-push-url="/bike"
                             hx-target="#content-area"
-                            class="bg-acc  rounded-md p-3 text-button text-lg shadow-md w-12">
+                            class="bg-blue-500 hover:bg-blue-600 rounded-md p-3 text-button text-lg shadow-md w-12">
                         <i class="fa-solid fa-clone"></i>
                     </button>
                     {% if bike.hidden %}
                     <button hx-put="/bike/{{ bike.id }}/restore" hx-target-error="#content-area"
                             hx-target="#content-area"
-                            class="bg-lime-700 hover:bg-lime-800 rounded-md p-3 text-button text-lg shadow-md w-12">
-                        <i class="fa-solid fa-rotate-right"></i>
+                            class="bg-lime-500 hover:bg-lime-600 rounded-md p-3 text-button text-lg shadow-md w-12">
+                        <i class="fa-solid fa-eye"></i>
                     </button>
                     <button hx-delete="/bike/{{ bike.id }}/delete" hx-target-error="#content-area"
                             hx-target="#content-area" hx-push-url="/bike"
-                            class="bg-red-800 hover:bg-red-900 rounded-md p-3 text-button text-lg shadow-md w-12">
+                            class="bg-red-600 hover:bg-red-700 rounded-md p-3 text-button text-lg shadow-md w-12">
                         <i class="fa-solid fa-trash"></i>
                     </button>
                     {% else %}
                     <button hx-delete="/bike/{{ bike.id }}/hide" hx-target-error="#content-area"
                             hx-target="#content-area"
-                            class="bg-acc  rounded-md p-3 text-button text-lg shadow-md w-12">
+                            class="bg-fuchsia-400 hover:bg-fuchsia-500 rounded-md p-3 text-button text-lg shadow-md w-12">
                         <i class="fa-solid fa-eye-slash"></i>
                     </button>
                     {% endif %}
