@@ -548,19 +548,14 @@ pub async fn download_bike_images(
     let bike_images = image_repo
         .read_many(&BikeImageSearch::new(Some(bike.id)))
         .await?;
-
-    let paths = bike_images
-        .into_iter()
-        .map(|bike_image| format!(".{}", bike_image.path))
-        .collect::<Vec<_>>();
-
+    
     let buf = Vec::new();
     let mut zip = zip::ZipWriter::new(std::io::Cursor::new(buf));
     let options = SimpleFileOptions::default().compression_method(zip::CompressionMethod::Stored);
 
-    for (index, path) in paths.iter().enumerate() {
-        let file_contents = tokio::fs::read(path).await?;
-        zip.start_file(path, options)?;
+    for (idx, img) in bike_images.iter().enumerate() {
+        let file_contents = tokio::fs::read(format!(".{}", img.path)).await?;
+        zip.start_file(format!("bike_image_{idx}.jpg"), options)?;
         zip.write_all(&file_contents)?;
     }
     let zip_contents = zip.finish()?.into_inner();
