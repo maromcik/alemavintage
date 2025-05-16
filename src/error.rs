@@ -13,7 +13,6 @@ use std::io::Error;
 use std::num::ParseIntError;
 use thiserror::Error;
 use tokio::task::JoinError;
-use zip::result::ZipError;
 
 /// User facing error type
 #[derive(Error, Debug, Serialize, Clone)]
@@ -193,8 +192,8 @@ impl From<ParseIntError> for AppError {
 }
 
 impl From<zip::result::ZipError> for AppError {
-    fn from(value: ZipError) -> Self {
-        Self::new(AppErrorKind::ZipError, "Could not zip file")
+    fn from(value: zip::result::ZipError) -> Self {
+        Self::new(AppErrorKind::ZipError, value.to_string().as_str())
     }
 }
 
