@@ -532,16 +532,14 @@ pub async fn download_bike_images(
     request: HttpRequest,
     identity: Option<Identity>,
     bike_repo: web::Data<BikeRepository>,
-    user_repo: web::Data<UserRepository>,
     image_repo: web::Data<ImageRepository>,
     path: web::Path<(Id,)>,
 ) -> Result<HttpResponse, AppError> {
-    let u = authorized!(identity, request.path());
-    let _ = get_user_from_identity(u, &user_repo).await?;
+    let _ = authorized!(identity, request.path());
 
     let bike: BikeDetail = <BikeRepository as DbReadOne<BikeGetById, BikeDetail>>::read_one(
         bike_repo.as_ref(),
-        &BikeGetById::new(path.into_inner().0, false, false),
+        &BikeGetById::new(path.into_inner().0, true, false),
     )
     .await?;
 
