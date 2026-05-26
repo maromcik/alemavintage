@@ -1,9 +1,12 @@
 use crate::database::common::{DbCreate, DbDelete, DbReadMany, DbReadOne, DbUpdate};
-use crate::database::models::bike::{Bike, BikeCreateSessionKeys, BikeDetail, BikeGetById, BikeMetadataForm, BikeUpdate};
+use crate::database::models::bike::{
+    Bike, BikeCreateSessionKeys, BikeDetail, BikeGetById, BikeMetadataForm, BikeUpdate,
+};
 use crate::database::models::image::{BikeImageGetById, BikeImagesCreate, Image, ImageCreate};
 use crate::database::models::user::{User, UserSearch};
 use crate::database::models::{GetById, Id};
 use crate::database::repositories::bike::repository::BikeRepository;
+use crate::database::repositories::image::repository::ImageRepository;
 use crate::database::repositories::user::repository::UserRepository;
 use crate::error::{AppError, AppErrorKind};
 use crate::forms::user::EmailForm;
@@ -21,7 +24,6 @@ use lettre::{AsyncTransport, Message};
 use rayon::iter::IntoParallelIterator;
 use rayon::iter::ParallelIterator;
 use std::sync::Arc;
-use crate::database::repositories::image::repository::ImageRepository;
 
 pub fn get_template_name(request: &HttpRequest, path: &str) -> String {
     if is_htmx(request) {
@@ -44,7 +46,7 @@ pub async fn hard_delete_bike(
             &GetById::new_with_deleted(bike_id),
         )
         .await?;
-        
+
         hard_delete_previews(image_repo, bikes).await?;
     }
     Ok(())
@@ -53,7 +55,7 @@ pub async fn hard_delete_bike(
 pub async fn hard_delete_previews(
     image_repo: &web::Data<ImageRepository>,
     bikes: Vec<Bike>,
-)-> Result<(), AppError>{
+) -> Result<(), AppError> {
     for bike in bikes {
         if let Some(preview_id) = bike.preview {
             hard_delete_preview(image_repo, preview_id).await?;
@@ -170,8 +172,8 @@ pub async fn save_bike_images_helper(
     image_repo: &web::Data<ImageRepository>,
     bike_id: Id,
 ) -> Result<(), AppError> {
-    let image_dimensions = ImageDimensions::new(IMAGE_SIZE, IMAGE_SIZE);
-    let thumbnail_image_dimensions = ImageDimensions::new(LOW_IMAGE_SIZE, LOW_IMAGE_SIZE);
+    let image_dimensions = ImageDimensions::new(*IMAGE_SIZE, *IMAGE_SIZE);
+    let thumbnail_image_dimensions = ImageDimensions::new(*LOW_IMAGE_SIZE, *LOW_IMAGE_SIZE);
 
     bike_repo
         .update(&BikeUpdate::update_status(
@@ -234,8 +236,9 @@ pub async fn save_bike_images_helper(
 
 pub fn save_bike_thumbnail_helper(thumbnail: TempFile) -> Result<(AppImage, AppImage), AppError> {
     let processor = ImageProcessor::builder(thumbnail).load_image_processor()?;
-    let preview = processor.resize_img(&ImageDimensions::new(IMAGE_SIZE, IMAGE_SIZE))?;
-    let thumbnail = processor.resize_img(&ImageDimensions::new(THUMBNAIL_SIZE, THUMBNAIL_SIZE))?;
+    let preview = processor.resize_img(&ImageDimensions::new(*IMAGE_SIZE, *IMAGE_SIZE))?;
+    let thumbnail =
+        processor.resize_img(&ImageDimensions::new(*THUMBNAIL_SIZE, *THUMBNAIL_SIZE))?;
     Ok((preview, thumbnail))
 }
 
@@ -278,7 +281,7 @@ impl Email {
 Správa:
 
 {}
-    
+
 Kontaktné údaje
 Email: {}
 Tel.: {}

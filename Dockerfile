@@ -1,9 +1,9 @@
-FROM rust:1.88 as base
+FROM rust:1.95 as base
 
 RUN apt-get update
 RUN apt-get install -y postgresql-client zip build-essential autoconf libtool pkg-config libgexiv2-dev
 
-RUN cargo install cargo-chef --version 0.1.68
+RUN cargo install cargo-chef --version 0.1.77
 
 
 FROM base AS planner
@@ -53,8 +53,3 @@ COPY ./webroot ./webroot
 EXPOSE 8000
 
 ENTRYPOINT ["/usr/local/bin/alemavintage"]
-
-
-
-
-

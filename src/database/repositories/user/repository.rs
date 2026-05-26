@@ -1,7 +1,6 @@
-use pbkdf2::password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString};
+use pbkdf2::password_hash::phc::{PasswordHash, SaltString};
+use pbkdf2::password_hash::{PasswordHasher, PasswordVerifier};
 use pbkdf2::Pbkdf2;
-use rand_core::OsRng;
-
 use sqlx::{Postgres, Transaction};
 
 use crate::database::common::error::BackendErrorKind::{
@@ -16,30 +15,34 @@ use crate::database::common::{
 use crate::database::models::user::{User, UserLogin, UserSearch, UserUpdate, UserUpdatePassword};
 use crate::database::models::GetById;
 
-fn generate_salt() -> SaltString {
-    SaltString::generate(&mut OsRng)
-}
-
-fn hash_password(password: String, salt: &SaltString) -> Result<String, DbError> {
-    let password_hash = Pbkdf2.hash_password(password.as_bytes(), salt)?.to_string();
-    Ok(password_hash)
-}
-
-fn verify_password_hash(
-    expected_password_hash: &str,
-    password_candidate: &str,
-) -> Result<bool, DbError> {
-    let parsed_hash = PasswordHash::new(expected_password_hash)?;
-    let bytes = password_candidate.bytes().collect::<Vec<u8>>();
-    Ok(Pbkdf2.verify_password(&bytes, &parsed_hash).is_ok())
-}
 
 #[derive(Clone)]
 pub struct UserRepository {
     pool_handler: PoolHandler,
+    pbkdf2: Pbkdf2
 }
 
 impl UserRepository {
+
+    fn generate_salt(&self) -> SaltString {
+        SaltString::from_rng(&mut rand::rng())
+    }
+
+    fn hash_password(&self, password: String, salt: &SaltString) -> Result<String, DbError> {
+        let password_hash = self.pbkdf2.hash_password_with_salt(password.as_bytes(), salt.as_bytes())?.to_string();
+        Ok(password_hash)
+    }
+
+    fn verify_password_hash(
+        &self,
+        expected_password_hash: &str,
+        password_candidate: &str,
+    ) -> Result<bool, DbError> {
+        let parsed_hash = PasswordHash::new(expected_password_hash).unwrap();
+        let bytes = password_candidate.bytes().collect::<Vec<u8>>();
+        Ok(self.pbkdf2.verify_password(&bytes, &parsed_hash).is_ok())
+    }
+
     /// Function which retrieves a user by their id, usable within a transaction
     ///
     /// # Params
@@ -86,8 +89,8 @@ impl UserRepository {
         entity_is_correct(user, EntityError::new(UserDeleted, UserDoesNotExist), false)
     }
 
-    pub fn verify_password(user: User, given_password: &str) -> DbResultSingle<User> {
-        match verify_password_hash(&user.password_hash, given_password) {
+    pub fn verify_password(&self, user: User, given_password: &str) -> DbResultSingle<User> {
+        match self.verify_password_hash(&user.password_hash, given_password) {
             Ok(ret) => {
                 if ret {
                     return Ok(user);
@@ -109,10 +112,10 @@ impl UserRepository {
         )
         .await?;
         let user = UserRepository::user_is_correct(user_query.clone())?;
-        let user = UserRepository::verify_password(user, &params.old_password)?;
+        let user = self.verify_password(user, &params.old_password)?;
 
-        let salt = generate_salt();
-        let password_hash = hash_password(params.new_password.clone(), &salt)?;
+        let salt = self.generate_salt();
+        let password_hash = self.hash_password(params.new_password.clone(), &salt)?;
 
         let users = sqlx::query_as!(
             User,
@@ -139,7 +142,7 @@ impl UserRepository {
 impl DbRepository for UserRepository {
     #[inline]
     fn new(pool_handler: PoolHandler) -> Self {
-        Self { pool_handler }
+        Self { pool_handler, pbkdf2: Pbkdf2::default() }
     }
 
     #[inline]
@@ -165,7 +168,7 @@ impl DbReadOne<UserLogin, User> for UserRepository {
 
         let user = UserRepository::user_is_correct(user)?;
 
-        UserRepository::verify_password(user, &params.password)
+        self.verify_password(user, &params.password)
     }
 }
 
@@ -227,8 +230,8 @@ impl DbUpdate<UserUpdate, User> for UserRepository {
         let validated_user = UserRepository::user_is_correct(user)?;
         let (password, salt) = match &params.password {
             Some(p) => {
-                let salt = generate_salt();
-                let password_hash = hash_password(p.clone(), &salt)?;
+                let salt = self.generate_salt();
+                let password_hash = self.hash_password(p.clone(), &salt)?;
                 (Some(password_hash), Some(salt.to_string()))
             }
             None => (None, None),

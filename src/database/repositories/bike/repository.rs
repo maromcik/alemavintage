@@ -9,7 +9,7 @@ use crate::database::common::{
     PoolHandler,
 };
 
-use sqlx::{Postgres, Transaction};
+use sqlx::{AssertSqlSafe, Postgres, Transaction};
 
 use crate::database::common::utilities::{entity_is_correct, generate_query_param_string};
 use crate::database::models::bike::{
@@ -352,7 +352,7 @@ impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
         let query_params = generate_query_param_string(&params.query_params);
         query.push_str(query_params.as_str());
 
-        let bikes = sqlx::query_as::<_, BikeDetail>(query.as_str())
+        let bikes = sqlx::query_as::<_, BikeDetail>(AssertSqlSafe(query))
             .bind(&params.name)
             .bind(params.brand_id)
             .bind(params.model_id)

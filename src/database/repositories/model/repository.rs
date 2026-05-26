@@ -11,7 +11,7 @@ use crate::database::common::{
 };
 use crate::database::models::model::{Model, ModelCreate, ModelDetail, ModelSearch, ModelUpdate};
 use crate::database::models::GetById;
-use sqlx::{Postgres, Transaction};
+use sqlx::{AssertSqlSafe, Postgres, Transaction};
 
 #[derive(Clone)]
 pub struct ModelRepository {
@@ -114,7 +114,7 @@ impl DbReadMany<ModelSearch, ModelDetail> for ModelRepository {
         let query_params = generate_query_param_string(&params.query_params);
         query.push_str(query_params.as_str());
 
-        let models = sqlx::query_as::<_, ModelDetail>(query.as_str())
+        let models = sqlx::query_as::<_, ModelDetail>(AssertSqlSafe(query))
             .bind(&params.name)
             .bind(&params.brand_id)
             .fetch_all(&self.pool_handler.pool)

@@ -14,7 +14,7 @@ use anyhow::anyhow;
 use env_logger::Env;
 use log::{info, warn};
 use std::env;
-use std::sync::Arc;
+use std::sync::{Arc, LazyLock};
 
 mod database;
 mod error;
@@ -22,8 +22,8 @@ mod forms;
 mod handlers;
 mod init;
 mod templates;
-mod utils;
 mod utilities;
+mod utils;
 
 const DEFAULT_HOSTNAME: &str = "localhost";
 const DEFAULT_PORT: &str = "8000";
@@ -33,9 +33,25 @@ const PAYLOAD_LIMIT: usize = 16 * 1024 * 1024 * 1024; // 16GiB
 const FORM_LIMIT: usize = 16 * 1024 * 1024; // 16MiB
 const MIN_PASS_LEN: usize = 6;
 
-const THUMBNAIL_SIZE: u32 = 600;
-const IMAGE_SIZE: u32 = 2000;
-const LOW_IMAGE_SIZE: u32 = 300;
+static THUMBNAIL_SIZE: LazyLock<u32> = LazyLock::new(|| {
+    env::var("THUMBNAIL_IMAGE_SIZE")
+        .unwrap_or_else(|_| "600".to_string())
+        .parse()
+        .expect("THUMBNAIL_IMAGE_SIZE must be a valid u32")
+});
+static IMAGE_SIZE: LazyLock<u32> = LazyLock::new(|| {
+    env::var("HIGHRES_IMAGE_SIZE")
+        .unwrap_or_else(|_| "2000".to_string())
+        .parse()
+        .expect("HIGHRES_IMAGE_SIZE must be a valid u32")
+});
+
+static LOW_IMAGE_SIZE: LazyLock<u32> = LazyLock::new(|| {
+    env::var("LOWRES_IMAGE_SIZE")
+        .unwrap_or_else(|_| "300".to_string())
+        .parse()
+        .expect("LOWRES_IMAGE_SIZE must be a valid u32")
+});
 
 #[actix_web::main]
 async fn main() -> anyhow::Result<()> {
@@ -44,15 +60,13 @@ async fn main() -> anyhow::Result<()> {
 
     let host = parse_host();
     let host2 = host.clone();
-    
+
     let pool = setup_pool(200_u32).await?;
     let jinja = Arc::new(create_reloader("templates".to_owned()));
     let mailer = Arc::new(create_mailer().map_err(|e| anyhow!(e.message))?);
-    let domain  = env::var("PUBLIC_DOMAIN").unwrap_or(format!("http://{host}"));
-    
-    let app_state = AppState::new(jinja.clone(), mailer.clone(), Arc::new(domain));
+    let domain = env::var("PUBLIC_DOMAIN").unwrap_or(format!("http://{host}"));
 
-    
+    let app_state = AppState::new(jinja.clone(), mailer.clone(), Arc::new(domain));
 
     let key = Key::from(
         &env::var("COOKIE_SESSION_KEY")

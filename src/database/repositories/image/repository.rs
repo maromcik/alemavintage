@@ -1,3 +1,4 @@
+use sqlx::AssertSqlSafe;
 use crate::database::common::error::BackendErrorKind::{BikeDeleted, BikeDoesNotExist};
 use crate::database::common::error::{DbResultMultiple, DbResultSingle, EntityError};
 use crate::database::common::{
@@ -49,7 +50,7 @@ impl DbReadMany<BikeImageSearch, BikeImage> for ImageRepository {
         let query_params = generate_query_param_string(&params.query_params);
         query.push_str(query_params.as_str());
 
-        let images = sqlx::query_as::<_, BikeImage>(query.as_str())
+        let images = sqlx::query_as::<_, BikeImage>(AssertSqlSafe(query))
             .bind(params.bike_id)
             .fetch_all(&self.pool_handler.pool)
             .await?;
