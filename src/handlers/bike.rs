@@ -181,24 +181,6 @@ pub async fn create_bike(
         &form.description,
         &form.year,
         &((form.price * 100_f64).round() as i32),
-        &form.height,
-        &form.top_tube_size,
-        &form.frame,
-        &form.seat_tube_sizes,
-        &form.headset,
-        &form.crankset,
-        &form.bottom_bracket,
-        &form.front_derail,
-        &form.rear_derail,
-        &form.brakes,
-        &form.shifters,
-        &form.brake_levers,
-        &form.saddle,
-        &form.seat_post,
-        &form.hubs,
-        &form.rims,
-        &form.handlebar,
-        &form.stem,
     );
 
     let bike = bike_repo.create(&bike_create).await?;
@@ -370,24 +352,6 @@ pub async fn edit_bike(
         None,
         Some(&form.year),
         Some(&((form.price * 100_f64).round() as i32)),
-        Some(&form.height),
-        Some(&form.top_tube_size),
-        Some(&form.frame),
-        Some(&form.seat_tube_sizes),
-        Some(&form.headset),
-        Some(&form.crankset),
-        Some(&form.bottom_bracket),
-        Some(&form.front_derail),
-        Some(&form.rear_derail),
-        Some(&form.brakes),
-        Some(&form.shifters),
-        Some(&form.brake_levers),
-        Some(&form.saddle),
-        Some(&form.seat_post),
-        Some(&form.hubs),
-        Some(&form.rims),
-        Some(&form.handlebar),
-        Some(&form.stem),
         None,
     );
     bike_repo.update(&book_update).await?;
@@ -546,7 +510,7 @@ pub async fn download_bike_images(
     let bike_images = image_repo
         .read_many(&BikeImageSearch::new(Some(bike.id)))
         .await?;
-    
+
     let buf = Vec::new();
     let mut zip = zip::ZipWriter::new(std::io::Cursor::new(buf));
     let options = SimpleFileOptions::default().compression_method(zip::CompressionMethod::Stored);
