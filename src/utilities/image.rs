@@ -1,10 +1,10 @@
-use rexiv2::Metadata;
-use std::fs::File;
-use std::io::{BufWriter, Read};
 use crate::error::{AppError, AppErrorKind};
 use actix_multipart::form::tempfile::TempFile;
 use image::metadata::Orientation;
-use image::{DynamicImage, ImageFormat};
+use image::ImageDecoder;
+use image::{DynamicImage, ImageFormat, ImageReader};
+use std::fs::File;
+use std::io::{BufWriter, Read};
 use uuid::Uuid;
 
 pub struct AppImage {
@@ -54,7 +54,7 @@ impl ImageProcessor {
             target_dimensions.height,
             image::imageops::FilterType::CatmullRom,
         );
-        
+
         resized_img.apply_orientation(self.orientation);
         let fs_path = format!(".{path}");
         let mut output_file = BufWriter::new(File::create(&fs_path)?);
@@ -74,11 +74,7 @@ pub struct ImageProcessorBuilder {
 
 impl ImageProcessorBuilder {
     pub fn validate(&self) -> Result<String, AppError> {
-        let filename = self
-            .input_image
-            .file_name
-            .clone()
-            .unwrap_or_default();
+        let filename = self.input_image.file_name.clone().unwrap_or_default();
         let split_res = filename.split('.');
         let vector = split_res.collect::<Vec<&str>>();
         let extension = match vector.last() {
@@ -119,13 +115,6 @@ impl ImageProcessorBuilder {
                     format!("File '{original_path}' could not be read: {err}").as_str(),
                 )
             })?;
-        let metadata = Metadata::new_from_buffer(&buffer).map_err(|err| {
-            AppError::new(
-                AppErrorKind::FileError,
-                format!("Could not extract metadata from file '{original_path}': {err}",).as_str(),
-            )
-        })?;
-        let orientation = metadata.get_orientation();
 
         let dynamic_image = image::load_from_memory(&buffer).map_err(|err| {
             AppError::new(
@@ -133,31 +122,26 @@ impl ImageProcessorBuilder {
                 format!("File '{original_path}' could not be loaded: {err}").as_str(),
             )
         })?;
-        let format = image::guess_format(&buffer).map_err(|err| {
+
+        let cursor = std::io::Cursor::new(&buffer);
+
+        let reader = ImageReader::new(cursor).with_guessed_format()?;
+
+        let format = reader.format().ok_or_else(|| {
             AppError::new(
                 AppErrorKind::FileError,
-                format!("File format of '{original_path}' could not be determined: {err}",)
-                    .as_str(),
+                format!("File format of '{original_path}' could not be determined",).as_str(),
             )
         })?;
+
+        let mut decoder = reader.into_decoder()?;
+        let orientation = decoder.orientation()?;
+
         Ok(ImageProcessor {
             dynamic_image,
-            orientation: map_orientation(orientation),
+            orientation,
             format,
-            extension
+            extension,
         })
-    }
-}
-
-fn map_orientation(orientation: rexiv2::Orientation) -> Orientation {
-    match orientation {
-        rexiv2::Orientation::Unspecified | rexiv2::Orientation::Normal => Orientation::NoTransforms,
-        rexiv2::Orientation::HorizontalFlip => Orientation::FlipHorizontal,
-        rexiv2::Orientation::Rotate180 => Orientation::Rotate180,
-        rexiv2::Orientation::VerticalFlip => Orientation::FlipVertical,
-        rexiv2::Orientation::Rotate90HorizontalFlip => Orientation::Rotate90FlipH,
-        rexiv2::Orientation::Rotate90 => Orientation::Rotate90,
-        rexiv2::Orientation::Rotate90VerticalFlip => Orientation::Rotate270FlipH,
-        rexiv2::Orientation::Rotate270 => Orientation::Rotate270,
     }
 }

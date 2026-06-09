@@ -6,7 +6,6 @@ use actix_web::http::StatusCode;
 use actix_web::{HttpResponse, ResponseError};
 use image::ImageError;
 use minijinja::{path_loader, Environment};
-use rexiv2::Rexiv2Error;
 use serde::Serialize;
 use std::fmt::{Debug, Display, Formatter};
 use std::io::Error;
@@ -158,12 +157,6 @@ impl From<lettre::transport::smtp::Error> for AppError {
 impl From<minijinja::Error> for AppError {
     fn from(value: minijinja::Error) -> Self {
         Self::new(AppErrorKind::TemplatingError, value.to_string().as_str())
-    }
-}
-
-impl From<Rexiv2Error> for AppError {
-    fn from(value: Rexiv2Error) -> Self {
-        Self::new(AppErrorKind::FileError, value.to_string().as_str())
     }
 }
 
