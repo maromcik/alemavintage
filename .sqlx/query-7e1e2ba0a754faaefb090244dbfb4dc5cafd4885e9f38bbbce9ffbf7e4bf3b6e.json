@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT * FROM \"Bike\"\n            WHERE id = $1\n            ",
+  "query": "\n            UPDATE \"Bike\"\n            SET\n                name = COALESCE($1, name),\n                internal_id = COALESCE($2, internal_id),\n                model_id = COALESCE($3, model_id),\n                preview = COALESCE($4, preview),\n                description = COALESCE($5, description),\n                view_count = COALESCE($6, view_count),\n                like_count = COALESCE($7, like_count),\n                hidden = COALESCE($8, hidden),\n                year = COALESCE($9, year),\n                price = COALESCE($10, price),\n                frame = COALESCE($11, frame),\n                seat_tube_sizes = COALESCE($12, seat_tube_sizes),\n                top_tube_size = COALESCE($13, top_tube_size),\n                height = COALESCE($14, height),\n                headset = COALESCE($15, headset),\n                crankset = COALESCE($16, crankset),\n                bottom_bracket = COALESCE($17, bottom_bracket),\n                front_derail = COALESCE($18, front_derail),\n                rear_derail = COALESCE($19, rear_derail),\n                brakes = COALESCE($20, brakes),\n                shifters = COALESCE($21, shifters),\n                brake_levers = COALESCE($22, brake_levers),\n                saddle = COALESCE($23, saddle),\n                seat_post = COALESCE($24, seat_post),\n                hubs = COALESCE($25, hubs),\n                rims = COALESCE($26, rims),\n                handlebar = COALESCE($27, handlebar),\n                stem = COALESCE($28, stem),\n                status = COALESCE($29, status),\n                edited_at = current_timestamp\n            WHERE id = $30\n            RETURNING *\n            ",
   "describe": {
     "columns": [
       {
@@ -358,6 +358,35 @@
     ],
     "parameters": {
       "Left": [
+        "Text",
+        "Varchar",
+        "Int8",
+        "Int8",
+        "Text",
+        "Int8",
+        "Int8",
+        "Bool",
+        "Int4",
+        "Int4",
+        "Text",
+        "Text",
+        "Int4",
+        "Int4",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
         "Int8"
       ]
     },
@@ -396,5 +425,5 @@
       false
     ]
   },
-  "hash": "0074a84e7e2bf8bd0f8d9ee159f0a74382706678de66660f7b4132c1b9b200d5"
+  "hash": "7e1e2ba0a754faaefb090244dbfb4dc5cafd4885e9f38bbbce9ffbf7e4bf3b6e"
 }

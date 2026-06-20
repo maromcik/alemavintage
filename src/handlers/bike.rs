@@ -176,6 +176,7 @@ pub async fn create_bike(
 
     let bike_create = BikeCreate::new(
         &form.name,
+        &form.internal_id,
         form.model_id,
         None,
         &form.description,
@@ -344,6 +345,7 @@ pub async fn edit_bike(
     let book_update = BikeUpdate::new(
         &form.bike_id,
         Some(&form.name),
+        Some(&form.internal_id),
         Some(&form.model_id),
         None,
         Some(&form.description),

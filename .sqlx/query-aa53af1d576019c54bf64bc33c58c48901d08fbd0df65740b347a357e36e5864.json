@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT * FROM \"Bike\"\n            WHERE id = $1\n            ",
+  "query": "\n            INSERT INTO \"Bike\" (\n                name,\n                internal_id,\n                model_id,\n                preview,\n                description,\n                year,\n                price,\n                frame,\n                seat_tube_sizes,\n                top_tube_size,\n                height,\n                headset,\n                crankset,\n                bottom_bracket,\n                front_derail,\n                rear_derail,\n                brakes,\n                shifters,\n                brake_levers,\n                saddle,\n                seat_post,\n                hubs,\n                rims,\n                handlebar,\n                stem\n            )\n            SELECT\n                name,\n                internal_id,\n                model_id,\n                NULL,\n                description,\n                year,\n                price,\n                frame,\n                seat_tube_sizes,\n                top_tube_size,\n                height,\n                headset,\n                crankset,\n                bottom_bracket,\n                front_derail,\n                rear_derail,\n                brakes,\n                shifters,\n                brake_levers,\n                saddle,\n                seat_post,\n                hubs,\n                rims,\n                handlebar,\n                stem\n            FROM \"Bike\"\n            WHERE id=$1\n            RETURNING *\n            ",
   "describe": {
     "columns": [
       {
@@ -396,5 +396,5 @@
       false
     ]
   },
-  "hash": "0074a84e7e2bf8bd0f8d9ee159f0a74382706678de66660f7b4132c1b9b200d5"
+  "hash": "aa53af1d576019c54bf64bc33c58c48901d08fbd0df65740b347a357e36e5864"
 }

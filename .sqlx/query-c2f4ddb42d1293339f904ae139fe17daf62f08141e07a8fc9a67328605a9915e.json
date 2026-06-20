@@ -6,32 +6,68 @@
       {
         "ordinal": 0,
         "name": "id",
-        "type_info": "Int8"
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "\"Model\"",
+            "name": "id"
+          }
+        }
       },
       {
         "ordinal": 1,
         "name": "brand_id",
-        "type_info": "Int8"
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "\"Model\"",
+            "name": "brand_id"
+          }
+        }
       },
       {
         "ordinal": 2,
         "name": "name",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Model\"",
+            "name": "name"
+          }
+        }
       },
       {
         "ordinal": 3,
         "name": "description",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Model\"",
+            "name": "description"
+          }
+        }
       },
       {
         "ordinal": 4,
         "name": "brand_name",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Brand\"",
+            "name": "name"
+          }
+        }
       },
       {
         "ordinal": 5,
         "name": "brand_description",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Brand\"",
+            "name": "description"
+          }
+        }
       }
     ],
     "parameters": {

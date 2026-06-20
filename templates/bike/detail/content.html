@@ -72,12 +72,23 @@
                         {{ bike.price }} €
                     </a>
                 </div>
+
+                <div>
+                    <h2 class="text-2xl font-semibold text-sat-l text-center">ID</h2>
+                    <a class="bg-panes text-sat-xl font-medium text-lg rounded-md px-4 py-2 shadow-md">
+                        {{ bike.internal_id }} €
+                    </a>
+                </div>
+
+                <div class="flex mt-5 text-sat-m space-x-3">
+                    <i class="fa-solid fa-eye text-2xl"></i>
+                    <span class="text-2xl">{{ bike.view_count }}</span>
+                </div>
+
             </div>
 
-            <div class="flex items-center justify-center mt-5 text-sat-m space-x-3">
-                <i class="fa-solid fa-eye text-2xl"></i>
-                <span class="text-2xl">{{ bike.view_count }}</span>
-            </div>
+
+
             <div class="h-2"></div> <!-- Spacer element for vertical spacing -->
             {% if logged_in %}
             <div class="flex justify-center items-center">

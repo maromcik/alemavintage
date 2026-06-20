@@ -7,6 +7,7 @@ use serde::Deserialize;
 #[derive(Debug, Clone, Deserialize)]
 pub struct BikeCreateForm {
     pub name: String,
+    pub internal_id: String,
     pub description: String,
     pub model_id: Id,
     pub year: i32,
@@ -56,6 +57,7 @@ pub struct BikeImagesEditForm {
 #[derive(Debug, Clone, Deserialize)]
 pub struct BikeEditForm {
     pub bike_id: Id,
+    pub internal_id: String,
     pub name: String,
     pub model_id: Id,
     pub description: String,

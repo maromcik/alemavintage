@@ -125,6 +125,7 @@ impl BikeRepository {
             r#"
             INSERT INTO "Bike" (
                 name,
+                internal_id,
                 model_id,
                 preview,
                 description,
@@ -151,6 +152,7 @@ impl BikeRepository {
             )
             SELECT
                 name,
+                internal_id,
                 model_id,
                 NULL,
                 description,
@@ -221,6 +223,7 @@ impl DbReadOne<BikeGetById, BikeDetail> for BikeRepository {
             r#"
             SELECT
                 bike.id,
+                bike.internal_id,
                 bike.model_id,
                 bike.name,
                 bike.description,
@@ -249,8 +252,8 @@ impl DbReadOne<BikeGetById, BikeDetail> for BikeRepository {
                 bike.rims,
                 bike.handlebar,
                 bike.stem,
-                bike.status, 
-                
+                bike.status,
+
                 brand.id as brand_id,
                 brand.name as brand_name,
                 model.name as model_name,
@@ -291,6 +294,7 @@ impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
         let mut query = r#"
             SELECT
                 bike.id,
+                bike.internal_id,
                 bike.model_id,
                 bike.name,
                 bike.description,
@@ -338,7 +342,7 @@ impl DbReadMany<BikeSearch, BikeDetail> for BikeRepository {
                     LEFT JOIN
                 "Image" AS image ON bike.preview = image.id
                     LEFT JOIN
-                "BikeTag" AS tag ON tag.bike_id = bike.id  
+                "BikeTag" AS tag ON tag.bike_id = bike.id
             WHERE
                 (bike.name = $1 OR $1 IS NULL)
                 AND (brand_id = $2 OR $2 IS NULL)
@@ -372,6 +376,7 @@ impl DbCreate<BikeCreate, Bike> for BikeRepository {
             r#"
             INSERT INTO "Bike" (
                 name,
+                internal_id,
                 model_id,
                 preview,
                 description,
@@ -396,10 +401,11 @@ impl DbCreate<BikeCreate, Bike> for BikeRepository {
                 handlebar,
                 stem
             )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25)
             RETURNING *
             "#,
             params.name,
+            params.internal_id,
             params.model_id,
             params.preview,
             params.description,
@@ -452,38 +458,40 @@ impl DbUpdate<BikeUpdate, Bike> for BikeRepository {
             UPDATE "Bike"
             SET
                 name = COALESCE($1, name),
-                model_id = COALESCE($2, model_id),
-                preview = COALESCE($3, preview),
-                description = COALESCE($4, description),
-                view_count = COALESCE($5, view_count),
-                like_count = COALESCE($6, like_count),
-                hidden = COALESCE($7, hidden),
-                year = COALESCE($8, year),
-                price = COALESCE($9, price),
-                frame = COALESCE($10, frame),
-                seat_tube_sizes = COALESCE($11, seat_tube_sizes),
-                top_tube_size = COALESCE($12, top_tube_size),
-                height = COALESCE($13, height),
-                headset = COALESCE($14, headset),
-                crankset = COALESCE($15, crankset),
-                bottom_bracket = COALESCE($16, bottom_bracket),
-                front_derail = COALESCE($17, front_derail),
-                rear_derail = COALESCE($18, rear_derail),
-                brakes = COALESCE($19, brakes),
-                shifters = COALESCE($20, shifters),
-                brake_levers = COALESCE($21 , brake_levers),
-                saddle = COALESCE($22, saddle),
-                seat_post = COALESCE($23, seat_post),
-                hubs = COALESCE($24, hubs),
-                rims = COALESCE($25, rims),
-                handlebar = COALESCE($26, handlebar),
-                stem = COALESCE($27, stem),
-                status = COALESCE($28, status),
+                internal_id = COALESCE($2, internal_id),
+                model_id = COALESCE($3, model_id),
+                preview = COALESCE($4, preview),
+                description = COALESCE($5, description),
+                view_count = COALESCE($6, view_count),
+                like_count = COALESCE($7, like_count),
+                hidden = COALESCE($8, hidden),
+                year = COALESCE($9, year),
+                price = COALESCE($10, price),
+                frame = COALESCE($11, frame),
+                seat_tube_sizes = COALESCE($12, seat_tube_sizes),
+                top_tube_size = COALESCE($13, top_tube_size),
+                height = COALESCE($14, height),
+                headset = COALESCE($15, headset),
+                crankset = COALESCE($16, crankset),
+                bottom_bracket = COALESCE($17, bottom_bracket),
+                front_derail = COALESCE($18, front_derail),
+                rear_derail = COALESCE($19, rear_derail),
+                brakes = COALESCE($20, brakes),
+                shifters = COALESCE($21, shifters),
+                brake_levers = COALESCE($22, brake_levers),
+                saddle = COALESCE($23, saddle),
+                seat_post = COALESCE($24, seat_post),
+                hubs = COALESCE($25, hubs),
+                rims = COALESCE($26, rims),
+                handlebar = COALESCE($27, handlebar),
+                stem = COALESCE($28, stem),
+                status = COALESCE($29, status),
                 edited_at = current_timestamp
-            WHERE id = $29
+            WHERE id = $30
             RETURNING *
             "#,
             params.name,
+            params.internal_id,
             params.model_id,
             params.preview,
             params.description,

@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT * FROM \"Bike\"\n            WHERE id = $1\n            ",
+  "query": "\n            INSERT INTO \"Bike\" (\n                name,\n                internal_id,\n                model_id,\n                preview,\n                description,\n                year,\n                price,\n                frame,\n                seat_tube_sizes,\n                top_tube_size,\n                height,\n                headset,\n                crankset,\n                bottom_bracket,\n                front_derail,\n                rear_derail,\n                brakes,\n                shifters,\n                brake_levers,\n                saddle,\n                seat_post,\n                hubs,\n                rims,\n                handlebar,\n                stem\n            )\n            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25)\n            RETURNING *\n            ",
   "describe": {
     "columns": [
       {
@@ -358,7 +358,31 @@
     ],
     "parameters": {
       "Left": [
-        "Int8"
+        "Text",
+        "Varchar",
+        "Int8",
+        "Int8",
+        "Text",
+        "Int4",
+        "Int4",
+        "Text",
+        "Text",
+        "Int4",
+        "Int4",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text"
       ]
     },
     "nullable": [
@@ -396,5 +420,5 @@
       false
     ]
   },
-  "hash": "0074a84e7e2bf8bd0f8d9ee159f0a74382706678de66660f7b4132c1b9b200d5"
+  "hash": "2b96a25d19555954e78c69df0f19ab6ffde396c508f691b017cf947fa0bb88c1"
 }

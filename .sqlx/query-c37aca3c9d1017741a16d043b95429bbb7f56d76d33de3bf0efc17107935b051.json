@@ -6,157 +6,354 @@
       {
         "ordinal": 0,
         "name": "id",
-        "type_info": "Int8"
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "id"
+          }
+        }
       },
       {
         "ordinal": 1,
         "name": "model_id",
-        "type_info": "Int8"
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "model_id"
+          }
+        }
       },
       {
         "ordinal": 2,
         "name": "name",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "name"
+          }
+        }
       },
       {
         "ordinal": 3,
         "name": "preview",
-        "type_info": "Int8"
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "preview"
+          }
+        }
       },
       {
         "ordinal": 4,
         "name": "description",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "description"
+          }
+        }
       },
       {
         "ordinal": 5,
         "name": "view_count",
-        "type_info": "Int8"
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "view_count"
+          }
+        }
       },
       {
         "ordinal": 6,
         "name": "like_count",
-        "type_info": "Int8"
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "like_count"
+          }
+        }
       },
       {
         "ordinal": 7,
         "name": "created_at",
-        "type_info": "Timestamptz"
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "created_at"
+          }
+        }
       },
       {
         "ordinal": 8,
         "name": "edited_at",
-        "type_info": "Timestamptz"
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "edited_at"
+          }
+        }
       },
       {
         "ordinal": 9,
         "name": "hidden",
-        "type_info": "Bool"
+        "type_info": "Bool",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "hidden"
+          }
+        }
       },
       {
         "ordinal": 10,
         "name": "year",
-        "type_info": "Int4"
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "year"
+          }
+        }
       },
       {
         "ordinal": 11,
         "name": "price",
-        "type_info": "Int4"
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "price"
+          }
+        }
       },
       {
         "ordinal": 12,
         "name": "frame",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "frame"
+          }
+        }
       },
       {
         "ordinal": 13,
         "name": "seat_tube_sizes",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "seat_tube_sizes"
+          }
+        }
       },
       {
         "ordinal": 14,
         "name": "top_tube_size",
-        "type_info": "Int4"
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "top_tube_size"
+          }
+        }
       },
       {
         "ordinal": 15,
         "name": "height",
-        "type_info": "Int4"
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "height"
+          }
+        }
       },
       {
         "ordinal": 16,
         "name": "headset",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "headset"
+          }
+        }
       },
       {
         "ordinal": 17,
         "name": "crankset",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "crankset"
+          }
+        }
       },
       {
         "ordinal": 18,
         "name": "bottom_bracket",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "bottom_bracket"
+          }
+        }
       },
       {
         "ordinal": 19,
         "name": "front_derail",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "front_derail"
+          }
+        }
       },
       {
         "ordinal": 20,
         "name": "rear_derail",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "rear_derail"
+          }
+        }
       },
       {
         "ordinal": 21,
         "name": "brakes",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "brakes"
+          }
+        }
       },
       {
         "ordinal": 22,
         "name": "shifters",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "shifters"
+          }
+        }
       },
       {
         "ordinal": 23,
         "name": "brake_levers",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "brake_levers"
+          }
+        }
       },
       {
         "ordinal": 24,
         "name": "saddle",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "saddle"
+          }
+        }
       },
       {
         "ordinal": 25,
         "name": "seat_post",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "seat_post"
+          }
+        }
       },
       {
         "ordinal": 26,
         "name": "hubs",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "hubs"
+          }
+        }
       },
       {
         "ordinal": 27,
         "name": "rims",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "rims"
+          }
+        }
       },
       {
         "ordinal": 28,
         "name": "handlebar",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "handlebar"
+          }
+        }
       },
       {
         "ordinal": 29,
         "name": "stem",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "stem"
+          }
+        }
       },
       {
         "ordinal": 30,
         "name": "status",
-        "type_info": "Text"
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "status"
+          }
+        }
+      },
+      {
+        "ordinal": 31,
+        "name": "internal_id",
+        "type_info": "Varchar",
+        "origin": {
+          "Table": {
+            "table": "\"Bike\"",
+            "name": "internal_id"
+          }
+        }
       }
     ],
     "parameters": {
@@ -195,7 +392,8 @@
       false,
       false,
       false,
-      true
+      true,
+      false
     ]
   },
   "hash": "c37aca3c9d1017741a16d043b95429bbb7f56d76d33de3bf0efc17107935b051"

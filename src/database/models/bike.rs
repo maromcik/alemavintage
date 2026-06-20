@@ -9,6 +9,7 @@ pub struct Bike {
     pub id: Id,
     // --------------
     pub name: String,
+    pub internal_id: String,
     pub model_id: Id,
     pub view_count: i64,
     pub like_count: i64,
@@ -55,6 +56,7 @@ pub struct BikeDetail {
     // --------------
     pub model_id: Id,
     pub name: String,
+    pub internal_id: String,
     pub description: String,
     pub view_count: i64,
     pub like_count: i64,
@@ -108,6 +110,7 @@ pub struct BikeDisplay {
     pub id: Id,
     // --------------
     pub name: String,
+    pub internal_id: String,
     pub brand_id: Id,
     pub model_id: Id,
     pub view_count: i64,
@@ -150,6 +153,7 @@ impl From<BikeDetail> for BikeDisplay {
     fn from(value: BikeDetail) -> Self {
         Self {
             id: value.id,
+            internal_id: value.internal_id,
             name: value.name,
             brand_id: value.brand_id,
             model_id: value.model_id,
@@ -201,6 +205,7 @@ impl BikeDisplay {
 
 pub struct BikeCreate {
     pub name: String,
+    pub internal_id: String,
     pub model_id: Id,
     pub preview: Option<Id>,
     pub description: String,
@@ -230,6 +235,7 @@ pub struct BikeCreate {
 impl BikeCreate {
     pub fn new(
         name: &str,
+        internal_id: &str,
         model_id: Id,
         preview: Option<Id>,
         description: &str,
@@ -238,6 +244,7 @@ impl BikeCreate {
     ) -> Self {
         Self {
             name: name.to_owned(),
+            internal_id: internal_id.to_owned(),
             model_id,
             preview,
             description: description.to_owned(),
@@ -404,6 +411,7 @@ pub struct BikeMetadataForm {
 
 pub struct BikeUpdate {
     pub id: Id,
+    pub internal_id: Option<String>,
     pub model_id: Option<Id>,
     pub name: Option<String>,
     pub preview: Option<Id>,
@@ -440,6 +448,7 @@ impl BikeUpdate {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
         id: &Id,
+        internal_id: Option<&str>,
         name: Option<&str>,
         model_id: Option<&Id>,
         preview: Option<&Id>,
@@ -454,6 +463,7 @@ impl BikeUpdate {
         let change_to_owned = |value: &str| Some(value.to_owned());
         Self {
             id: *id,
+            internal_id: internal_id.and_then(change_to_owned),
             name: name.and_then(change_to_owned),
             model_id: model_id.copied(),
             preview: preview.copied(),
@@ -488,6 +498,7 @@ impl BikeUpdate {
     #[must_use]
     pub const fn update_fields_none(&self) -> bool {
         self.name.is_none()
+            && self.internal_id.is_none()
             && self.model_id.is_none()
             && self.preview.is_none()
             && self.view_count.is_none()
@@ -521,6 +532,7 @@ impl BikeUpdate {
     pub fn update_views(id: Id, view_count: i64) -> Self {
         Self {
             id,
+            internal_id: None,
             model_id: None,
             name: None,
             preview: None,
@@ -555,6 +567,7 @@ impl BikeUpdate {
     pub fn update_thumbnail(id: Id, preview: Id) -> Self {
         Self {
             id,
+            internal_id: None,
             model_id: None,
             name: None,
             preview: Some(preview),
@@ -589,6 +602,7 @@ impl BikeUpdate {
     pub fn update_thumbnail_and_mark_complete(id: Id, preview: Id) -> Self {
         Self {
             id,
+            internal_id: None,
             model_id: None,
             name: None,
             preview: Some(preview),
@@ -622,6 +636,7 @@ impl BikeUpdate {
     pub fn update_status(id: Id, status: &str) -> Self {
         Self {
             id,
+            internal_id: None,
             model_id: None,
             name: None,
             preview: None,
