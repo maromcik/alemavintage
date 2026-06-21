@@ -40,6 +40,8 @@ pub enum AppErrorKind {
     EmailAddressError,
     #[error("zip error")]
     ZipError,
+    #[error("markdown error")]
+    MarkdownError,
 }
 
 // impl From<askama::Error> for AppError {
@@ -114,7 +116,10 @@ impl From<DbError> for AppError {
 
 impl From<JoinError> for AppError {
     fn from(value: JoinError) -> Self {
-        Self::new(AppErrorKind::InternalServerError, value.to_string().as_str())
+        Self::new(
+            AppErrorKind::InternalServerError,
+            value.to_string().as_str(),
+        )
     }
 }
 
@@ -190,6 +195,12 @@ impl From<zip::result::ZipError> for AppError {
     }
 }
 
+impl From<markdown::message::Message> for AppError {
+    fn from(value: markdown::message::Message) -> Self {
+        Self::new(AppErrorKind::MarkdownError, value.to_string().as_str())
+    }
+}
+
 impl Display for AppError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
@@ -213,6 +224,7 @@ impl ResponseError for AppError {
             | AppErrorKind::SessionError
             | AppErrorKind::EmailError
             | AppErrorKind::FileError
+            | AppErrorKind::MarkdownError
             | AppErrorKind::ZipError => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }

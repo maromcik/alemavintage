@@ -10,7 +10,9 @@ use crate::database::models::model::{
 use crate::database::models::{GetById, Id};
 use crate::database::repositories::bike::repository::BikeRepository;
 use crate::database::repositories::brand::repository::BrandRepository;
+use crate::database::repositories::image::repository::ImageRepository;
 use crate::database::repositories::model::repository::ModelRepository;
+use crate::database::repositories::user::repository::UserRepository;
 use crate::error::AppError;
 use crate::forms::model::{ModelCreateForm, ModelEditForm};
 use crate::handlers::helpers::{get_template_name, get_user_from_identity, hard_delete_bike};
@@ -23,8 +25,6 @@ use actix_web::http::header::LOCATION;
 use actix_web::{delete, get, post, web, HttpRequest, HttpResponse};
 use itertools::Itertools;
 use std::collections::HashMap;
-use crate::database::repositories::image::repository::ImageRepository;
-use crate::database::repositories::user::repository::UserRepository;
 
 #[get("/create")]
 pub async fn create_model_page(
@@ -85,7 +85,7 @@ pub async fn edit_model_page(
 ) -> Result<HttpResponse, AppError> {
     let u = authorized!(identity, request.path());
     let _ = get_user_from_identity(u, &user_repo).await?;
-    
+
     let model_id = path.into_inner().0;
     let model = model_repo.read_one(&GetById::new(model_id)).await?;
     let brands = brand_repo.read_many(&BrandSearch::new(None)).await?;
@@ -189,8 +189,11 @@ pub async fn get_model(
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(ModelDetailTemplate {
-        model: &ModelDisplay::from(model),
-        bikes: &bikes.into_iter().map(|bike| BikeDisplay::from(bike).description_to_markdown()).collect(),
+        model: &ModelDisplay::from(model)?,
+        bikes: &bikes
+            .into_iter()
+            .map(|bike| BikeDisplay::from(bike).description_to_markdown())
+            .collect::<Result<Vec<BikeDisplay>, AppError>>()?,
         logged_in: identity.is_some(),
     })?;
 
@@ -209,7 +212,7 @@ pub async fn remove_model(
 ) -> Result<HttpResponse, AppError> {
     let u = authorized!(identity, request.path());
     let _ = get_user_from_identity(u, &user_repo).await?;
-    
+
     let model_id = path.into_inner().0;
 
     let bikes = bike_repo
@@ -219,7 +222,12 @@ pub async fn remove_model(
         ))
         .await?;
 
-    hard_delete_bike(&bike_repo, &image_repo, bikes.iter().map(|b| b.id).collect()).await?;
+    hard_delete_bike(
+        &bike_repo,
+        &image_repo,
+        bikes.iter().map(|b| b.id).collect(),
+    )
+    .await?;
 
     let _ = model_repo
         .delete(&GetById::new_with_deleted(model_id))

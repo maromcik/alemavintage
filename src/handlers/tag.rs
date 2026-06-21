@@ -30,7 +30,10 @@ pub async fn get_tag(
     let template = env.get_template(&template_name)?;
     let body = template.render(BikesTemplate {
         logged_in: identity.is_some(),
-        bikes: &bikes.into_iter().map(|bike| BikeDisplay::from(bike).description_to_markdown()).collect(),
+        bikes: &bikes
+            .into_iter()
+            .map(|bike| BikeDisplay::from(bike).description_to_markdown())
+            .collect::<Result<Vec<BikeDisplay>, AppError>>()?,
     })?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
@@ -49,9 +52,7 @@ pub async fn create_tag(
     let template_name = get_template_name(&request, "tag");
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
-    let body = template.render(TagsTemplate {
-        tags: &tags
-    })?;
+    let body = template.render(TagsTemplate { tags: &tags })?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
@@ -69,9 +70,7 @@ pub async fn delete_tag(
     let template_name = get_template_name(&request, "tag");
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
-    let body = template.render(TagsTemplate {
-        tags: &tags
-    })?;
+    let body = template.render(TagsTemplate { tags: &tags })?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }
@@ -83,16 +82,15 @@ pub async fn assign_tags(
     state: web::Data<AppState>,
     form: web::Form<TagsAssignForm>,
 ) -> Result<HttpResponse, AppError> {
-    
-    tag_repo.create(&TagAssign::new(&form.tags, &form.bike_id)).await?;
-    
+    tag_repo
+        .create(&TagAssign::new(&form.tags, &form.bike_id))
+        .await?;
+
     let tags = tag_repo.read_many(&TagSearch::default()).await?;
     let template_name = get_template_name(&request, "tag");
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
-    let body = template.render(TagsTemplate {
-        tags: &tags
-    })?;
+    let body = template.render(TagsTemplate { tags: &tags })?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
 }

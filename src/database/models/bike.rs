@@ -1,6 +1,6 @@
-use crate::database::common::query_parameters::DbQueryParams;
 use crate::database::common::EntityById;
 use crate::database::models::Id;
+use crate::{database::common::query_parameters::DbQueryParams, error::AppError};
 use chrono::{DateTime, Utc};
 use serde::Serialize;
 
@@ -197,9 +197,10 @@ impl From<BikeDetail> for BikeDisplay {
 }
 
 impl BikeDisplay {
-    pub fn description_to_markdown(mut self) -> BikeDisplay {
-        self.description = markdown::to_html(&self.description);
-        self
+    pub fn description_to_markdown(mut self) -> Result<BikeDisplay, AppError> {
+        self.description =
+            markdown::to_html_with_options(&self.description, &markdown::Options::gfm())?;
+        Ok(self)
     }
 }
 

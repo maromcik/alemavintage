@@ -1,5 +1,6 @@
 use crate::database::common::EntityById;
 use crate::database::models::Id;
+use crate::error::AppError;
 use serde::Serialize;
 
 #[derive(sqlx::FromRow, Debug, PartialEq, Eq, Clone, Serialize)]
@@ -26,13 +27,16 @@ pub struct BrandDisplay {
     pub description: String,
 }
 
-impl From<Brand> for BrandDisplay {
-    fn from(value: Brand) -> Self {
-        Self {
+impl BrandDisplay {
+    pub fn from(value: Brand) -> Result<Self, AppError> {
+        Ok(Self {
             id: value.id,
             name: value.name,
-            description: markdown::to_html(&value.description),
-        }
+            description: markdown::to_html_with_options(
+                &value.description,
+                &markdown::Options::gfm(),
+            )?,
+        })
     }
 }
 

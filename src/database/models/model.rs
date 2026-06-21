@@ -1,6 +1,7 @@
 use crate::database::common::query_parameters::DbQueryParams;
 use crate::database::common::EntityById;
 use crate::database::models::Id;
+use crate::error::AppError;
 use serde::Serialize;
 
 #[derive(sqlx::FromRow, Debug, PartialEq, Eq, Clone, Serialize)]
@@ -51,16 +52,22 @@ pub struct ModelDisplay {
     pub brand_description: String,
 }
 
-impl From<ModelDetail> for ModelDisplay {
-    fn from(value: ModelDetail) -> Self {
-        Self {
+impl ModelDisplay {
+    pub fn from(value: ModelDetail) -> Result<Self, AppError> {
+        Ok(Self {
             id: value.id,
             name: value.name,
-            description: markdown::to_html(&value.description),
+            description: markdown::to_html_with_options(
+                &value.description,
+                &markdown::Options::gfm(),
+            )?,
             brand_id: value.brand_id,
             brand_name: value.brand_name,
-            brand_description: markdown::to_html(&value.brand_description),
-        }
+            brand_description: markdown::to_html_with_options(
+                &value.brand_description,
+                &markdown::Options::gfm(),
+            )?,
+        })
     }
 }
 

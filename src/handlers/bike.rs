@@ -61,7 +61,7 @@ pub async fn get_bikes(
         bikes: &bikes
             .into_iter()
             .map(|bike| BikeDisplay::from(bike).description_to_markdown())
-            .collect(),
+            .collect::<Result<Vec<BikeDisplay>, AppError>>()?,
     })?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(body))
@@ -108,7 +108,7 @@ pub async fn get_bike_detail(
     let env = state.jinja.acquire_env()?;
     let template = env.get_template(&template_name)?;
     let body = template.render(BikeDisplayTemplate {
-        bike: &BikeDisplay::from(bike).description_to_markdown(),
+        bike: &BikeDisplay::from(bike).description_to_markdown()?,
         bike_images: &bike_images,
         tags: &tags,
         logged_in: identity.is_some(),
