@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT\n                image.id,\n                image.path,\n                image.width,\n                image.height,\n                image.thumbnail_path,\n                other_image_type.id AS image_type,\n                other_image_type.name AS image_type_name\n            FROM\n                \"Image\" AS image \n                    INNER JOIN\n                 \"OtherImage\" AS other_image ON other_image.image_id = image.id\n                    INNER JOIN\n                 \"OtherImageType\" AS other_image_type ON other_image.image_type = other_image_type.id\n            WHERE\n                other_image.image_type = $1 OR $1 IS NULL\n            ",
+  "query": "\n                DELETE\n                FROM \"Image\" AS image\n                USING \"BikeImage\" AS bike_image\n                WHERE image.id = bike_image.image_id AND bike_image.bike_id = $1\n                RETURNING id, path, width, height, thumbnail_path\n            ",
   "describe": {
     "columns": [
       {
@@ -57,28 +57,6 @@
             "name": "thumbnail_path"
           }
         }
-      },
-      {
-        "ordinal": 5,
-        "name": "image_type",
-        "type_info": "Int8",
-        "origin": {
-          "Table": {
-            "table": "\"OtherImageType\"",
-            "name": "id"
-          }
-        }
-      },
-      {
-        "ordinal": 6,
-        "name": "image_type_name",
-        "type_info": "Text",
-        "origin": {
-          "Table": {
-            "table": "\"OtherImageType\"",
-            "name": "name"
-          }
-        }
       }
     ],
     "parameters": {
@@ -91,10 +69,8 @@
       false,
       false,
       false,
-      false,
-      false,
       false
     ]
   },
-  "hash": "39c05b7d7d2f996572768161b8091113865b967ae54b655db1d0562ebc8fc2ef"
+  "hash": "eb96b712fc56885b93c6a97e0805c5d92ad5256121b7479619155f14a525adeb"
 }
