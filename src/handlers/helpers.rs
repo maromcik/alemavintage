@@ -21,6 +21,7 @@ use actix_session::Session;
 use actix_web::{web, HttpRequest, HttpResponse};
 use lettre::message::Mailbox;
 use lettre::{AsyncTransport, Message};
+use log::error;
 use rayon::iter::IntoParallelIterator;
 use rayon::iter::ParallelIterator;
 use std::sync::Arc;
@@ -217,7 +218,10 @@ pub async fn save_bike_images_helper(
 
     let mut errors = errors
         .iter()
-        .map(|e| format!("<p class=\"text-error\">{e}</p>"))
+        .map(|e| {
+            error!("{e}");
+            format!("<p class=\"text-error\">{e}</p>")
+        })
         .collect::<Vec<String>>();
 
     if errors.is_empty() {
