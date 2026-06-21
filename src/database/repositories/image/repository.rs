@@ -113,6 +113,17 @@ impl DbCreate<BikeImagesCreate, Vec<Image>> for ImageRepository {
     async fn create(&self, data: &BikeImagesCreate) -> DbResultSingle<Vec<Image>> {
         let mut transaction = self.pool_handler.pool.begin().await?;
         let mut images = Vec::default();
+        let mut ordering = sqlx::query_scalar!(
+            r#"
+                SELECT MAX(ordering) FROM "BikeImage" WHERE bike_id = $1
+            "#,
+            data.bike_id,
+        )
+        .fetch_one(&self.pool_handler.pool)
+        .await?
+        .unwrap_or(-1)
+            + 1;
+
         for image in data.bike_images.iter() {
             let bike_image = sqlx::query_as!(
                 Image,
@@ -131,15 +142,17 @@ impl DbCreate<BikeImagesCreate, Vec<Image>> for ImageRepository {
 
             sqlx::query!(
                 r#"
-                    INSERT INTO "BikeImage" (bike_id, image_id)
-                    VALUES ($1, $2)
+                    INSERT INTO "BikeImage" (bike_id, image_id, ordering)
+                    VALUES ($1, $2, $3)
                 "#,
                 data.bike_id,
                 bike_image.id,
+                ordering,
             )
             .execute(transaction.as_mut())
             .await?;
             images.push(bike_image);
+            ordering += 1;
         }
         transaction.commit().await?;
         Ok(images)
