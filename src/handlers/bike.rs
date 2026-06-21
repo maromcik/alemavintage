@@ -97,18 +97,14 @@ pub async fn get_bike_detail(
     .await?;
 
     let bike_images = image_repo
-        .read_many(&BikeImageSearch::new(Some(bike.id)))
+        .read_many(&BikeImageSearch::with_params(
+            Some(bike.id),
+            DbQueryParams::order(
+                DbOrderColumn::new(DbTable::BikeImage, DbColumn::Ordering, DbOrder::Asc),
+                None,
+            ),
+        ))
         .await?;
-
-    // let bike_images = image_repo
-    //     .read_many(&BikeImageSearch::with_params(
-    //         Some(bike.id),
-    //         DbQueryParams::order(
-    //             DbOrderColumn::new(DbTable::BikeImage, DbColumn::Ordering, DbOrder::Asc),
-    //             None,
-    //         ),
-    //     ))
-    //     .await?;
 
     let tags: Vec<TagJoin> = tag_repo
         .read_many(&TagSearch::new(None, None, Some(&bike.id)))
