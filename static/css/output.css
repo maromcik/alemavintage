@@ -644,27 +644,38 @@ blockquote {
   color: rgb(75 85 99 / var(--tw-text-opacity, 1));
 }
 
-pre {
-  margin-bottom: 1rem;
-  overflow-x: auto;
-  border-radius: 0.5rem;
-  --tw-bg-opacity: 1;
-  background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));
-  padding: 1rem;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-}
+/* inline code */
 
-code {
+p code, li code, span code {
   border-radius: 0.25rem;
   --tw-bg-opacity: 1;
-  background-color: rgb(229 231 235 / var(--tw-bg-opacity, 1));
+  background-color: rgb(75 85 99 / var(--tw-bg-opacity, 1));
   padding-left: 0.25rem;
   padding-right: 0.25rem;
   padding-top: 0.125rem;
   padding-bottom: 0.125rem;
   font-size: 0.875rem;
   line-height: 1.25rem;
+  --tw-text-opacity: 1;
+  color: rgb(243 244 246 / var(--tw-text-opacity, 1));
+}
+
+@media (prefers-color-scheme: dark) {
+  p code, li code, span code {
+    --tw-bg-opacity: 1;
+    background-color: rgb(209 213 219 / var(--tw-bg-opacity, 1));
+    --tw-text-opacity: 1;
+    color: rgb(31 41 55 / var(--tw-text-opacity, 1));
+  }
+}
+
+/* remove background from block code */
+
+pre code {
+  border-radius: 0px;
+  background-color: transparent;
+  padding: 0px;
+  color: inherit;
 }
 
 .container {
