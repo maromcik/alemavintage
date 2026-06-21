@@ -344,8 +344,8 @@ pub async fn edit_bike(
 
     let book_update = BikeUpdate::new(
         &form.bike_id,
-        Some(&form.name),
         Some(&form.internal_id),
+        Some(&form.name),
         Some(&form.model_id),
         None,
         Some(&form.description),
