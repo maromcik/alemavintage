@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::database::common::{DbCreate, DbDelete, DbReadMany};
 use crate::database::models::image::{ImageCreate, OtherImageSearch, OtherImagesCreate};
 use crate::database::models::{GetById, Id};
@@ -114,6 +116,7 @@ pub async fn delete_image(
     user_repo: web::Data<UserRepository>,
     image_repo: web::Data<ImageRepository>,
     path: web::Path<(Id,)>,
+    query: web::Query<HashMap<String, String>>,
 ) -> Result<HttpResponse, AppError> {
     let u = authorized!(identity, request.path());
     let _ = get_user_from_identity(u, &user_repo).await?;
@@ -126,8 +129,12 @@ pub async fn delete_image(
         remove_file(&image.path)?;
         remove_file(&image.thumbnail_path)?;
     }
+    let return_url = query
+        .get("return_url")
+        .map(String::as_str)
+        .unwrap_or("/image");
 
     Ok(HttpResponse::SeeOther()
-        .insert_header((LOCATION, "/image"))
+        .insert_header((LOCATION, return_url))
         .finish())
 }
