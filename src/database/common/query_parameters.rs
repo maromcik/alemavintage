@@ -107,6 +107,7 @@ pub enum DbTable {
     Model,
     Brand,
     BikeImage,
+    Image,
     User,
 }
 
@@ -114,7 +115,8 @@ impl DbTable {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             DbTable::Bike => write!(f, "bike"),
-            DbTable::BikeImage => write!(f, "image"),
+            DbTable::BikeImage => write!(f, "bike_image"),
+            DbTable::Image => write!(f, "image"),
             DbTable::Brand => write!(f, "brand"),
             DbTable::Model => write!(f, "model"),
             DbTable::User => write!(f, "user"),

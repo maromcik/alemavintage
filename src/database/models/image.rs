@@ -1,7 +1,9 @@
-use serde::Serialize;
+use crate::database::common::query_parameters::{
+    DbColumn, DbOrder, DbOrderColumn, DbQueryParams, DbTable,
+};
 use crate::database::common::EntityById;
-use crate::database::common::query_parameters::{DbColumn, DbOrder, DbOrderColumn, DbQueryParams, DbTable};
 use crate::database::models::Id;
+use serde::Serialize;
 
 #[derive(sqlx::FromRow, Debug, Clone, PartialEq, Serialize)]
 pub struct Image {
@@ -48,7 +50,6 @@ impl BikeImageSearch {
         }
     }
 
-    #[allow(dead_code)]
     pub fn with_params(bike_id: Option<Id>, query_params: DbQueryParams) -> Self {
         Self {
             bike_id,
@@ -61,7 +62,7 @@ impl BikeImageSearch {
         Self {
             bike_id: Some(bike_id),
             query_params: DbQueryParams::order(
-                DbOrderColumn::new(DbTable::BikeImage, DbColumn::Path, DbOrder::Asc),
+                DbOrderColumn::new(DbTable::Image, DbColumn::Path, DbOrder::Asc),
                 None,
             ),
         }
@@ -148,9 +149,7 @@ pub struct OtherImageSearch {
 
 impl OtherImageSearch {
     pub fn new(image_type: Option<Id>) -> Self {
-        Self {
-            image_type
-        }
+        Self { image_type }
     }
 }
 
@@ -164,7 +163,7 @@ pub struct OtherImageType {
 pub enum OtherImageTypeEnum {
     Homepage,
     About,
-    Other
+    Other,
 }
 
 pub trait ImageTypeId {
@@ -176,7 +175,7 @@ impl ImageTypeId for OtherImageTypeEnum {
         match self {
             OtherImageTypeEnum::Homepage => 1,
             OtherImageTypeEnum::About => 2,
-            OtherImageTypeEnum::Other => 3
+            OtherImageTypeEnum::Other => 3,
         }
     }
 }

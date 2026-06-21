@@ -1,14 +1,14 @@
-use sqlx::AssertSqlSafe;
 use crate::database::common::error::BackendErrorKind::{BikeDeleted, BikeDoesNotExist};
 use crate::database::common::error::{DbResultMultiple, DbResultSingle, EntityError};
 use crate::database::common::{
     DbCreate, DbDelete, DbPoolHandler, DbReadMany, DbReadOne, DbRepository, EntityById, PoolHandler,
 };
+use sqlx::AssertSqlSafe;
 
 use crate::database::common::utilities::{entity_is_correct, generate_query_param_string};
 use crate::database::models::image::{
-    BikeImage, BikeImageGetById, BikeImageSearch, BikeImagesCreate, Image, ImageCreate, OtherImage
-    , OtherImageSearch, OtherImageType, OtherImagesCreate,
+    BikeImage, BikeImageGetById, BikeImageSearch, BikeImagesCreate, Image, ImageCreate, OtherImage,
+    OtherImageSearch, OtherImageType, OtherImagesCreate,
 };
 use crate::database::models::GetById;
 
@@ -39,7 +39,7 @@ impl DbReadMany<BikeImageSearch, BikeImage> for ImageRepository {
                 image.height,
                 image.thumbnail_path
             FROM
-                "Image" AS image 
+                "Image" AS image
                     INNER JOIN
                  "BikeImage" as bike_image ON bike_image.image_id = image.id
             WHERE
@@ -72,7 +72,7 @@ impl DbReadMany<OtherImageSearch, OtherImage> for ImageRepository {
                 other_image_type.id AS image_type,
                 other_image_type.name AS image_type_name
             FROM
-                "Image" AS image 
+                "Image" AS image
                     INNER JOIN
                  "OtherImage" AS other_image ON other_image.image_id = image.id
                     INNER JOIN
@@ -113,8 +113,7 @@ impl DbCreate<BikeImagesCreate, Vec<Image>> for ImageRepository {
     async fn create(&self, data: &BikeImagesCreate) -> DbResultSingle<Vec<Image>> {
         let mut transaction = self.pool_handler.pool.begin().await?;
         let mut images = Vec::default();
-
-        for image in &data.bike_images {
+        for image in data.bike_images.iter() {
             let bike_image = sqlx::query_as!(
                 Image,
                 r#"
@@ -194,9 +193,9 @@ impl DbDelete<BikeImageGetById, Image> for ImageRepository {
         let images = sqlx::query_as!(
             Image,
             r#"
-                DELETE 
-                FROM "Image" AS image 
-                USING "BikeImage" AS bike_image 
+                DELETE
+                FROM "Image" AS image
+                USING "BikeImage" AS bike_image
                 WHERE image.id = bike_image.image_id AND bike_image.bike_id = $1
                 RETURNING id, path, width, height, thumbnail_path
             "#,
@@ -236,14 +235,14 @@ where
         let maybe_image = sqlx::query_as!(
             BikeImage,
             r#"
-            SELECT 
+            SELECT
                 image.id,
                 bike_image.bike_id,
                 image.path,
                 image.width,
                 image.height,
                 image.thumbnail_path
-            FROM "Image" AS image LEFT JOIN "BikeImage" AS bike_image ON image.id = bike_image.image_id 
+            FROM "Image" AS image LEFT JOIN "BikeImage" AS bike_image ON image.id = bike_image.image_id
             WHERE id = $1
             "#,
             params.id()
