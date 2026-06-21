@@ -732,8 +732,8 @@ pre code {
   left: 0px;
 }
 
-.right-10 {
-  right: 2.5rem;
+.right-1 {
+  right: 0.25rem;
 }
 
 .right-2 {
@@ -748,12 +748,8 @@ pre code {
   top: 0px;
 }
 
-.top-10 {
-  top: 2.5rem;
-}
-
-.top-16 {
-  top: 4rem;
+.top-1 {
+  top: 0.25rem;
 }
 
 .top-2 {
@@ -764,20 +760,12 @@ pre code {
   top: 1rem;
 }
 
-.right-1 {
-  right: 0.25rem;
-}
-
-.top-1 {
-  top: 0.25rem;
+.top-16 {
+  top: 4rem;
 }
 
 .z-10 {
   z-index: 10;
-}
-
-.z-20 {
-  z-index: 20;
 }
 
 .m-2 {
