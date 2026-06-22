@@ -20,12 +20,6 @@ pub struct BrandTemplate<'a> {
 }
 
 #[derive(Serialize)]
-pub struct BrandContentTemplate<'a> {
-    pub brands: &'a Vec<Brand>,
-    pub logged_in: bool,
-}
-
-#[derive(Serialize)]
 pub struct BrandDetailTemplate<'a> {
     pub brand: &'a BrandDisplay,
     pub models: &'a Vec<ModelDetail>,

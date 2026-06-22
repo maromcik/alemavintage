@@ -106,7 +106,6 @@ pub struct PoolHandler {
 
 impl DbPoolHandler for PoolHandler {
     /// Database pool constructor
-    #[must_use]
     fn new(pool: PgPool) -> Self {
         Self { pool }
     }

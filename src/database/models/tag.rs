@@ -12,7 +12,7 @@ pub struct Tag {
 pub struct TagJoin {
     pub id: Id,
     pub name: String,
-    pub bike_id: Id
+    pub bike_id: Id,
 }
 
 impl EntityById for Tag {
@@ -30,7 +30,6 @@ pub struct TagCreate {
     pub name: String,
 }
 
-
 impl TagCreate {
     #[inline]
     #[allow(dead_code)]
@@ -46,7 +45,7 @@ pub struct TagAssign {
     pub tags_ids: Vec<Id>,
     pub bike_id: Id,
 }
-
+#[allow(dead_code)]
 impl TagAssign {
     pub fn new(tags_ids: &[Id], bike_id: &Id) -> Self {
         Self {

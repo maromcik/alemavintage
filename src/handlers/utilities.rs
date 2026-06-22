@@ -1,7 +1,6 @@
 use crate::MIN_PASS_LEN;
 use actix_web::HttpRequest;
 
-
 #[macro_export]
 macro_rules! authorized {
     ($e:expr, $p:expr) => {{

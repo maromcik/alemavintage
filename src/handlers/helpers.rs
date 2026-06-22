@@ -11,7 +11,6 @@ use crate::database::repositories::user::repository::UserRepository;
 use crate::error::{AppError, AppErrorKind};
 use crate::forms::user::EmailForm;
 use crate::handlers::utilities::is_htmx;
-use crate::templates::bike;
 use crate::utilities::file::remove_file;
 use crate::utilities::image::{AppImage, ImageDimensions, ImageProcessor};
 use crate::utils::AppState;

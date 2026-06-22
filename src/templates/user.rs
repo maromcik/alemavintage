@@ -42,6 +42,7 @@ pub struct UserManageProfileUserFormTemplate<'a> {
     pub logged_in: bool,
 }
 
+#[allow(dead_code)]
 #[derive(Serialize)]
 pub struct ContactAdminTemplate {
     pub message: String,

@@ -39,6 +39,7 @@ pub struct BikeImageSearch {
     pub query_params: DbQueryParams,
 }
 
+#[allow(dead_code)]
 impl BikeImageSearch {
     pub fn new(bike_id: Option<Id>) -> Self {
         Self {

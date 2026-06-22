@@ -15,21 +15,22 @@ use crate::database::common::{
 use crate::database::models::user::{User, UserLogin, UserSearch, UserUpdate, UserUpdatePassword};
 use crate::database::models::GetById;
 
-
 #[derive(Clone)]
 pub struct UserRepository {
     pool_handler: PoolHandler,
-    pbkdf2: Pbkdf2
+    pbkdf2: Pbkdf2,
 }
 
 impl UserRepository {
-
     fn generate_salt(&self) -> SaltString {
         SaltString::from_rng(&mut rand::rng())
     }
 
     fn hash_password(&self, password: String, salt: &SaltString) -> Result<String, DbError> {
-        let password_hash = self.pbkdf2.hash_password_with_salt(password.as_bytes(), salt.as_bytes())?.to_string();
+        let password_hash = self
+            .pbkdf2
+            .hash_password_with_salt(password.as_bytes(), salt.as_bytes())?
+            .to_string();
         Ok(password_hash)
     }
 
@@ -142,7 +143,10 @@ impl UserRepository {
 impl DbRepository for UserRepository {
     #[inline]
     fn new(pool_handler: PoolHandler) -> Self {
-        Self { pool_handler, pbkdf2: Pbkdf2::default() }
+        Self {
+            pool_handler,
+            pbkdf2: Pbkdf2::default(),
+        }
     }
 
     #[inline]

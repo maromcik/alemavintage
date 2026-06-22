@@ -9,12 +9,20 @@ use std::sync::Arc;
 pub struct AppState {
     pub jinja: Arc<AutoReloader>,
     pub mailer: Arc<AsyncSmtpTransport<Tokio1Executor>>,
-    pub domain: Arc<String>
+    pub domain: Arc<String>,
 }
 
 impl AppState {
-    pub fn new(jinja: Arc<AutoReloader>, mailer: Arc<AsyncSmtpTransport<Tokio1Executor>>, domain: Arc<String>) -> Self {
-        AppState { jinja, mailer, domain }
+    pub fn new(
+        jinja: Arc<AutoReloader>,
+        mailer: Arc<AsyncSmtpTransport<Tokio1Executor>>,
+        domain: Arc<String>,
+    ) -> Self {
+        AppState {
+            jinja,
+            mailer,
+            domain,
+        }
     }
 }
 

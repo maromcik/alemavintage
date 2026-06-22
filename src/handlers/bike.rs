@@ -37,7 +37,7 @@ use actix_session::Session;
 use actix_web::http::header::LOCATION;
 use actix_web::{delete, get, post, put, web, HttpRequest, HttpResponse};
 use std::io::Write;
-use zip::write::{FileOptions, SimpleFileOptions};
+use zip::write::SimpleFileOptions;
 
 #[get("")]
 pub async fn get_bikes(

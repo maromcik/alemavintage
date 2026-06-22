@@ -24,12 +24,6 @@ pub struct ModelTemplate<'a> {
 }
 
 #[derive(Serialize)]
-pub struct ModelContentTemplate<'a> {
-    pub models: &'a Vec<ModelDetail>,
-    pub logged_in: bool,
-}
-
-#[derive(Serialize)]
 pub struct ModelDetailTemplate<'a> {
     pub model: &'a ModelDisplay,
     pub bikes: &'a Vec<BikeDisplay>,

@@ -1,9 +1,9 @@
 pub mod bike;
 pub mod brand;
 pub mod helpers;
+pub mod image;
 pub mod index;
 pub mod model;
+pub mod tag;
 pub mod user;
 pub mod utilities;
-pub mod tag;
-pub mod image;
