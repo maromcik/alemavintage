@@ -46,8 +46,17 @@ impl ImageProcessor {
         ImageProcessorBuilder { input_image }
     }
 
-    pub fn resize_img(&self, target_dimensions: &ImageDimensions) -> Result<AppImage, AppError> {
-        let path = format!("/media/{}.{}", Uuid::new_v4(), self.extension.as_str());
+    pub fn resize_img(
+        &self,
+        target_dimensions: &ImageDimensions,
+        base_path: &str,
+    ) -> Result<AppImage, AppError> {
+        let path = format!(
+            "{}_{}.{}",
+            base_path,
+            &Uuid::new_v4().to_string().as_str()[0..8],
+            self.extension.as_str()
+        );
         log::info!("resizing image .{path}");
         let mut resized_img = self.dynamic_image.resize(
             target_dimensions.width,

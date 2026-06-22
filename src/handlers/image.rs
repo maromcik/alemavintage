@@ -86,9 +86,14 @@ pub async fn upload_images(
         .into_par_iter()
         .map(|photo| {
             let processor = ImageProcessor::builder(photo).load_image_processor()?;
-            let high_res = processor.resize_img(&ImageDimensions::new(*IMAGE_SIZE, *IMAGE_SIZE))?;
-            let thumbnail =
-                processor.resize_img(&ImageDimensions::new(*THUMBNAIL_SIZE, *THUMBNAIL_SIZE))?;
+            let high_res = processor.resize_img(
+                &ImageDimensions::new(*IMAGE_SIZE, *IMAGE_SIZE),
+                format!("/media/{}", image_type).as_str(),
+            )?;
+            let thumbnail = processor.resize_img(
+                &ImageDimensions::new(*THUMBNAIL_SIZE, *THUMBNAIL_SIZE),
+                format!("/media/{}_thumbnail", image_type).as_str(),
+            )?;
             Ok(ImageCreate::new(
                 &high_res.path,
                 &high_res.width,

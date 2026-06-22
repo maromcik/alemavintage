@@ -11,6 +11,7 @@ use crate::database::repositories::user::repository::UserRepository;
 use crate::error::{AppError, AppErrorKind};
 use crate::forms::user::EmailForm;
 use crate::handlers::utilities::is_htmx;
+use crate::templates::bike;
 use crate::utilities::file::remove_file;
 use crate::utilities::image::{AppImage, ImageDimensions, ImageProcessor};
 use crate::utils::AppState;
@@ -128,8 +129,9 @@ pub async fn get_user_from_identity(
 pub async fn create_bike_preview(
     file: TempFile,
     image_repo: &web::Data<ImageRepository>,
+    bike: &Bike,
 ) -> Result<Image, AppError> {
-    let (preview, thumbnail) = save_bike_thumbnail_helper(file)?;
+    let (preview, thumbnail) = save_bike_thumbnail_helper(file, bike)?;
 
     match image_repo
         .create(&ImageCreate::new(
@@ -155,7 +157,15 @@ pub async fn upload_bike_helper(
     image_repo: &web::Data<ImageRepository>,
     thumbnail: TempFile,
 ) -> Result<Bike, AppError> {
-    let bike_image = create_bike_preview(thumbnail, image_repo).await?;
+    let params = BikeGetById {
+        id: bike_id,
+        fetch_deleted: true,
+        update_view_count: false,
+    };
+    let bike: Bike =
+        <BikeRepository as DbReadOne<BikeGetById, Bike>>::read_one(bike_repo.as_ref(), &params)
+            .await?;
+    let bike_image = create_bike_preview(thumbnail, image_repo, &bike).await?;
     let bike_update = BikeUpdate::update_thumbnail_and_mark_complete(bike_id, bike_image.id);
     let bikes = bike_repo.update(&bike_update).await?;
 
@@ -171,25 +181,34 @@ pub async fn save_bike_images_helper(
     photos: Vec<TempFile>,
     bike_repo: &web::Data<BikeRepository>,
     image_repo: &web::Data<ImageRepository>,
-    bike_id: Id,
+    bike: &Bike,
 ) -> Result<(), AppError> {
     let image_dimensions = ImageDimensions::new(*IMAGE_SIZE, *IMAGE_SIZE);
     let thumbnail_image_dimensions = ImageDimensions::new(*LOW_IMAGE_SIZE, *LOW_IMAGE_SIZE);
 
     bike_repo
         .update(&BikeUpdate::update_status(
-            bike_id,
+            bike.id,
             "<p class=\"text-blue-500\">PROCESSING IMAGES</p>",
         ))
         .await?;
+
+    let bike_id = bike.id;
+    let bike_internal_id = bike.internal_id.clone();
 
     let paths = tokio::task::spawn_blocking(move || {
         photos
             .into_par_iter()
             .map(|photo| {
                 let processor = ImageProcessor::builder(photo).load_image_processor()?;
-                let high_res = processor.resize_img(&image_dimensions)?;
-                let thumbnail = processor.resize_img(&thumbnail_image_dimensions)?;
+                let high_res = processor.resize_img(
+                    &image_dimensions,
+                    format!("/media/bike_{}-{}", bike_internal_id, bike_id).as_str(),
+                )?;
+                let thumbnail = processor.resize_img(
+                    &thumbnail_image_dimensions,
+                    format!("/media/bike_{}-{}-thumbnail", bike_internal_id, bike_id).as_str(),
+                )?;
                 Ok(ImageCreate::new(
                     &high_res.path,
                     &high_res.width,
@@ -213,7 +232,7 @@ pub async fn save_bike_images_helper(
             });
 
     image_repo
-        .create(&BikeImagesCreate::new(bike_id, bike_images))
+        .create(&BikeImagesCreate::new(bike.id, bike_images))
         .await?;
 
     let mut errors = errors
@@ -230,7 +249,7 @@ pub async fn save_bike_images_helper(
 
     bike_repo
         .update(&BikeUpdate::update_status(
-            bike_id,
+            bike.id,
             errors.join("\n").as_str(),
         ))
         .await?;
@@ -238,11 +257,23 @@ pub async fn save_bike_images_helper(
     Ok(())
 }
 
-pub fn save_bike_thumbnail_helper(thumbnail: TempFile) -> Result<(AppImage, AppImage), AppError> {
+pub fn save_bike_thumbnail_helper(
+    thumbnail: TempFile,
+    bike: &Bike,
+) -> Result<(AppImage, AppImage), AppError> {
     let processor = ImageProcessor::builder(thumbnail).load_image_processor()?;
-    let preview = processor.resize_img(&ImageDimensions::new(*IMAGE_SIZE, *IMAGE_SIZE))?;
-    let thumbnail =
-        processor.resize_img(&ImageDimensions::new(*THUMBNAIL_SIZE, *THUMBNAIL_SIZE))?;
+    let preview = processor.resize_img(
+        &ImageDimensions::new(*IMAGE_SIZE, *IMAGE_SIZE),
+        format!("/media/bike_{}-{}-preview", bike.internal_id, bike.id).as_str(),
+    )?;
+    let thumbnail = processor.resize_img(
+        &ImageDimensions::new(*THUMBNAIL_SIZE, *THUMBNAIL_SIZE),
+        format!(
+            "/media/bike_{}-{}-preview-thumbnail",
+            bike.internal_id, bike.id
+        )
+        .as_str(),
+    )?;
     Ok((preview, thumbnail))
 }
 

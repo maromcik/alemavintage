@@ -230,7 +230,7 @@ pub async fn upload_bike(
     };
 
     tokio::task::spawn(async move {
-        save_bike_images_helper(form.photos, &bike_repo, &image_repo, bike.id).await
+        save_bike_images_helper(form.photos, &bike_repo, &image_repo, &bike).await
     });
 
     session.remove(session_keys.bike_id.as_str());
@@ -414,9 +414,9 @@ pub async fn upload_bike_thumbnail(
     )
     .await?;
 
-    hard_delete_previews(&image_repo, vec![bike]).await?;
+    hard_delete_previews(&image_repo, vec![bike.clone()]).await?;
 
-    let bike_image = create_bike_preview(form.thumbnail, &image_repo).await?;
+    let bike_image = create_bike_preview(form.thumbnail, &image_repo, &bike).await?;
 
     bike_repo
         .update(&BikeUpdate::update_thumbnail(bike_id, bike_image.id))
@@ -468,8 +468,17 @@ pub async fn reupload_bike(
         hard_delete_bike_images(&image_repo, bike_id).await?;
     }
 
+    let params = BikeGetById {
+        id: bike_id,
+        fetch_deleted: true,
+        update_view_count: false,
+    };
+    let bike: Bike =
+        <BikeRepository as DbReadOne<BikeGetById, Bike>>::read_one(bike_repo.as_ref(), &params)
+            .await?;
+
     tokio::task::spawn(async move {
-        save_bike_images_helper(form.photos, &bike_repo, &image_repo, bike_id).await
+        save_bike_images_helper(form.photos, &bike_repo, &image_repo, &bike).await
     });
 
     let url = format!("/bike/{}", bike_id);
@@ -516,7 +525,13 @@ pub async fn download_bike_images(
     .await?;
 
     let bike_images = image_repo
-        .read_many(&BikeImageSearch::new(Some(bike.id)))
+        .read_many(&BikeImageSearch::with_params(
+            Some(bike.id),
+            DbQueryParams::order(
+                DbOrderColumn::new(DbTable::BikeImage, DbColumn::Ordering, DbOrder::Asc),
+                None,
+            ),
+        ))
         .await?;
 
     let buf = Vec::new();
@@ -534,7 +549,10 @@ pub async fn download_bike_images(
         .content_type("application/zip")
         .insert_header((
             "Content-Disposition",
-            format!("attachment; filename=\"bike_{}_images.zip\"", bike.id),
+            format!(
+                "attachment; filename=\"bike_{}_images.zip\"",
+                bike.internal_id
+            ),
         ))
         .body(zip_contents))
 }
