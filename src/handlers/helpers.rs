@@ -23,8 +23,8 @@ use actix_web::{web, HttpRequest, HttpResponse};
 use lettre::message::Mailbox;
 use lettre::{AsyncTransport, Message};
 use log::error;
-use rayon::iter::IntoParallelIterator;
 use rayon::iter::ParallelIterator;
+use rayon::iter::{IndexedParallelIterator, IntoParallelIterator};
 use std::sync::Arc;
 
 pub fn get_template_name(request: &HttpRequest, path: &str) -> String {
@@ -199,15 +199,16 @@ pub async fn save_bike_images_helper(
     let paths = tokio::task::spawn_blocking(move || {
         photos
             .into_par_iter()
-            .map(|photo| {
+            .enumerate()
+            .map(|(i, photo)| {
                 let processor = ImageProcessor::builder(photo).load_image_processor()?;
                 let high_res = processor.resize_img(
                     &image_dimensions,
-                    format!("/media/bike_{}-{}", bike_internal_id, bike_id).as_str(),
+                    format!("/media/bike_{}-{}-{i}", bike_internal_id, bike_id).as_str(),
                 )?;
                 let thumbnail = processor.resize_img(
                     &thumbnail_image_dimensions,
-                    format!("/media/bike_{}-{}-thumbnail", bike_internal_id, bike_id).as_str(),
+                    format!("/media/bike_{}-{}-{i}-thumbnail", bike_internal_id, bike_id).as_str(),
                 )?;
                 Ok(ImageCreate::new(
                     &high_res.path,
