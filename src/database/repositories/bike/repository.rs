@@ -152,7 +152,7 @@ impl BikeRepository {
             )
             SELECT
                 name,
-                internal_id,
+                'Clone of ' || internal_id || (id::text),
                 model_id,
                 NULL,
                 description,
