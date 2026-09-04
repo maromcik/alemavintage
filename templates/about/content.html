@@ -8,48 +8,6 @@
         </div>
     </section>
 
-    <section class="py-8 text-center">
-        <div class="bg-panes rounded-lg p-6 shadow-md">
-            <h2 class="text-2xl font-semibold text-sat-xl mb-4">Our Story</h2>
-            <p class="text-sat-m text-lg">Based in Slovakia, our family workshop is where passion meets precision. My
-                dad, an avid bike enthusiast and craftsman, has been restoring bicycles for years. Together, we breathe
-                new life into timeless brands like <strong>Colnago</strong>, <strong>Hetchins</strong>,
-                <strong>Bianchi</strong>, and <strong>Peugeot</strong>. Every vintage bike we restore combines history,
-                artistry, and functionality. We take pride in preserving cycling heritage and sharing it with
-                enthusiasts worldwide.</p>
-
-
-            <div class="pswp-gallery" id="about-us-gallery">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-                    {% for image in images %}
-                    <a href="{{ image.path }}" data-pswp-width="{{ image.width }}" data-pswp-height="{{ image.height }}"
-                       target="_blank">
-                        <div class="w-full h-80 rounded-lg overflow-hidden shadow-md hover:scale-105 transition-transform">
-                            <img class="object-cover w-full h-full" src="{{ image.thumbnail_path }}" alt="Image">
-                        </div>
-                    </a>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-8 text-center">
-        <div class="bg-panes rounded-lg p-6 shadow-md">
-            <h2 class="text-2xl font-semibold text-sat-xl mb-4">Buying</h2>
-            <p class="text-sat-m text-lg">
-                If you're interested in purchasing our bicycles,
-                click the <strong>Make an Inquiry</strong> button on the bike's detail page.
-                Fill out the form and submit your request.
-                We will reach out to you to finalize payment and shipping arrangements.
-            </p>
-            <div class="flex justify-center items-center">
-                <img class="w-60 items-center" src=/static/images/about-make_an_inquiry.png alt="Image">
-            </div>
-        </div>
-    </section>
-
-
     <section class="my-10">
         <div class="bg-panes rounded-lg p-6 shadow-md">
             <h2 class="text-2xl font-semibold text-sat-xl mb-4">Get in Touch</h2>
@@ -78,6 +36,49 @@
 
         </div>
     </section>
+
+    <section class="py-8 text-center">
+        <div class="bg-panes rounded-lg p-6 shadow-md">
+            <h2 class="text-2xl font-semibold text-sat-xl mb-4">Buying</h2>
+            <p class="text-sat-m text-lg">
+                If you're interested in purchasing our bicycles,
+                click the <strong>Make an Inquiry</strong> button on the bike's detail page.
+                Fill out the form and submit your request.
+                We will reach out to you to finalize payment and shipping arrangements.
+            </p>
+            <div class="flex justify-center items-center">
+                <img class="w-60 items-center" src=/static/images/about-make_an_inquiry.png alt="Image">
+            </div>
+        </div>
+    </section>
+
+    <section class="py-8 text-center">
+        <div class="bg-panes rounded-lg p-6 shadow-md">
+            <h2 class="text-2xl font-semibold text-sat-xl mb-4">Our Story</h2>
+            <p class="text-sat-m text-lg">Based in Slovakia, our family workshop is where passion meets precision. My
+                dad, an avid bike enthusiast and craftsman, has been restoring bicycles for years. Together, we breathe
+                new life into timeless brands like <strong>Colnago</strong>, <strong>Hetchins</strong>,
+                <strong>Bianchi</strong>, and <strong>Peugeot</strong>. Every vintage bike we restore combines history,
+                artistry, and functionality. We take pride in preserving cycling heritage and sharing it with
+                enthusiasts worldwide.</p>
+
+
+            <div class="pswp-gallery" id="about-us-gallery">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+                    {% for image in images %}
+                    <a href="{{ image.path }}" data-pswp-width="{{ image.width }}" data-pswp-height="{{ image.height }}"
+                       target="_blank">
+                        <div class="w-full h-80 rounded-lg overflow-hidden shadow-md hover:scale-105 transition-transform">
+                            <img class="object-cover w-full h-full" src="{{ image.thumbnail_path }}" alt="Image">
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+
 </div>
 
 <script type='module'>
