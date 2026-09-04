@@ -4,5 +4,5 @@ podman build -t registry.hafka.eu/alemavintage-image .
 #podman push cerit.io/roman_alexander_mariancik/alemavintage-image:latest
 podman push registry.hafka.eu/alemavintage-image
 ssh roman@server systemctl --user restart alemavintage.service
-# ssh roman@hp systemctl --user restart alemavintage.service
+ssh roman@server systemctl --user restart alemavintage.service
 #kubectl apply -f kubernetes/alemavintage -n mariancik-ns
