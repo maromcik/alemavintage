@@ -1,4 +1,4 @@
-FROM rust:1.95 as base
+FROM rust:1.99 as base
 
 RUN apt-get update
 RUN apt-get install -y postgresql-client zip build-essential autoconf libtool pkg-config libgexiv2-dev

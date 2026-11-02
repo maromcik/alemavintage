@@ -1,37 +1,37 @@
 [package]
 name = "alemavintage"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2021"
 
 [dependencies]
 actix-files = { version = "0.6.10" }
-actix-web = "4.13.0"
-anyhow = { version = "1.0.102", features = [] }
-chrono = { version = "0.4.44", features = ["serde"] }
+actix-web = "4.18.1"
+anyhow = { version = "1.0.104", features = [] }
+chrono = { version = "0.4.45", features = ["serde"] }
 dotenv = "0.15.0"
 dotenvy = "0.15.7"
-env_logger = "0.11.10"
-futures = "0.3.32"
+env_logger = "0.11.11"
+futures = "0.3.34"
 hmac = "0.13.0"
-log = "0.4.30"
-serde = { version = "1.0.228", features = ["derive"] }
+log = "0.4.35"
+serde = { version = "1.0.229", features = ["derive"] }
 sqlx = { version = "0.9.0", features = ["chrono", "runtime-tokio", "postgres", "bigdecimal"] }
-thiserror = "2.0.18"
-uuid = { version = "1.23.1", features = ["v4"] }
+thiserror = "2.0.21"
+uuid = { version = "1.29.0", features = ["v4"] }
 pbkdf2 = { version = "0.13.0", features = ["password-hash", "rand_core", "phc"] }
 rand_core = { version = "0.10.1" }
 actix-identity = "0.9.0"
 actix-session = { version = "0.11.0", features = ["cookie-session"]}
-actix-cors = "0.7.1"
+actix-cors = "0.7.2"
 actix-multipart = "0.7.2"
-futures-util = "0.3.32"
+futures-util = "0.3.34"
 image = "0.25.10"
 rayon = "1.12.0"
-minijinja = { version = "2.20.0", features = ["loader"] }
-minijinja-autoreload = "2.20.0"
+minijinja = { version = "2.24.0", features = ["loader"] }
+minijinja-autoreload = "2.24.0"
 itertools = "0.14.0"
 markdown = "1.0.0"
-lettre = { version = "0.11.22", features = ["tokio1-native-tls"] }
-tokio = "1.52.3"
+lettre = { version = "0.11.23", features = ["tokio1-native-tls"] }
+tokio = "1.54.1"
 zip = "8.6.0"
-rand = "0.10.1"
+rand = "0.10.3"
