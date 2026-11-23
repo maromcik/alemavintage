@@ -7,7 +7,7 @@ use crate::database::models::bike::{
     Bike, BikeCreate, BikeCreateSessionKeys, BikeDetail, BikeDetailSessionKeys, BikeDisplay,
     BikeGetById, BikeSearch, BikeUpdate,
 };
-use crate::database::models::image::BikeImageSearch;
+use crate::database::models::image::{BikeImage, BikeImageSearch};
 use crate::database::models::model::ModelSearch;
 use crate::database::models::tag::{TagJoin, TagSearch};
 use crate::database::models::{GetById, Id};
@@ -524,7 +524,7 @@ pub async fn download_bike_images(
     )
     .await?;
 
-    let bike_images = image_repo
+    let mut bike_images: Vec<String> = image_repo
         .read_many(&BikeImageSearch::with_params(
             Some(bike.id),
             DbQueryParams::order(
@@ -532,14 +532,21 @@ pub async fn download_bike_images(
                 None,
             ),
         ))
-        .await?;
+        .await?
+        .iter()
+        .map(|image| image.path.clone())
+        .collect();
+
+    if let Some(path) = bike.preview_path {
+        bike_images.insert(0, path);
+    }
 
     let buf = Vec::new();
     let mut zip = zip::ZipWriter::new(std::io::Cursor::new(buf));
     let options = SimpleFileOptions::default().compression_method(zip::CompressionMethod::Stored);
 
     for (idx, img) in bike_images.iter().enumerate() {
-        let file_contents = tokio::fs::read(format!(".{}", img.path)).await?;
+        let file_contents = tokio::fs::read(format!(".{img}")).await?;
         zip.start_file(format!("bike_image_{idx}.jpg"), options)?;
         zip.write_all(&file_contents)?;
     }

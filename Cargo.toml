@@ -1,23 +1,23 @@
 [package]
 name = "alemavintage"
-version = "1.0.1"
-edition = "2021"
+version = "1.1.0"
+edition = "2024"
 
 [dependencies]
 actix-files = { version = "0.6.10" }
-actix-web = "4.18.1"
-anyhow = { version = "1.0.104", features = [] }
+actix-web = "4.20.0"
+anyhow = { version = "1.0.105", features = [] }
 chrono = { version = "0.4.45", features = ["serde"] }
 dotenv = "0.15.0"
 dotenvy = "0.15.7"
-env_logger = "0.11.11"
+env_logger = "0.11.12"
 futures = "0.3.34"
 hmac = "0.13.0"
 log = "0.4.35"
 serde = { version = "1.0.229", features = ["derive"] }
-sqlx = { version = "0.9.0", features = ["chrono", "runtime-tokio", "postgres", "bigdecimal"] }
+sqlx = { version = "0.9.1", features = ["chrono", "runtime-tokio", "postgres", "bigdecimal"] }
 thiserror = "2.0.21"
-uuid = { version = "1.29.0", features = ["v4"] }
+uuid = { version = "1.29.3", features = ["v4"] }
 pbkdf2 = { version = "0.13.0", features = ["password-hash", "rand_core", "phc"] }
 rand_core = { version = "0.10.1" }
 actix-identity = "0.9.0"
@@ -31,7 +31,7 @@ minijinja = { version = "2.24.0", features = ["loader"] }
 minijinja-autoreload = "2.24.0"
 itertools = "0.14.0"
 markdown = "1.0.0"
-lettre = { version = "0.11.23", features = ["tokio1-native-tls"] }
+lettre = { version = "0.11.24", features = ["tokio1-native-tls"] }
 tokio = "1.54.1"
 zip = "8.6.0"
-rand = "0.10.3"
+rand = "0.10.4"
