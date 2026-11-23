@@ -7,7 +7,7 @@ use crate::database::models::bike::{
     Bike, BikeCreate, BikeCreateSessionKeys, BikeDetail, BikeDetailSessionKeys, BikeDisplay,
     BikeGetById, BikeSearch, BikeUpdate,
 };
-use crate::database::models::image::{BikeImage, BikeImageSearch};
+use crate::database::models::image::BikeImageSearch;
 use crate::database::models::model::ModelSearch;
 use crate::database::models::tag::{TagJoin, TagSearch};
 use crate::database::models::{GetById, Id};
@@ -29,13 +29,13 @@ use crate::templates::bike::{
     BikeCreateTemplate, BikeDisplayTemplate, BikeEditTemplate, BikeReuploadFormTemplate,
     BikeThumbnailUploadTemplate, BikeUploadFormTemplate, BikesTemplate,
 };
-use crate::{authorized, AppState};
+use crate::{AppState, authorized};
 use actix_identity::Identity;
-use actix_multipart::form::text::Text;
 use actix_multipart::form::MultipartForm;
+use actix_multipart::form::text::Text;
 use actix_session::Session;
 use actix_web::http::header::LOCATION;
-use actix_web::{delete, get, post, put, web, HttpRequest, HttpResponse};
+use actix_web::{HttpRequest, HttpResponse, delete, get, post, put, web};
 use std::io::Write;
 use zip::write::SimpleFileOptions;
 

@@ -1,15 +1,15 @@
 use crate::database::common::setup_pool;
 use crate::init::configure_webapp;
-use crate::utils::{create_mailer, create_reloader, AppState};
+use crate::utils::{AppState, create_mailer, create_reloader};
 use actix_cors::Cors;
 use actix_identity::IdentityMiddleware;
 use actix_multipart::form::MultipartFormConfig;
 use actix_session::config::PersistentSession;
-use actix_session::{storage::CookieSessionStore, SessionMiddleware};
+use actix_session::{SessionMiddleware, storage::CookieSessionStore};
 use actix_web::http::header;
 use actix_web::middleware::Logger;
 use actix_web::web::{FormConfig, PayloadConfig};
-use actix_web::{cookie::Key, App, HttpServer};
+use actix_web::{App, HttpServer, cookie::Key};
 use anyhow::anyhow;
 use env_logger::Env;
 use log::{info, warn};
@@ -55,7 +55,6 @@ static LOW_IMAGE_SIZE: LazyLock<u32> = LazyLock::new(|| {
 
 #[actix_web::main]
 async fn main() -> anyhow::Result<()> {
-    env::set_var("TMPDIR", "./media");
     let _dir = env::temp_dir();
 
     let host = parse_host();
